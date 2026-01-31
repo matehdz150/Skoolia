@@ -13,10 +13,16 @@ pre-push:
   parallel: false
   commands:
     biome-check:
+      glob: "*.{js,ts,cjs,mjs,jsx,tsx,json,jsonc}"
       run: npx @biomejs/biome check .
 
     type-check:
-      run: pnpm type-check
+      run: |
+        if ls **/*.ts **/*.tsx 1> /dev/null 2>&1; then
+          pnpm type-check
+        else
+          echo "No TypeScript files found, skipping type-check"
+        fi
 
 commit-msg:
   commands:
