@@ -2,6 +2,11 @@
 	"devDependencies": {
 		"@biomejs/biome": "^2.3.13",
 		"@commitlint/cli": "^20.4.0",
-		"@evilmartians/lefthook": "^2.0.16"
+		"@evilmartians/lefthook": "^2.0.16",
+		"typescript": "^5.9.3"
+	},
+	"scripts": {
+		"biome": "biome",
+		"type-check": "tsc --noEmit --pretty false || exit 0"
 	}
 }
