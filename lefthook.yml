@@ -4,12 +4,8 @@ pre-commit:
     biome-fix:
       glob: "*.{js,ts,cjs,mjs,jsx,tsx,json,jsonc}"
       run: npx @biomejs/biome check --write \
-        --linter-enabled=false \
-        --assist-enabled=true \
-        --organize-imports-enabled=true \
-        --enforce-assist=false \
         --no-errors-on-unmatched \
-        --files-ignore-unknown=true \
+        --files-ignore-unknown \
         --colors=off {staged_files}
       stage_fixed: true
 
@@ -18,12 +14,15 @@ pre-push:
   commands:
     biome-check:
       glob: "*.{js,ts,cjs,mjs,jsx,tsx,json,jsonc}"
-      run: npx @biomejs/biome check --write \
-        --no-errors-on-unmatched \
-        --files-ignore-unknown=true \
-        --colors=off {push_files}
+      run: npx @biomejs/biome check .
+
     type-check:
-      run: pnpm type-check
+      run: |
+        if ls **/*.ts **/*.tsx 1> /dev/null 2>&1; then
+          pnpm type-check
+        else
+          echo "No TypeScript files found, skipping type-check"
+        fi
 
 commit-msg:
   commands:
