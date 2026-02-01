@@ -6,7 +6,7 @@ export default function Navbar() {
     const [activeLink, setActiveLink] = useState("padres"); // Cambia según la lógica de tu app
 
     return (
-        <nav className="w-full max-w-6xl mx-auto mt-6 px-8 py-4 bg-white border-b border-black/8 dark:border-white/[.145] text-black rounded-3xl shadow-lg flex items-center justify-between">
+        <nav className="w-full max-w-6xl mx-auto mt-6 px-8 py-4 bg-white border-b border-black/8 dark:border-white/[.145] text-black rounded-4xl shadow-lg flex items-center justify-between">
             {/* Logo */}
             <div className="flex items-center gap-2">
                 <div className="flex items-center justify-center w-12 h-12 bg-indigo-600 rounded-xl shadow-indigo-200">
