@@ -1,12 +1,26 @@
 'use client';
 import { GraduationCap, LogIn, PlusCircle } from "lucide-react";
-import { useState } from "react";
+import Link from "next/link";
+import { usePathname, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function Navbar() {
-    const [activeLink, setActiveLink] = useState("padres"); // Cambia según la lógica de tu app
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
+    const audience = searchParams.get("audience") ?? "parents";
+    const [scrolled, setScrolled] = useState(false);
+
+    useEffect(() => {
+        const onScroll = () => setScrolled(window.scrollY > 12);
+        onScroll();
+        window.addEventListener('scroll', onScroll, { passive: true });
+        return () => window.removeEventListener('scroll', onScroll);
+    }, []);
 
     return (
-        <nav className="w-full max-w-6xl mx-auto mt-6 px-8 py-4 bg-white border-b border-black/8 dark:border-white/[.145] text-black rounded-4xl shadow-lg flex items-center justify-between">
+        
+        <div className="sticky top-0 z-50">
+        <nav className={`w-full max-w-6xl mx-auto px-8 py-4 ${scrolled ? 'bg-white/55 backdrop-blur-md supports-[backdrop-filter]:bg-white/50 supports-[backdrop-filter]:backdrop-blur-md shadow-lg border border-white/30' : 'bg-white'} text-black rounded-4xl flex items-center justify-between transition-all duration-300`}> 
             {/* Logo */}
             <div className="flex items-center gap-2">
                 <div className="flex items-center justify-center w-12 h-12 bg-indigo-600 rounded-xl shadow-indigo-200">
@@ -20,28 +34,20 @@ export default function Navbar() {
                 <div>
                     <ul className="flex gap-8 font-semibold text-base">
                         <li>
-                            <a
-                                href="#"
-                                className={`font-extrabold ${activeLink === "padres"
-                                        ? "text-indigo-600 cursor-default"
-                                        : "text-gray-400 hover:text-black cursor-pointer"
-                                    }`}
-                                onClick={() => setActiveLink("padres")}
+                            <Link
+                                href="/?audience=parents"
+                                className={`font-extrabold ${pathname === "/" && audience === "parents" ? "text-indigo-600" : "text-gray-400 hover:text-black"}`}
                             >
                                 PARA PADRES
-                            </a>
+                            </Link>
                         </li>
                         <li>
-                            <a
-                                href="#"
-                                className={`font-extrabold ${activeLink === "escuelas"
-                                        ? "text-indigo-600 cursor-default"
-                                        : "text-gray-400 hover:text-black cursor-pointer"
-                                    }`}
-                                onClick={() => setActiveLink("escuelas")}
+                            <Link
+                                href="/?audience=schools"
+                                className={`font-extrabold ${pathname === "/" && audience === "schools" ? "text-indigo-600" : "text-gray-400 hover:text-black"}`}
                             >
                                 PARA ESCUELAS
-                            </a>
+                            </Link>
                         </li>
                     </ul>
                 </div>
@@ -62,5 +68,6 @@ export default function Navbar() {
                 </div>
             </div>
         </nav>
+        </div>
     );
 }
