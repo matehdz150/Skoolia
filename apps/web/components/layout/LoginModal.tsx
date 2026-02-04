@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { X, User, Building2 } from "lucide-react";
 
 type Props = {
@@ -11,6 +12,7 @@ type Props = {
 export default function LoginModal({ isOpen, onClose, onSwitchToRegister }: Props) {
   const [audience, setAudience] = useState<"parents" | "schools">("parents");
   const panelRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -82,7 +84,14 @@ export default function LoginModal({ isOpen, onClose, onSwitchToRegister }: Prop
           </div>
 
           {/* Form */}
-          <form className="mt-4">
+          <form
+            className="mt-4"
+            onSubmit={(e) => {
+              e.preventDefault();
+              onClose();
+              router.push(audience === "schools" ? "/schools" : "/parents");
+            }}
+          >
             <label className="block text-xs font-bold text-slate-500">EMAIL</label>
             <input
               type="email"

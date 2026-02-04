@@ -2,9 +2,10 @@
 import { GraduationCap, LogIn, PlusCircle } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { JSX, useEffect, useState } from "react";
 import LoginModal from "./LoginModal";
 import RegisterModal from "./RegisterModal";
+import ParentsNavbar from "./ParentsNavbar";
 
 export default function Navbar(): JSX.Element {
     const pathname = usePathname();
@@ -78,6 +79,11 @@ export default function Navbar(): JSX.Element {
         
         
         
+        // Parent area navbar variant
+        if (pathname?.startsWith('/parents')) {
+            return <ParentsNavbar />;
+        }
+
         return (
             <div className="sticky top-0 z-50">
             <nav className={`w-full max-w-6xl mx-auto px-8 py-4 ${scrolled ? 'bg-white/55 backdrop-blur-md supports-backdrop-filter:bg-white/50 supports-backdrop-filter:backdrop-blur-md shadow-lg border border-white/30' : 'bg-white'} text-black rounded-4xl flex items-center justify-between transition-all duration-300`}> 

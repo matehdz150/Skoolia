@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { X, User, Building2, ArrowRight } from "lucide-react";
 
 type Props = {
@@ -11,6 +12,7 @@ type Props = {
 export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }: Props) {
   const [audience, setAudience] = useState<"parents" | "schools">("parents");
   const panelRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -84,7 +86,14 @@ export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }: Prop
           </div>
 
           {/* Form */}
-          <form className="mt-4">
+          <form
+            className="mt-4"
+            onSubmit={(e) => {
+              e.preventDefault();
+              onClose();
+              router.push(audience === "schools" ? "/schools" : "/parents");
+            }}
+          >
             <label className="block text-xs font-bold text-slate-500">NOMBRE COMPLETO</label>
             <input
               type="text"
