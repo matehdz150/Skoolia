@@ -53,10 +53,10 @@ export default function SearchBar() {
             </div>
 
             {/* Main Search Box */}
-            <div className="w-full max-w-5xl bg-white rounded-3xl shadow-xl px-8 py-8 flex flex-col gap-4">
+            <div className="w-full max-w-5xl bg-white rounded-3xl shadow-xl px-6 sm:px-8 py-6 sm:py-8 flex flex-col gap-4">
                 {/* Search Inputs */}
-                <div className="flex w-full gap-4 mb-2">
-                    <div className="flex items-center bg-[#f7f8fa] border border-[#e6e6fa] rounded-lg px-4 py-3 w-1/2 shadow-sm">
+                <div className="flex w-full flex-col md:flex-row gap-3 md:gap-4 mb-2">
+                    <div className="flex items-center bg-[#f7f8fa] border border-[#e6e6fa] rounded-lg px-4 py-3 w-full md:w-1/2 shadow-sm">
                         <FaSearch className="text-[#4f4fff] mr-2" />
                         <input
                             className="bg-transparent outline-none w-full text-base text-slate-700"
@@ -69,7 +69,7 @@ export default function SearchBar() {
                             onChange={(e) => setQuery(e.target.value)}
                         />
                     </div>
-                    <div className="flex items-center bg-[#f7f8fa] border border-[#e6e6fa] rounded-lg px-4 py-3 w-1/2 shadow-sm">
+                    <div className="flex items-center bg-[#f7f8fa] border border-[#e6e6fa] rounded-lg px-4 py-3 w-full md:w-1/2 shadow-sm">
                         <FaMapMarkerAlt className="text-[#4f4fff] mr-2" />
                         <input
                             className="bg-transparent outline-none w-full text-base text-slate-700"
@@ -89,7 +89,7 @@ export default function SearchBar() {
                                 router.push('/?loginPrompt=1');
                             }
                         }}
-                        className="flex items-center justify-center bg-[#ff6b1a] hover:bg-[#ff7f3f] text-white font-bold px-8 py-3 rounded-lg transition text-base shadow-md ml-2"
+                        className="flex items-center justify-center bg-[#ff6b1a] hover:bg-[#ff7f3f] text-white font-bold px-8 py-3 rounded-lg transition text-base shadow-md md:ml-2 w-full md:w-auto"
                     >
                         <FaSearch className="mr-2" />
                         Buscar
@@ -97,7 +97,7 @@ export default function SearchBar() {
                 </div>
 
                 {/* Filters */}
-                <div className="flex w-full gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 w-full gap-3 sm:gap-4">
                     {/* Categoría */}
                     <select
                         name="categoria"
