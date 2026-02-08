@@ -88,6 +88,9 @@ export default function LoginModal({ isOpen, onClose, onSwitchToRegister }: Prop
             className="mt-4"
             onSubmit={(e) => {
               e.preventDefault();
+              try {
+                localStorage.setItem('skoolia:auth', audience);
+              } catch {}
               onClose();
               router.push(audience === "schools" ? "/schools" : "/parents");
             }}

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { FaSearch, FaMapMarkerAlt, FaMagic } from "react-icons/fa";
 
 export default function SearchBar() {
@@ -12,6 +13,9 @@ export default function SearchBar() {
         precio: "",
         duracion: "",
     });
+    const [query, setQuery] = useState("");
+    const [city, setCity] = useState("");
+    const router = useRouter();
 
     const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setFilters({ ...filters, [e.target.name]: e.target.value });
@@ -61,6 +65,8 @@ export default function SearchBar() {
                                     ? "Buscar escuela por nombre o palabra clave..."
                                     : "Buscar curso por nombre o palabra clave..."
                             }
+                            value={query}
+                            onChange={(e) => setQuery(e.target.value)}
                         />
                     </div>
                     <div className="flex items-center bg-[#f7f8fa] border border-[#e6e6fa] rounded-lg px-4 py-3 w-1/2 shadow-sm">
@@ -68,10 +74,23 @@ export default function SearchBar() {
                         <input
                             className="bg-transparent outline-none w-full text-base text-slate-700"
                             placeholder="Ciudad o zona..."
+                            value={city}
+                            onChange={(e) => setCity(e.target.value)}
                         />
                     </div>
                     {/* Search Button */}
-                    <button className="flex items-center justify-center bg-[#ff6b1a] hover:bg-[#ff7f3f] text-white font-bold px-8 py-3 rounded-lg transition text-base shadow-md ml-2">
+                    <button
+                        onClick={() => {
+                            const auth = typeof window !== 'undefined' ? localStorage.getItem('skoolia:auth') : null;
+                            if (auth === 'parents') {
+                                const params = new URLSearchParams({ q: query, loc: city, tab: activeTab });
+                                router.push(`/search?${params.toString()}`);
+                            } else {
+                                router.push('/?loginPrompt=1');
+                            }
+                        }}
+                        className="flex items-center justify-center bg-[#ff6b1a] hover:bg-[#ff7f3f] text-white font-bold px-8 py-3 rounded-lg transition text-base shadow-md ml-2"
+                    >
                         <FaSearch className="mr-2" />
                         Buscar
                     </button>
