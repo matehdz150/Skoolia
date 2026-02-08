@@ -15,6 +15,7 @@ type CatalogCardProps = {
 	price: number | string; // e.g., 12500 or "$12,500"
 	href?: string; // destination for the action arrow
 	onAction?: () => void; // fallback when href isn't provided
+	onCardClick?: () => void; // click on the whole card
 	isFavorite?: boolean;
 	onFavoriteToggle?: () => void;
 	className?: string;
@@ -31,6 +32,7 @@ export default function CatalogCard({
 	price,
 	href,
 	onAction,
+	onCardClick,
 	isFavorite = false,
 	onFavoriteToggle,
 	className = "",
@@ -40,7 +42,8 @@ export default function CatalogCard({
 
 	return (
 		<article
-			className={`group overflow-hidden rounded-[32px] border border-black/5 bg-white shadow-sm transition-all duration-300 hover:-translate-y-[2px] hover:shadow-lg ${className}`}
+			onClick={onCardClick}
+			className={`group overflow-hidden rounded-[32px] border border-black/5 bg-white shadow-sm transition-all duration-300 ${onCardClick ? 'cursor-pointer hover:-translate-y-[2px] hover:shadow-lg' : 'hover:-translate-y-[2px] hover:shadow-lg'} ${className}`}
 		>
 			{/* Media */}
 			<div className="relative h-64 w-full">

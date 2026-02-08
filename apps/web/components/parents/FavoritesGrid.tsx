@@ -1,4 +1,7 @@
-import InstitutionCard from './InstitutionCard';
+"use client";
+import { useState } from "react";
+import CatalogCard from "../layout/CatalogCard";
+import FavoriteDetailModal from "./FavoriteDetailModal";
 
 const demo = [
   {
@@ -22,15 +25,42 @@ const demo = [
 ];
 
 export default function FavoritesGrid() {
+  const [open, setOpen] = useState(false);
+  const [selected, setSelected] = useState<typeof demo[number] | undefined>();
+
+  const openModal = (item: typeof demo[number]) => {
+    setSelected(item);
+    setOpen(true);
+  };
+
   return (
-    <section className="w-full rounded-4xl bg-white p-6 shadow-sm ring-1 ring-black/5">
-      <h3 className="text-2xl font-extrabold text-slate-900">Instituciones Guardadas</h3>
-      <p className="mt-1 text-sm text-slate-600">Tus opciones favoritas para Carlos.</p>
-      <div className="mt-4 grid grid-cols-1 gap-6 md:grid-cols-2">
+    <>
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {demo.map((item) => (
-          <InstitutionCard key={item.id} {...item} />
+          <CatalogCard
+            key={item.id}
+            imageSrc={item.imageUrl}
+            imageAlt={item.title}
+            tags={item.badges}
+            typeLabel={item.level}
+            title={item.title}
+            location={item.location}
+            priceLabel="MENSUALIDAD"
+            price={item.price}
+            onCardClick={() => openModal(item)}
+            onAction={() => openModal(item)}
+          />
         ))}
       </div>
-    </section>
+
+      <FavoriteDetailModal open={open} onClose={() => setOpen(false)} item={selected && {
+        imageUrl: selected.imageUrl,
+        badges: selected.badges,
+        level: selected.level,
+        title: selected.title,
+        location: selected.location,
+        price: selected.price,
+      }} />
+    </>
   );
 }
