@@ -7,10 +7,12 @@ export default function ParentsPage() {
     return (
         <>
             <ParentsNavbar />
-            <main>
-                <HeroParentsSection />
-                <CategoriesSection />
-                <CatalogSection />
+            <main className="pt-6 md:pt-8">
+                <div className="space-y-10 md:space-y-14">
+                    <HeroParentsSection />
+                    <CategoriesSection />
+                    <CatalogSection />
+                </div>
             </main>
         </>
     );

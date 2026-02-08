@@ -20,20 +20,20 @@ export default async function Home({ searchParams }: { searchParams?: Promise<Se
 	return (
 		<>
 			<Navbar />
-			<main>
+			<main className="pt-6 md:pt-8">
 				{isParents ? (
-					<>
+					<div className="space-y-10 md:space-y-14">
 						<HeroParentsSection />
 						<CategoriesSection />
 						<CatalogSection />
 						<CallParentsSections />
-					</>
+					</div>
 				) : (
-					<>
+					<div className="space-y-10 md:space-y-14">
 						<HeroInstitutionSection />
 						<ChallengeInstitutionsSection />
 						<BussinessSections />
-					</>
+					</div>
 				)}
 			</main>
 		</>
