@@ -9,12 +9,12 @@ export default function StudentConfigForm() {
   const [interests, setInterests] = useState('');
 
   return (
-    <section className="w-full rounded-4xl bg-white p-6 shadow-sm ring-1 ring-black/5">
+    <section className="w-full rounded-4xl bg-white p-5 sm:p-6 shadow-sm ring-1 ring-black/5">
       <div className="flex items-center justify-between">
-        <h3 className="text-2xl font-extrabold text-slate-900">Configuración del Alumno</h3>
+        <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900">Configuración del Alumno</h3>
         <Wand2 className="text-indigo-600" />
       </div>
-      <p className="mt-1 text-sm text-slate-600">Define los intereses y presupuesto para mejores resultados.</p>
+      <p className="mt-1 text-xs sm:text-sm text-slate-600">Define los intereses y presupuesto para mejores resultados.</p>
 
       <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
         <div>
@@ -52,7 +52,7 @@ export default function StudentConfigForm() {
         </div>
       </div>
 
-      <button className="mt-6 flex w-full items-center justify-center gap-2 rounded-3xl bg-orange-500 px-4 py-3 font-extrabold text-white shadow-orange-200 hover:bg-orange-600">
+      <button className="mt-6 flex w-full items-center justify-center gap-2 rounded-3xl bg-orange-500 px-4 py-3 text-sm sm:text-base font-extrabold text-white shadow-orange-200 hover:bg-orange-600">
         <Save size={18} /> Guardar Información
       </button>
     </section>
