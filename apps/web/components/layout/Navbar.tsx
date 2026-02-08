@@ -91,19 +91,20 @@ export default function Navbar(): JSX.Element {
 
         return (
             <div className="sticky top-0 z-50">
-            <nav className={`w-full max-w-6xl mx-auto px-8 py-4 ${scrolled ? 'bg-white/55 backdrop-blur-md supports-backdrop-filter:bg-white/50 supports-backdrop-filter:backdrop-blur-md shadow-lg border border-white/30' : 'bg-white'} text-black rounded-4xl flex items-center justify-between transition-all duration-300 outline-none`}> 
+            <nav className={`w-full max-w-6xl mx-auto px-4 sm:px-8 py-3 sm:py-4 ${scrolled ? 'bg-white/55 backdrop-blur-md supports-backdrop-filter:bg-white/50 supports-backdrop-filter:backdrop-blur-md shadow-lg border border-white/30' : 'bg-white'} text-black rounded-4xl flex flex-wrap items-center justify-between gap-3 sm:gap-6 transition-all duration-300 outline-none`}> 
                 {/* Logo */}
                 <div className="flex items-center gap-2">
-                    <div className="flex items-center justify-center w-12 h-12 bg-indigo-600 rounded-xl shadow-indigo-200">
-                        <GraduationCap size={32} className="text-white" />
+                    <div className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-indigo-600 rounded-xl shadow-indigo-200">
+                        <GraduationCap size={28} className="text-white sm:hidden" />
+                        <GraduationCap size={32} className="hidden sm:block text-white" />
                     </div>
-                    <span className="font-extrabold text-2xl text-slate-800">Skoolia</span>
+                    <span className="font-extrabold text-xl sm:text-2xl text-slate-800">Skoolia</span>
                 </div>
 
-                <div className="flex items-center gap-10">
+                <div className="flex items-center gap-4 sm:gap-8">
                     {/* Links */}
-                    <div>
-                        <ul className="flex gap-8 font-semibold text-base">
+                    <div className="hidden md:block">
+                        <ul className="flex gap-6 lg:gap-8 font-semibold text-sm lg:text-base">
                             <li>
                                 <Link
                                     href="/?audience=parents"
@@ -123,16 +124,16 @@ export default function Navbar(): JSX.Element {
                         </ul>
                     </div>
 
-                    <div className="h-6 w-px bg-gray-200" />
+                    <div className="hidden md:block h-6 w-px bg-gray-200" />
 
                     {/* Botones */}
-                    <div className="flex gap-5">
-                        <button onClick={() => setLoginOpen(true)} className="px-5 py-2 text-slate-800 rounded-full font-extrabold flex items-center gap-2 border-none hover:text-indigo-600 cursor-pointer focus:outline-none focus:ring-0">
+                    <div className="flex gap-3 sm:gap-5">
+                        <button onClick={() => setLoginOpen(true)} className="px-3 sm:px-5 py-2 text-sm sm:text-base text-slate-800 rounded-full font-extrabold flex items-center gap-2 border-none hover:text-indigo-600 cursor-pointer focus:outline-none focus:ring-0">
                             <LogIn size={15} />
                             ENTRAR
                         </button>
-                        <button onClick={() => setRegisterOpen(true)} className="px-5 py-2 rounded-2xl bg-slate-900 text-white font-bold flex items-center gap-2
-                        hover:bg-indigo-600 transition-all duration-200 cursor-pointer transform hover:scale-105 focus:outline-none focus:ring-0">
+                        <button onClick={() => setRegisterOpen(true)} className="px-3 sm:px-5 py-2 rounded-2xl bg-slate-900 text-white text-sm sm:text-base font-bold flex items-center gap-2
+                        hover:bg-indigo-600 transition-all duration-200 cursor-pointer focus:outline-none focus:ring-0">
                             <PlusCircle size={15} />
                             UNIRSE
                         </button>
