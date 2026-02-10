@@ -12,7 +12,8 @@
 	"files": {
 		"ignoreUnknown": false,
 		"includes": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "**/*.json"],
-		"maxSize": 1048576
+		"maxSize": 1048576,
+		"experimentalScannerIgnores": ["node_modules", "**/dist", "**/.next"]
 	},
 	"overrides": [
 		{
@@ -25,5 +26,10 @@
 				}
 			}
 		}
-	]
+	],
+	"javascript": {
+		"parser": {
+			"unsafeParameterDecoratorsEnabled": true
+		}
+	}
 }
