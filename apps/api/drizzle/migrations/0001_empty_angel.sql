@@ -1,0 +1,1 @@
+ALTER TABLE "public_users" ADD COLUMN "password_hash" text NOT NULL;
