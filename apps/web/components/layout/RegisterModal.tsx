@@ -43,7 +43,7 @@ export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }: Prop
     >
       <div
         ref={panelRef}
-        className="relative w-md max-w-[92vw] rounded-3xl bg-white shadow-2xl"
+        className="relative w-md max-w-[92vw] rounded-3xl bg-white surface"
       >
         {/* Close */}
         <button
