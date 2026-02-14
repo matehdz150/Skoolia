@@ -1,5 +1,10 @@
 import { IsEmail, IsEnum, IsString, MinLength } from "class-validator";
 
+export enum UserRole {
+	PUBLIC = "public",
+	PRIVATE = "private",
+}
+
 export class RegisterDto {
 	@IsEmail()
 	email!: string;
@@ -8,6 +13,6 @@ export class RegisterDto {
 	@MinLength(6)
 	password!: string;
 
-	@IsEnum(["public", "private"])
+	@IsEnum(UserRole)
 	role!: "public" | "private";
 }

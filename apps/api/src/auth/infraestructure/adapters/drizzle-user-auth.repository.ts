@@ -2,8 +2,8 @@ import { Inject, Injectable } from "@nestjs/common";
 import { randomUUID } from "crypto";
 import { privateUsers, publicUsers } from "drizzle/schemas";
 import { eq } from "drizzle-orm";
-import type { AuthUser } from "src/auth/core/auth.types";
 import type { UserAuthRepository } from "src/auth/core/ports/user-auth.repository";
+import type { AuthUser } from "src/auth/core/types/auth.types";
 import { DATABASE } from "src/db/db.module";
 import type { Database } from "src/db/db.types";
 

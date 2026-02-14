@@ -1,13 +1,26 @@
-import { UnauthorizedException } from "@nestjs/common";
-import type { JwtPort } from "../ports/jwt.port";
-import type { UserAuthRepository } from "../ports/user-auth.repository";
-import type { PasswordHasher } from "../services/password-hassher";
+import { Inject, UnauthorizedException } from "@nestjs/common";
+import * as bcrypt from "bcrypt";
+import type * as jwtPort from "../ports/jwt.port";
+import type * as refreshTokensRepository from "../ports/refresh-tokens.repository";
+import {
+	JWT_PORT,
+	PASSWORD_HASHER,
+	REFRESH_TOKEN_REPOSITORY,
+	USER_AUTH_REPOSITORY,
+} from "../ports/tokens";
+import type * as userAuthRepository from "../ports/user-auth.repository";
+import type * as passwordHassher from "../services/password-hassher";
 
 export class LoginUseCase {
 	constructor(
-		private readonly userRepository: UserAuthRepository,
-		private readonly jwt: JwtPort,
-		private readonly passwordHasher: PasswordHasher,
+		@Inject(USER_AUTH_REPOSITORY)
+		private readonly userRepository: userAuthRepository.UserAuthRepository,
+		@Inject(JWT_PORT)
+		private readonly jwt: jwtPort.JwtPort,
+		@Inject(PASSWORD_HASHER)
+		private readonly passwordHasher: passwordHassher.PasswordHasher,
+		@Inject(REFRESH_TOKEN_REPOSITORY)
+		private readonly refreshRepository: refreshTokensRepository.RefreshTokenRepository,
 	) {}
 
 	async execute(email: string, password: string) {
@@ -26,11 +39,29 @@ export class LoginUseCase {
 			throw new UnauthorizedException("Invalid credentials");
 		}
 
-		const token = await this.jwt.sign({
+		const accessToken = await this.jwt.signAccessToken({
 			sub: user.id,
 			role: user.role,
 		});
 
-		return { accessToken: token };
+		const refreshToken = await this.jwt.signRefreshToken({
+			sub: user.id,
+			role: user.role,
+		});
+
+		// hash del refresh token
+		const refreshHash = await bcrypt.hash(refreshToken, 10);
+
+		await this.refreshRepository.upsert({
+			userId: user.id,
+			role: user.role,
+			tokenHash: refreshHash,
+			expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+		});
+
+		return {
+			accessToken,
+			refreshToken,
+		};
 	}
 }
