@@ -1,7 +1,7 @@
 import { Global, Module } from "@nestjs/common";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
-import * as schema from "../../drizzle/schema";
+import * as schema from "../../drizzle/schemas";
 import type { Database } from "./db.types";
 
 export const DATABASE = Symbol("DATABASE");
@@ -15,7 +15,6 @@ export const DATABASE = Symbol("DATABASE");
 				const client = postgres(process.env.DATABASE_URL!, {
 					max: 10,
 				});
-
 				return drizzle(client, { schema });
 			},
 		},

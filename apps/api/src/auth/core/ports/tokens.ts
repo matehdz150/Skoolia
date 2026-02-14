@@ -1,0 +1,2 @@
+export const USER_AUTH_REPOSITORY = Symbol("USER_AUTH_REPOSITORY");
+export const PASSWORD_HASHER = Symbol("PASSWORD_HASHER");
