@@ -1,2 +1,2 @@
-export * from "./school";
-export * from "./school-favorites";
+export * from './school';
+export * from './school-favorites';

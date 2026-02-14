@@ -11,6 +11,7 @@ import {
 import type express from "express";
 
 import { LoginUseCase } from "src/auth/core/use-cases/login.use-cae";
+import { LogoutUseCase } from "src/auth/core/use-cases/logOut.use-case";
 import { RefreshUseCase } from "src/auth/core/use-cases/refresh.use-case";
 import { RegisterUserUseCase } from "src/auth/core/use-cases/register.use-case";
 
@@ -28,25 +29,29 @@ export class AuthController {
 
 		@Inject(RefreshUseCase)
 		private readonly refreshUseCase: RefreshUseCase,
+
+		@Inject(LogoutUseCase)
+		private readonly logoutUseCase: LogoutUseCase,
 	) {}
 
+	// 🍪 Centralizamos cookies aquí
 	private setAuthCookies(
 		res: express.Response,
 		accessToken: string,
 		refreshToken: string,
-	) {
+	): void {
 		res.cookie("access_token", accessToken, {
 			httpOnly: true,
 			secure: process.env.NODE_ENV === "production",
 			sameSite: "lax",
-			maxAge: 15 * 60 * 1000,
+			maxAge: 15 * 60 * 1000, // 15 min
 		});
 
 		res.cookie("refresh_token", refreshToken, {
 			httpOnly: true,
 			secure: process.env.NODE_ENV === "production",
 			sameSite: "lax",
-			maxAge: 7 * 24 * 60 * 60 * 1000,
+			maxAge: 7 * 24 * 60 * 60 * 1000, // 7 días
 		});
 	}
 
@@ -87,5 +92,24 @@ export class AuthController {
 		this.setAuthCookies(res, tokens.accessToken, tokens.refreshToken);
 
 		return { success: true };
+	}
+
+	@Post("logout")
+	async logout(
+		@Req() req: express.Request,
+		@Res({ passthrough: true }) res: express.Response,
+	) {
+		const cookies = req.cookies as Record<string, string> | undefined;
+		const refreshToken = cookies?.refresh_token;
+
+		if (refreshToken) {
+			await this.logoutUseCase.execute(refreshToken);
+		}
+
+		// 🍪 limpiar cookies
+		res.clearCookie("access_token");
+		res.clearCookie("refresh_token");
+
+		return { message: "Logged out successfully" };
 	}
 }

@@ -11,8 +11,9 @@ import {
 } from "./core/ports/tokens";
 
 import { LoginUseCase } from "./core/use-cases/login.use-cae";
+import { LogoutUseCase } from "./core/use-cases/logOut.use-case";
+import { RefreshUseCase } from "./core/use-cases/refresh.use-case";
 import { RegisterUserUseCase } from "./core/use-cases/register.use-case";
-
 import { BcryptPasswordHasher } from "./infraestructure/adapters/bycript.adapter";
 import { DrizzleRefreshTokenRepository } from "./infraestructure/adapters/drizzle-refresh-token.repository";
 import { DrizzleUserAuthRepository } from "./infraestructure/adapters/drizzle-user-auth.repository";
@@ -37,6 +38,8 @@ import { JwtAdapter } from "./infraestructure/adapters/jwt.adapter";
 		DrizzleRefreshTokenRepository,
 		BcryptPasswordHasher,
 		JwtAdapter,
+		LogoutUseCase,
+		RefreshUseCase,
 
 		{
 			provide: USER_AUTH_REPOSITORY,

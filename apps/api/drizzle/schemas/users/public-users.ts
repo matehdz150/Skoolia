@@ -1,4 +1,4 @@
-import { index, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { index, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 
 /**
  * Public users
@@ -6,22 +6,22 @@ import { index, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
  * - Pueden guardar escuelas en favoritos
  */
 export const publicUsers = pgTable(
-	"public_users",
-	{
-		id: uuid("id").defaultRandom().primaryKey(),
+  'public_users',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
 
-		name: text("name"),
+    name: text('name'),
 
-		avatarUrl: text("avatarUrl"),
+    avatarUrl: text('avatarUrl'),
 
-		email: text("email").notNull().unique(),
+    email: text('email').notNull().unique(),
 
-		passwordHash: text("password_hash").notNull(),
+    passwordHash: text('password_hash').notNull(),
 
-		createdAt: timestamp("created_at").defaultNow().notNull(),
-	},
-	(table) => ({
-		// 🔍 login / lookup rápido
-		emailIdx: index("public_users_email_idx").on(table.email),
-	}),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+  },
+  (table) => ({
+    // 🔍 login / lookup rápido
+    emailIdx: index('public_users_email_idx').on(table.email),
+  }),
 );

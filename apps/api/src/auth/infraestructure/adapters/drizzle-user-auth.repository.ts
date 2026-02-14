@@ -1,5 +1,5 @@
+import { randomUUID } from "node:crypto";
 import { Inject, Injectable } from "@nestjs/common";
-import { randomUUID } from "crypto";
 import { privateUsers, publicUsers } from "drizzle/schemas";
 import { eq } from "drizzle-orm";
 import type { UserAuthRepository } from "src/auth/core/ports/user-auth.repository";

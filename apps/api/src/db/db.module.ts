@@ -12,7 +12,12 @@ export const DATABASE = Symbol("DATABASE");
 		{
 			provide: DATABASE,
 			useFactory: (): Database => {
-				const client = postgres(process.env.DATABASE_URL!, {
+				const databaseUrl = process.env.DATABASE_URL;
+				if (!databaseUrl) {
+					throw new Error("DATABASE_URL environment variable is required");
+				}
+
+				const client = postgres(databaseUrl, {
 					max: 10,
 				});
 				return drizzle(client, { schema });
