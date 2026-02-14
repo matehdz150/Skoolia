@@ -1,4 +1,4 @@
-export const USER_AUTH_REPOSITORY = Symbol("USER_AUTH_REPOSITORY");
-export const PASSWORD_HASHER = Symbol("PASSWORD_HASHER");
-export const JWT_PORT = Symbol("JWT_PORT");
-export const REFRESH_TOKEN_REPOSITORY = Symbol("REFRESH_TOKEN_REPOSITORY");
+export const USER_AUTH_REPOSITORY = Symbol('USER_AUTH_REPOSITORY');
+export const PASSWORD_HASHER = Symbol('PASSWORD_HASHER');
+export const JWT_PORT = Symbol('JWT_PORT');
+export const REFRESH_TOKEN_REPOSITORY = Symbol('REFRESH_TOKEN_REPOSITORY');
