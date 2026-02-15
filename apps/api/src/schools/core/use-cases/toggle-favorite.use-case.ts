@@ -1,18 +1,12 @@
-import { Inject, ForbiddenException, NotFoundException } from '@nestjs/common';
-
-import { FAVORITES_REPOSITORY, SCHOOL_REPOSITORY } from '../ports/tokens';
+import { ForbiddenException, Inject } from '@nestjs/common';
+import { FAVORITES_REPOSITORY } from '../ports/tokens';
 import type { FavoritesRepository } from '../ports/favorites.repository';
-
 import type { JwtPayload } from 'src/auth/core/types/jwt-payload';
-import * as schoolRepository from '../ports/school.repository';
 
-export class AddFavoriteUseCase {
+export class ToggleFavoriteUseCase {
   constructor(
     @Inject(FAVORITES_REPOSITORY)
     private readonly favoritesRepository: FavoritesRepository,
-
-    @Inject(SCHOOL_REPOSITORY)
-    private readonly schoolRepository: schoolRepository.SchoolRepository,
   ) {}
 
   async execute(user: JwtPayload, schoolId: string) {
@@ -20,22 +14,25 @@ export class AddFavoriteUseCase {
       throw new ForbiddenException();
     }
 
-    const school = await this.schoolRepository.findById(schoolId);
-
-    if (!school) {
-      throw new NotFoundException('School not found');
-    }
-
     const exists = await this.favoritesRepository.existsByUserAndSchool({
       publicUserId: user.sub,
       schoolId,
     });
 
-    if (exists) return;
+    if (exists) {
+      await this.favoritesRepository.remove({
+        publicUserId: user.sub,
+        schoolId,
+      });
+
+      return { isFavorite: false };
+    }
 
     await this.favoritesRepository.add({
       publicUserId: user.sub,
       schoolId,
     });
+
+    return { isFavorite: true };
   }
 }
