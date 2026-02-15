@@ -17,7 +17,6 @@ export const schools = pgTable(
     id: uuid('id').defaultRandom().primaryKey(),
 
     name: text('name').notNull(),
-
     description: text('description'),
 
     // 🖼 imágenes
@@ -30,12 +29,26 @@ export const schools = pgTable(
     latitude: doublePrecision('latitude'),
     longitude: doublePrecision('longitude'),
 
+    // 🎓 info académica
+    educationalLevel: text('educational_level'),
+    institutionType: text('institution_type'), // publica | privada
+    schedule: text('schedule'),
+    maxStudentsPerClass: integer('max_students_per_class'),
+    languages: text('languages'),
+    enrollmentYear: integer('enrollment_year'),
+    enrollmentOpen: boolean('enrollment_open').default(false),
+
+    // 💰 precios
+    monthlyPrice: integer('monthly_price'),
+
     // ⭐ métricas
     averageRating: doublePrecision('average_rating').default(0).notNull(),
-
+    ratingsCount: integer('ratings_count').default(0).notNull(),
     favoritesCount: integer('favorites_count').default(0).notNull(),
+    rankingScore: doublePrecision('ranking_score').default(0).notNull(),
 
-    // ✅ verificación
+    // 🏅 destacados
+    isFeatured: boolean('is_featured').default(false).notNull(),
     isVerified: boolean('is_verified').default(false).notNull(),
 
     // 🔐 owner
