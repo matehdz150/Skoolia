@@ -12,11 +12,22 @@ export interface SchoolRepository {
   findById(id: string): Promise<School | null>;
 
   update(params: {
-    schoolId: string;
     ownerId: string;
-    name?: string;
-    description?: string;
+    data: {
+      name?: string;
+      description?: string;
+      logoUrl?: string;
+      coverImageUrl?: string;
+      address?: string;
+      city?: string;
+      latitude?: number;
+      longitude?: number;
+    };
   }): Promise<School>;
 
   list(): Promise<School[]>;
+
+  assignCategories(schoolId: string, categoryIds: string[]): Promise<void>;
+
+  findByOwner(ownerId: string): Promise<School | null>;
 }

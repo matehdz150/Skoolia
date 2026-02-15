@@ -9,6 +9,8 @@ import { GetMySchoolUseCase } from './core/use-cases/get-my-school.use-case';
 import { DrizzleSchoolRepository } from './infrastructure/adapters/drizzle-school.repository';
 import { SCHOOL_REPOSITORY } from './core/ports/tokens';
 import { AuthModule } from 'src/auth/auth.module';
+import { UpdateSchoolUseCase } from './core/use-cases/update-school.use-case';
+import { AssignSchoolCategoriesUseCase } from './core/use-cases/assign-school-categories.use-case';
 
 @Module({
   imports: [DbModule, AuthModule],
@@ -17,6 +19,8 @@ import { AuthModule } from 'src/auth/auth.module';
     CreateSchoolUseCase,
     GetMySchoolUseCase,
     DrizzleSchoolRepository,
+    UpdateSchoolUseCase,
+    AssignSchoolCategoriesUseCase,
     {
       provide: SCHOOL_REPOSITORY,
       useClass: DrizzleSchoolRepository,
