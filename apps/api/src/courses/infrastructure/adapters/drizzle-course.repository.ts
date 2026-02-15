@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { eq } from 'drizzle-orm';
 import { courses } from 'drizzle/schemas/courses/courses';
 import { CourseRepository } from 'src/courses/core/ports/course.repository';
 import { Course } from 'src/courses/core/types/course.types';
@@ -36,5 +37,28 @@ export class DrizzleCourseRepository implements CourseRepository {
       .returning();
 
     return course;
+  }
+
+  async findById(id: string) {
+    const rows = await this.db
+      .select()
+      .from(courses)
+      .where(eq(courses.id, id))
+      .limit(1);
+
+    return rows[0] ?? null;
+  }
+
+  async update(params: { courseId: string; data: Partial<Course> }) {
+    const [updated] = await this.db
+      .update(courses)
+      .set({
+        ...params.data,
+        updatedAt: new Date(), // 🔥 backend controla esto
+      })
+      .where(eq(courses.id, params.courseId))
+      .returning();
+
+    return updated;
   }
 }
