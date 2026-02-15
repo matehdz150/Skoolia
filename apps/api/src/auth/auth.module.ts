@@ -19,6 +19,8 @@ import { DrizzleUserAuthRepository } from './infraestructure/adapters/drizzle-us
 import { JwtAdapter } from './infraestructure/adapters/jwt.adapter';
 import { LogoutUseCase } from './core/use-cases/logOut.use-case';
 import { RefreshUseCase } from './core/use-cases/refresh.use-case';
+import { AuthGuard } from './application/guards/auth.guard';
+import { RolesGuard } from './application/guards/roles.guard';
 
 @Module({
   imports: [
@@ -41,7 +43,8 @@ import { RefreshUseCase } from './core/use-cases/refresh.use-case';
     JwtAdapter,
     LogoutUseCase,
     RefreshUseCase,
-
+    AuthGuard,
+    RolesGuard,
     {
       provide: USER_AUTH_REPOSITORY,
       useClass: DrizzleUserAuthRepository,
@@ -59,5 +62,6 @@ import { RefreshUseCase } from './core/use-cases/refresh.use-case';
       useClass: DrizzleRefreshTokenRepository,
     },
   ],
+  exports: [JWT_PORT, AuthGuard, RolesGuard],
 })
 export class AuthModule {}
