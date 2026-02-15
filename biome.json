@@ -1,5 +1,5 @@
 {
-	"$schema": "https://biomejs.dev/schemas/2.3.13/schema.json",
+	"$schema": "https://biomejs.dev/schemas/2.3.15/schema.json",
 	"formatter": {
 		"enabled": true
 	},
@@ -7,13 +7,28 @@
 		"enabled": true
 	},
 	"assist": {
-		"enabled": true
+		"enabled": false
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"includes": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "**/*.json"],
-		"maxSize": 1048576,
-		"experimentalScannerIgnores": ["node_modules", "**/dist", "**/.next"]
+		"includes": [
+			"apps/**/src/**/*.ts",
+			"apps/**/src/**/*.tsx",
+			"apps/**/src/**/*.js",
+			"apps/**/src/**/*.jsx",
+			"apps/**/src/**/*.json",
+			"packages/**/src/**/*.ts",
+			"packages/**/src/**/*.tsx",
+			"packages/**/src/**/*.js",
+			"packages/**/src/**/*.jsx",
+			"packages/**/src/**/*.json",
+			"!!apps/**/dist",
+			"!!apps/**/.next",
+			"*.ts",
+			"*.js",
+			"*.json"
+		],
+		"maxSize": 1048576
 	},
 	"overrides": [
 		{
