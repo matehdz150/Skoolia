@@ -7,12 +7,14 @@ import { DrizzleSchoolRatingsRepository } from './infraestructure/adapters/drizz
 
 import { UpsertSchoolRatingUseCase } from './core/use-cases/upsert-school-rating.use-case';
 import { SchoolRatingsController } from './application/ratings.controller';
+import { DeleteSchoolRatingUseCase } from './core/use-cases/delete-rating.use-case';
 
 @Module({
   imports: [DbModule, AuthModule],
   controllers: [SchoolRatingsController],
   providers: [
     UpsertSchoolRatingUseCase,
+    DeleteSchoolRatingUseCase,
     {
       provide: SCHOOL_RATINGS_REPOSITORY,
       useClass: DrizzleSchoolRatingsRepository,
