@@ -1,6 +1,6 @@
 // src/services/auth.service.ts
 
-import { api } from "./api";
+import { api } from "../api";
 
 export type UserRole = 'public' | 'private';
 
