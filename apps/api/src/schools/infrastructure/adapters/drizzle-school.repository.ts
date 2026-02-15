@@ -1,12 +1,25 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { schoolCategories, schools } from 'drizzle/schemas';
-import { and, eq, ilike, desc, type SQL } from 'drizzle-orm';
+import { and, eq, ilike, desc, lt, SQL } from 'drizzle-orm';
 
 import { DATABASE } from 'src/db/db.module';
 import type { Database } from 'src/db/db.types';
 
 import type { SchoolRepository } from '../../core/ports/school.repository';
 import { School } from 'src/schools/core/types/school.types';
+import {
+  SchoolEdge,
+  SchoolsConnection,
+} from 'src/schools/core/types/schools-connection';
+
+function encodeCursor(date: Date): string {
+  return Buffer.from(date.toISOString()).toString('base64');
+}
+
+function decodeCursor(cursor: string): Date {
+  const decoded = Buffer.from(cursor, 'base64').toString('ascii');
+  return new Date(decoded);
+}
 
 @Injectable()
 export class DrizzleSchoolRepository implements SchoolRepository {
@@ -85,85 +98,101 @@ export class DrizzleSchoolRepository implements SchoolRepository {
     );
   }
 
-  async listForFeed(filters: {
-    city?: string;
-    categoryId?: string;
-    search?: string;
-    sortBy?: 'favorites' | 'rating' | 'recent';
-    onlyVerified?: boolean;
-  }): Promise<School[]> {
-    const conditions: SQL[] = [];
+  async listForFeed(params: {
+    filters?: {
+      city?: string;
+      categoryId?: string;
+      search?: string;
+      sortBy?: 'favorites' | 'rating' | 'recent';
+      onlyVerified?: boolean;
+    };
+    pagination?: {
+      first: number;
+      after?: string;
+    };
+  }): Promise<SchoolsConnection> {
+    const { filters = {}, pagination } = params;
+
+    const whereConditions: SQL[] = [];
 
     if (filters.city) {
-      conditions.push(eq(schools.city, filters.city));
+      whereConditions.push(eq(schools.city, filters.city));
     }
 
     if (filters.onlyVerified) {
-      conditions.push(eq(schools.isVerified, true));
+      whereConditions.push(eq(schools.isVerified, true));
     }
 
     if (filters.search) {
-      conditions.push(ilike(schools.name, `%${filters.search}%`));
+      whereConditions.push(ilike(schools.name, `%${filters.search}%`));
     }
 
-    const baseWhere = conditions.length > 0 ? and(...conditions) : undefined;
-
-    // 🔥 CASO 1: filtro por categoría
-    if (filters.categoryId) {
-      const rows = await this.db
-        .select({
-          id: schools.id,
-          name: schools.name,
-          description: schools.description,
-          logoUrl: schools.logoUrl,
-          coverImageUrl: schools.coverImageUrl,
-          address: schools.address,
-          city: schools.city,
-          latitude: schools.latitude,
-          longitude: schools.longitude,
-          averageRating: schools.averageRating,
-          favoritesCount: schools.favoritesCount,
-          isVerified: schools.isVerified,
-          ownerId: schools.ownerId,
-          createdAt: schools.createdAt,
-          updatedAt: schools.updatedAt,
-        })
-        .from(schools)
-        .innerJoin(schoolCategories, eq(schoolCategories.schoolId, schools.id))
-        .where(
-          and(
-            eq(schoolCategories.categoryId, filters.categoryId),
-            ...(baseWhere ? [baseWhere] : []),
-          ),
-        )
-        .orderBy(
-          filters.sortBy === 'favorites'
-            ? desc(schools.favoritesCount)
-            : filters.sortBy === 'rating'
-              ? desc(schools.averageRating)
-              : filters.sortBy === 'recent'
-                ? desc(schools.createdAt)
-                : desc(schools.createdAt),
-        );
-
-      return rows as School[];
+    if (pagination?.after) {
+      const cursorDate = decodeCursor(pagination.after);
+      whereConditions.push(lt(schools.createdAt, cursorDate));
     }
 
-    // 🔥 CASO 2: sin categoría
-    const rows = await this.db
-      .select()
-      .from(schools)
-      .where(baseWhere)
-      .orderBy(
-        filters.sortBy === 'favorites'
-          ? desc(schools.favoritesCount)
-          : filters.sortBy === 'rating'
-            ? desc(schools.averageRating)
-            : filters.sortBy === 'recent'
-              ? desc(schools.createdAt)
-              : desc(schools.createdAt),
-      );
+    // 🔥 Construcción dinámica SIN romper tipos
+    const queryBuilder = this.db.select({
+      id: schools.id,
+      name: schools.name,
+      description: schools.description,
+      logoUrl: schools.logoUrl,
+      coverImageUrl: schools.coverImageUrl,
+      address: schools.address,
+      city: schools.city,
+      latitude: schools.latitude,
+      longitude: schools.longitude,
+      averageRating: schools.averageRating,
+      favoritesCount: schools.favoritesCount,
+      isVerified: schools.isVerified,
+      ownerId: schools.ownerId,
+      createdAt: schools.createdAt,
+      updatedAt: schools.updatedAt,
+    });
 
-    return rows;
+    const fromBuilder = filters.categoryId
+      ? queryBuilder
+          .from(schools)
+          .innerJoin(
+            schoolCategories,
+            eq(schoolCategories.schoolId, schools.id),
+          )
+      : queryBuilder.from(schools);
+
+    const whereBuilder =
+      whereConditions.length > 0
+        ? fromBuilder.where(and(...whereConditions))
+        : fromBuilder;
+
+    const orderedBuilder =
+      filters.sortBy === 'favorites'
+        ? whereBuilder.orderBy(desc(schools.favoritesCount))
+        : filters.sortBy === 'rating'
+          ? whereBuilder.orderBy(desc(schools.averageRating))
+          : whereBuilder.orderBy(desc(schools.createdAt));
+
+    const limit = pagination?.first ?? 10;
+
+    const rows = await orderedBuilder.limit(limit + 1);
+
+    const hasNextPage = rows.length > limit;
+    const sliced = hasNextPage ? rows.slice(0, limit) : rows;
+
+    const edges: SchoolEdge[] = sliced.map((row) => ({
+      node: row,
+      cursor: encodeCursor(row.createdAt),
+    }));
+
+    return {
+      edges,
+      pageInfo: {
+        hasNextPage,
+        endCursor:
+          sliced.length > 0
+            ? encodeCursor(sliced[sliced.length - 1].createdAt)
+            : null,
+      },
+    };
   }
 }

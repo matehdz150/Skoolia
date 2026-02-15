@@ -3,7 +3,10 @@ import { Inject } from '@nestjs/common';
 
 import { SchoolModel } from './types/school.model';
 import { SchoolsFeedInput } from './inputs/schools-feed.input';
+import { PaginationInput } from './inputs/pagination.input';
+
 import { ListSchoolsFeedUseCase } from 'src/schools/core/use-cases/list-schools.use-case';
+import { SchoolsConnectionModel } from './types/schools-connection.model';
 
 @Resolver(() => SchoolModel)
 export class SchoolsFeedResolver {
@@ -12,10 +15,14 @@ export class SchoolsFeedResolver {
     private readonly listSchoolsFeed: ListSchoolsFeedUseCase,
   ) {}
 
-  @Query(() => [SchoolModel])
+  @Query(() => SchoolsConnectionModel)
   async schoolsFeed(
     @Args('filters', { nullable: true }) filters?: SchoolsFeedInput,
+    @Args('pagination', { nullable: true }) pagination?: PaginationInput,
   ) {
-    return this.listSchoolsFeed.execute(filters ?? {});
+    return this.listSchoolsFeed.execute({
+      filters: filters ?? {},
+      pagination,
+    });
   }
 }

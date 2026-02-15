@@ -1,3 +1,4 @@
+import { SchoolsConnection } from 'src/schools/core/types/schools-connection';
 import type { School } from '../types/school.types';
 
 export interface SchoolRepository {
@@ -31,11 +32,17 @@ export interface SchoolRepository {
 
   findByOwner(ownerId: string): Promise<School | null>;
 
-  listForFeed(filters: {
-    city?: string;
-    categoryId?: string;
-    search?: string;
-    sortBy?: 'favorites' | 'rating' | 'recent';
-    onlyVerified?: boolean;
-  }): Promise<School[]>;
+  listForFeed(params: {
+    filters?: {
+      city?: string;
+      categoryId?: string;
+      search?: string;
+      sortBy?: 'favorites' | 'rating' | 'recent';
+      onlyVerified?: boolean;
+    };
+    pagination?: {
+      first: number;
+      after?: string;
+    };
+  }): Promise<SchoolsConnection>;
 }
