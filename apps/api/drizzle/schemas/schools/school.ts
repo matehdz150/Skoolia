@@ -6,6 +6,8 @@ import {
   uniqueIndex,
   uuid,
   doublePrecision,
+  integer,
+  boolean,
 } from 'drizzle-orm/pg-core';
 import { privateUsers } from '../users/private-users';
 
@@ -28,6 +30,14 @@ export const schools = pgTable(
     latitude: doublePrecision('latitude'),
     longitude: doublePrecision('longitude'),
 
+    // ⭐ métricas
+    averageRating: doublePrecision('average_rating').default(0).notNull(),
+
+    favoritesCount: integer('favorites_count').default(0).notNull(),
+
+    // ✅ verificación
+    isVerified: boolean('is_verified').default(false).notNull(),
+
     // 🔐 owner
     ownerId: uuid('owner_id')
       .notNull()
@@ -43,5 +53,7 @@ export const schools = pgTable(
     ownerIdx: index('schools_owner_idx').on(table.ownerId),
     nameIdx: index('schools_name_idx').on(table.name),
     cityIdx: index('schools_city_idx').on(table.city),
+    ratingIdx: index('schools_rating_idx').on(table.averageRating),
+    verifiedIdx: index('schools_verified_idx').on(table.isVerified),
   }),
 );
