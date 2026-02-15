@@ -2,6 +2,36 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type SchoolModel {
+  id: ID!
+  name: String!
+  description: String
+  logoUrl: String
+  coverImageUrl: String
+  address: String
+  city: String
+  averageRating: Float!
+  favoritesCount: Int!
+  isVerified: Boolean!
+}
+
 type Query {
   health: String!
+  schoolsFeed(filters: SchoolsFeedInput): [SchoolModel!]!
+}
+
+input SchoolsFeedInput {
+  city: String
+  categoryId: String
+  search: String
+  sortBy: SchoolSortEnum
+  onlyVerified: Boolean
+  latitude: Float
+  longitude: Float
+}
+
+enum SchoolSortEnum {
+  FAVORITES
+  RATING
+  RECENT
 }

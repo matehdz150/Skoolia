@@ -8,6 +8,8 @@ import { DrizzleSchoolRepository } from './infrastructure/adapters/drizzle-schoo
 import { SchoolsController } from './application/schools.controller';
 import { DbModule } from 'src/db/db.module';
 import { Module } from '@nestjs/common';
+import { SchoolsFeedResolver } from './application/graphql/school-feed.resolver';
+import { ListSchoolsFeedUseCase } from './core/use-cases/list-schools.use-case';
 
 @Module({
   imports: [DbModule, AuthModule],
@@ -18,6 +20,8 @@ import { Module } from '@nestjs/common';
     UpdateSchoolUseCase,
     AssignSchoolCategoriesUseCase,
     DrizzleSchoolRepository,
+    SchoolsFeedResolver,
+    ListSchoolsFeedUseCase,
     {
       provide: SCHOOL_REPOSITORY,
       useClass: DrizzleSchoolRepository,
