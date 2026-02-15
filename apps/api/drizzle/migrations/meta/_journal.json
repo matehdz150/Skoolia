@@ -36,6 +36,20 @@
       "when": 1771138534409,
       "tag": "0004_pink_king_cobra",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1771194307671,
+      "tag": "0005_dizzy_rhino",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1771194827152,
+      "tag": "0006_known_rogue",
+      "breakpoints": true
     }
   ]
 }

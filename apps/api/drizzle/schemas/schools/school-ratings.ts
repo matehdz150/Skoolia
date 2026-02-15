@@ -28,6 +28,7 @@ export const schoolRatings = pgTable(
     comment: text('comment'),
 
     createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
   },
   (table) => ({
     uniqueUserRating: uniqueIndex('school_rating_unique').on(
