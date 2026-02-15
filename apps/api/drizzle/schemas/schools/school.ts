@@ -5,14 +5,10 @@ import {
   timestamp,
   uniqueIndex,
   uuid,
+  doublePrecision,
 } from 'drizzle-orm/pg-core';
 import { privateUsers } from '../users/private-users';
 
-/**
- * Schools
- * - Cada escuela pertenece a UN private user
- * - Un private user solo puede tener UNA escuela
- */
 export const schools = pgTable(
   'schools',
   {
@@ -22,7 +18,17 @@ export const schools = pgTable(
 
     description: text('description'),
 
-    // FK → private_users
+    // 🖼 imágenes
+    logoUrl: text('logo_url'),
+    coverImageUrl: text('cover_image_url'),
+
+    // 📍 ubicación
+    address: text('address'),
+    city: text('city'),
+    latitude: doublePrecision('latitude'),
+    longitude: doublePrecision('longitude'),
+
+    // 🔐 owner
     ownerId: uuid('owner_id')
       .notNull()
       .references(() => privateUsers.id, {
@@ -30,19 +36,12 @@ export const schools = pgTable(
       }),
 
     createdAt: timestamp('created_at').defaultNow().notNull(),
-
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
   },
   (table) => ({
-    /**
-     * Un private user solo puede tener una escuela
-     */
     ownerUnique: uniqueIndex('schools_owner_unique').on(table.ownerId),
-
-    /**
-     * 🔍 PERFORMANCE
-     */
     ownerIdx: index('schools_owner_idx').on(table.ownerId),
     nameIdx: index('schools_name_idx').on(table.name),
+    cityIdx: index('schools_city_idx').on(table.city),
   }),
 );
