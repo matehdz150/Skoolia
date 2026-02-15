@@ -61,4 +61,15 @@ export class DrizzleCourseRepository implements CourseRepository {
 
     return updated;
   }
+
+  async softDelete(courseId: string): Promise<void> {
+    await this.db
+      .update(courses)
+      .set({
+        isActive: false,
+        status: 'archived',
+        updatedAt: new Date(),
+      })
+      .where(eq(courses.id, courseId));
+  }
 }

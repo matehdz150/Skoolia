@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Inject,
   Param,
   Patch,
@@ -19,6 +20,7 @@ import { CreateCourseUseCase } from '../core/use-cases/create-course.use-case';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
 import { UpdateCourseUseCase } from '../core/use-cases/update-course.use-case';
+import { DeleteCourseUseCase } from '../core/use-cases/delete-course.use-case';
 
 @Controller('courses')
 export class CoursesController {
@@ -28,6 +30,9 @@ export class CoursesController {
 
     @Inject(UpdateCourseUseCase)
     private readonly updateCourse: UpdateCourseUseCase,
+
+    @Inject(DeleteCourseUseCase)
+    private readonly deleteCourse: DeleteCourseUseCase,
   ) {}
 
   /**
@@ -65,6 +70,17 @@ export class CoursesController {
       role: user.role,
       courseId: id,
       data: dto,
+    });
+  }
+
+  @Delete(':id')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('private')
+  async delete(@Param('id') id: string, @CurrentUser() user: JwtPayload) {
+    return this.deleteCourse.execute({
+      ownerId: user.sub,
+      role: user.role,
+      courseId: id,
     });
   }
 }

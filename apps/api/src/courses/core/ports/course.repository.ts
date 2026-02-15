@@ -30,4 +30,6 @@ export interface CourseRepository {
   }): Promise<Course>;
 
   findById(id: string): Promise<Course | null>;
+
+  softDelete(courseId: string): Promise<void>;
 }

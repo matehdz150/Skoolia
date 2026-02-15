@@ -10,6 +10,7 @@ import { CreateCourseUseCase } from './core/use-cases/create-course.use-case';
 import { COURSE_REPOSITORY } from './core/ports/tokens';
 import { DrizzleCourseRepository } from './infrastructure/adapters/drizzle-course.repository';
 import { UpdateCourseUseCase } from './core/use-cases/update-course.use-case';
+import { DeleteCourseUseCase } from './core/use-cases/delete-course.use-case';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { UpdateCourseUseCase } from './core/use-cases/update-course.use-case';
     CreateCourseUseCase,
     DrizzleCourseRepository,
     UpdateCourseUseCase,
+    DeleteCourseUseCase,
     {
       provide: COURSE_REPOSITORY,
       useClass: DrizzleCourseRepository,
