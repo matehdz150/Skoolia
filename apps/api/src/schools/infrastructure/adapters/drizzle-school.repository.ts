@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
-import { schools } from 'drizzle/schemas';
+import { schoolCategories, schools } from 'drizzle/schemas';
 
 import { DATABASE } from 'src/db/db.module';
 import type { Database } from 'src/db/db.types';
@@ -64,5 +64,24 @@ export class DrizzleSchoolRepository implements SchoolRepository {
       .returning();
 
     return updated;
+  }
+
+  async assignCategories(
+    schoolId: string,
+    categoryIds: string[],
+  ): Promise<void> {
+    // borrar actuales
+    await this.db
+      .delete(schoolCategories)
+      .where(eq(schoolCategories.schoolId, schoolId));
+
+    if (!categoryIds.length) return;
+
+    await this.db.insert(schoolCategories).values(
+      categoryIds.map((categoryId) => ({
+        schoolId,
+        categoryId,
+      })),
+    );
   }
 }

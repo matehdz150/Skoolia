@@ -26,4 +26,8 @@ export interface SchoolRepository {
   }): Promise<School>;
 
   list(): Promise<School[]>;
+
+  assignCategories(schoolId: string, categoryIds: string[]): Promise<void>;
+
+  findByOwner(ownerId: string): Promise<School | null>;
 }

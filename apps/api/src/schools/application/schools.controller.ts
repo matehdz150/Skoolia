@@ -21,6 +21,8 @@ import { UpdateSchoolDto } from './dto/update-school.dto';
 import { CreateSchoolUseCase } from '../core/use-cases/create-school.use-case';
 import { GetMySchoolUseCase } from '../core/use-cases/get-my-school.use-case';
 import { UpdateSchoolUseCase } from '../core/use-cases/update-school.use-case';
+import { AssignCategoriesDto } from './dto/assign-categories.dto';
+import { AssignSchoolCategoriesUseCase } from '../core/use-cases/assign-school-categories.use-case';
 
 @Controller('schools')
 export class SchoolsController {
@@ -33,6 +35,9 @@ export class SchoolsController {
 
     @Inject(UpdateSchoolUseCase)
     private readonly updateSchool: UpdateSchoolUseCase,
+
+    @Inject(AssignSchoolCategoriesUseCase)
+    private readonly assignCategoriesUseCase: AssignSchoolCategoriesUseCase,
   ) {}
 
   /**
@@ -75,5 +80,21 @@ export class SchoolsController {
       role: user.role,
       data: dto,
     });
+  }
+
+  @Post('categories')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('private')
+  async assignCategories(
+    @Body() dto: AssignCategoriesDto,
+    @CurrentUser() user: JwtPayload,
+  ) {
+    await this.assignCategoriesUseCase.execute({
+      ownerId: user.sub,
+      role: user.role,
+      categoryIds: dto.categoryIds,
+    });
+
+    return { success: true };
   }
 }
