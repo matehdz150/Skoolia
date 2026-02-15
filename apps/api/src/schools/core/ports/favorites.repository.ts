@@ -3,5 +3,8 @@ export interface FavoritesRepository {
 
   remove(params: { publicUserId: string; schoolId: string }): Promise<void>;
 
-  listByUser(publicUserId: string): Promise<string[]>; // devuelve schoolIds
+  existsByUserAndSchool(params: {
+    publicUserId: string;
+    schoolId: string;
+  }): Promise<boolean>;
 }
