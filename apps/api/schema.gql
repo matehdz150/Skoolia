@@ -15,9 +15,24 @@ type SchoolModel {
   isVerified: Boolean!
 }
 
+type SchoolEdgeModel {
+  node: SchoolModel!
+  cursor: String!
+}
+
+type PageInfoModel {
+  hasNextPage: Boolean!
+  endCursor: String
+}
+
+type SchoolsConnectionModel {
+  edges: [SchoolEdgeModel!]!
+  pageInfo: PageInfoModel!
+}
+
 type Query {
   health: String!
-  schoolsFeed(filters: SchoolsFeedInput): [SchoolModel!]!
+  schoolsFeed(filters: SchoolsFeedInput, pagination: PaginationInput): SchoolsConnectionModel!
 }
 
 input SchoolsFeedInput {
@@ -34,4 +49,9 @@ enum SchoolSortEnum {
   FAVORITES
   RATING
   RECENT
+}
+
+input PaginationInput {
+  first: Int!
+  after: String
 }

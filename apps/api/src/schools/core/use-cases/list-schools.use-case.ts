@@ -8,13 +8,22 @@ export class ListSchoolsFeedUseCase {
     private readonly schoolRepository: SchoolRepository,
   ) {}
 
-  async execute(filters: {
-    city?: string;
-    categoryId?: string;
-    search?: string;
-    sortBy?: 'favorites' | 'rating' | 'recent';
-    onlyVerified?: boolean;
+  async execute(params: {
+    filters?: {
+      city?: string;
+      categoryId?: string;
+      search?: string;
+      sortBy?: 'favorites' | 'rating' | 'recent';
+      onlyVerified?: boolean;
+    };
+    pagination?: {
+      first: number;
+      after?: string;
+    };
   }) {
-    return this.schoolRepository.listForFeed(filters);
+    return this.schoolRepository.listForFeed({
+      filters: params.filters ?? {},
+      pagination: params.pagination,
+    });
   }
 }
