@@ -1,4 +1,13 @@
-import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Inject,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 
 import { AuthGuard } from 'src/auth/application/guards/auth.guard';
 import { RolesGuard } from 'src/auth/application/guards/roles.guard';
@@ -9,12 +18,21 @@ import type { JwtPayload } from 'src/auth/core/types/jwt-payload';
 
 import { CreateCourseUseCase } from '../core/use-cases/create-course.use-case';
 import { CreateCourseDto } from './dto/create-course.dto';
+import { UpdateCourseDto } from './dto/update-course.dto';
+import { UpdateCourseUseCase } from '../core/use-cases/update-course.use-case';
+import { DeleteCourseUseCase } from '../core/use-cases/delete-course.use-case';
 
 @Controller('courses')
 export class CoursesController {
   constructor(
     @Inject(CreateCourseUseCase)
     private readonly createCourse: CreateCourseUseCase,
+
+    @Inject(UpdateCourseUseCase)
+    private readonly updateCourse: UpdateCourseUseCase,
+
+    @Inject(DeleteCourseUseCase)
+    private readonly deleteCourse: DeleteCourseUseCase,
   ) {}
 
   /**
@@ -36,6 +54,33 @@ export class CoursesController {
       startDate: dto.startDate,
       endDate: dto.endDate,
       modality: dto.modality,
+    });
+  }
+
+  @Patch(':id')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('private')
+  async update(
+    @Param('id') id: string,
+    @Body() dto: UpdateCourseDto,
+    @CurrentUser() user: JwtPayload,
+  ) {
+    return this.updateCourse.execute({
+      ownerId: user.sub,
+      role: user.role,
+      courseId: id,
+      data: dto,
+    });
+  }
+
+  @Delete(':id')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('private')
+  async delete(@Param('id') id: string, @CurrentUser() user: JwtPayload) {
+    return this.deleteCourse.execute({
+      ownerId: user.sub,
+      role: user.role,
+      courseId: id,
     });
   }
 }
