@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { eq } from 'drizzle-orm';
 import { schoolCategories, schools } from 'drizzle/schemas';
+import { and, eq, ilike, desc, type SQL } from 'drizzle-orm';
 
 import { DATABASE } from 'src/db/db.module';
 import type { Database } from 'src/db/db.types';
@@ -83,5 +83,87 @@ export class DrizzleSchoolRepository implements SchoolRepository {
         categoryId,
       })),
     );
+  }
+
+  async listForFeed(filters: {
+    city?: string;
+    categoryId?: string;
+    search?: string;
+    sortBy?: 'favorites' | 'rating' | 'recent';
+    onlyVerified?: boolean;
+  }): Promise<School[]> {
+    const conditions: SQL[] = [];
+
+    if (filters.city) {
+      conditions.push(eq(schools.city, filters.city));
+    }
+
+    if (filters.onlyVerified) {
+      conditions.push(eq(schools.isVerified, true));
+    }
+
+    if (filters.search) {
+      conditions.push(ilike(schools.name, `%${filters.search}%`));
+    }
+
+    const baseWhere = conditions.length > 0 ? and(...conditions) : undefined;
+
+    // 🔥 CASO 1: filtro por categoría
+    if (filters.categoryId) {
+      const rows = await this.db
+        .select({
+          id: schools.id,
+          name: schools.name,
+          description: schools.description,
+          logoUrl: schools.logoUrl,
+          coverImageUrl: schools.coverImageUrl,
+          address: schools.address,
+          city: schools.city,
+          latitude: schools.latitude,
+          longitude: schools.longitude,
+          averageRating: schools.averageRating,
+          favoritesCount: schools.favoritesCount,
+          isVerified: schools.isVerified,
+          ownerId: schools.ownerId,
+          createdAt: schools.createdAt,
+          updatedAt: schools.updatedAt,
+        })
+        .from(schools)
+        .innerJoin(schoolCategories, eq(schoolCategories.schoolId, schools.id))
+        .where(
+          and(
+            eq(schoolCategories.categoryId, filters.categoryId),
+            ...(baseWhere ? [baseWhere] : []),
+          ),
+        )
+        .orderBy(
+          filters.sortBy === 'favorites'
+            ? desc(schools.favoritesCount)
+            : filters.sortBy === 'rating'
+              ? desc(schools.averageRating)
+              : filters.sortBy === 'recent'
+                ? desc(schools.createdAt)
+                : desc(schools.createdAt),
+        );
+
+      return rows as School[];
+    }
+
+    // 🔥 CASO 2: sin categoría
+    const rows = await this.db
+      .select()
+      .from(schools)
+      .where(baseWhere)
+      .orderBy(
+        filters.sortBy === 'favorites'
+          ? desc(schools.favoritesCount)
+          : filters.sortBy === 'rating'
+            ? desc(schools.averageRating)
+            : filters.sortBy === 'recent'
+              ? desc(schools.createdAt)
+              : desc(schools.createdAt),
+      );
+
+    return rows;
   }
 }

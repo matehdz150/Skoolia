@@ -30,4 +30,12 @@ export interface SchoolRepository {
   assignCategories(schoolId: string, categoryIds: string[]): Promise<void>;
 
   findByOwner(ownerId: string): Promise<School | null>;
+
+  listForFeed(filters: {
+    city?: string;
+    categoryId?: string;
+    search?: string;
+    sortBy?: 'favorites' | 'rating' | 'recent';
+    onlyVerified?: boolean;
+  }): Promise<School[]>;
 }
