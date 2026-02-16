@@ -14,20 +14,5 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
-  api:
-    container_name: skoolia-api
-    build:
-      context: .
-      dockerfile: Dockerfile
-    command: pnpm --filter api start:prod
-    depends_on:
-      - postgres
-    environment:
-      DATABASE_URL: postgres://skoolia_user:skoolia_password@postgres:5432/skoolia
-      NODE_ENV: production
-    ports:
-      - "8000:8000"
-    restart: unless-stopped
-
 volumes:
   postgres_data:
