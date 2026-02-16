@@ -2,9 +2,11 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Inject,
   Param,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 
@@ -15,6 +17,7 @@ import type { JwtPayload } from 'src/auth/core/types/jwt-payload';
 import { UpsertSchoolRatingDto } from './dto/upsert-school-rating.dto';
 import { UpsertSchoolRatingUseCase } from '../core/use-cases/upsert-school-rating.use-case';
 import { DeleteSchoolRatingUseCase } from '../core/use-cases/delete-rating.use-case';
+import { ListSchoolRatingsUseCase } from '../core/use-cases/list-school-ratings.use-case';
 
 @Controller('schools/:schoolId/ratings')
 export class SchoolRatingsController {
@@ -24,6 +27,9 @@ export class SchoolRatingsController {
 
     @Inject(DeleteSchoolRatingUseCase)
     private readonly deleteRating: DeleteSchoolRatingUseCase,
+
+    @Inject(ListSchoolRatingsUseCase)
+    private readonly listRatings: ListSchoolRatingsUseCase,
   ) {}
 
   /**
@@ -55,5 +61,22 @@ export class SchoolRatingsController {
     @CurrentUser() user: JwtPayload,
   ) {
     return this.deleteRating.execute(user, schoolId);
+  }
+
+  /**
+   * 📜 Listar ratings de la escuela
+   * GET /schools/:schoolId/ratings?page=1&pageSize=10
+   */
+  @Get()
+  async list(
+    @Param('schoolId') schoolId: string,
+    @Query('page') page?: string,
+    @Query('pageSize') pageSize?: string,
+  ) {
+    return this.listRatings.execute({
+      schoolId,
+      page: page ? Number(page) : undefined,
+      pageSize: pageSize ? Number(pageSize) : undefined,
+    });
   }
 }

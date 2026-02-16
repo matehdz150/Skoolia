@@ -1,4 +1,5 @@
-import { IsString, IsOptional, IsNumber, IsDateString } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsString, IsOptional, IsNumber, IsDate } from 'class-validator';
 
 export class CreateCourseDto {
   @IsString()
@@ -20,11 +21,13 @@ export class CreateCourseDto {
   capacity?: number;
 
   @IsOptional()
-  @IsDateString()
+  @Type(() => Date)
+  @IsDate()
   startDate?: Date;
 
   @IsOptional()
-  @IsDateString()
+  @Type(() => Date)
+  @IsDate()
   endDate?: Date;
 
   @IsOptional()
