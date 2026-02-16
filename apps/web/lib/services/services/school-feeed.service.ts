@@ -1,5 +1,5 @@
 // src/services/schools-feed.service.ts
-import { graphql } from "../graphQl";
+import { graphql } from "../graphql";
 
 export interface SchoolNode {
   id: string;
