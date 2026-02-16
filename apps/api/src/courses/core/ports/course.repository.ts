@@ -1,4 +1,4 @@
-import type { Course } from '../types/course.types';
+import type { Course } from '../entities/course.types';
 
 export interface CourseRepository {
   create(params: {

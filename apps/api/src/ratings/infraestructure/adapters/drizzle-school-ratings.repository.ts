@@ -6,7 +6,7 @@ import type { Database } from 'src/db/db.types';
 
 import { schools, schoolRatings } from 'drizzle/schemas';
 import type { SchoolRatingsRepository } from '../../core/ports/school-ratings.repository';
-import type { SchoolRating } from '../../core/types/school-rating.types';
+import type { SchoolRating } from '../../core/entities/school-rating.types';
 
 @Injectable()
 export class DrizzleSchoolRatingsRepository implements SchoolRatingsRepository {

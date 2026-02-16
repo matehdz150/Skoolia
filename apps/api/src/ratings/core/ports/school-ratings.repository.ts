@@ -1,4 +1,4 @@
-import type { SchoolRating } from '../types/school-rating.types';
+import type { SchoolRating } from '../entities/school-rating.types';
 
 export interface SchoolRatingsRepository {
   // read helpers

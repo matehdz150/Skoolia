@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { courses } from 'drizzle/schemas/courses/courses';
 import { CourseRepository } from 'src/courses/core/ports/course.repository';
-import { Course } from 'src/courses/core/types/course.types';
+import { Course } from 'src/courses/core/entities/course.types';
 import { DATABASE } from 'src/db/db.module';
 import * as dbTypes from 'src/db/db.types';
 

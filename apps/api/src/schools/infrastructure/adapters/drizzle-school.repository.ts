@@ -6,11 +6,11 @@ import { DATABASE } from 'src/db/db.module';
 import type { Database } from 'src/db/db.types';
 
 import type { SchoolRepository } from '../../core/ports/school.repository';
-import { School } from 'src/schools/core/types/school.types';
+import { School } from 'src/schools/core/entities/school.types';
 import {
   SchoolEdge,
   SchoolsConnection,
-} from 'src/schools/core/types/schools-connection';
+} from 'src/schools/core/entities/schools-connection';
 
 function encodeCursor(date: Date): string {
   return Buffer.from(date.toISOString()).toString('base64');
