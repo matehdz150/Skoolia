@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { X, User, Building2 } from "lucide-react";
+import { authService } from "@/lib/services/services/auth.service";
 
 type Props = {
   isOpen: boolean;
@@ -26,6 +27,7 @@ export default function LoginModal({
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   // ✅ cuando llegue prefill (ej. tras register)
   useEffect(() => {
@@ -127,23 +129,33 @@ export default function LoginModal({
             onSubmit={async (e) => {
               e.preventDefault();
 
-              // ✅ si quieres limpiar mensaje al intentar login:
               setMessage(null);
+              setLoading(true);
 
               try {
-                // TODO: aquí va tu authService.login({ email, password })
-                // await authService.login({ email, password });
+                await authService.login({
+                  email,
+                  password,
+                });
+
+                // 🔐 cookies ya quedaron seteadas por el backend
 
                 try {
                   localStorage.setItem("skoolia:auth", audience);
                 } catch {}
 
                 onClose();
+
                 router.push(
-                  audience === "schools" ? "/schools/dashboard" : "/parents/dashboard"
+                  audience === "schools"
+                    ? "/?audience=parents"
+                    : "/?audience=schools",
                 );
-              } catch (err) {
+              } catch (err: any) {
+                console.error(err);
                 setMessage("No se pudo iniciar sesión. Revisa tus datos.");
+              } finally {
+                setLoading(false);
               }
             }}
           >
@@ -175,9 +187,10 @@ export default function LoginModal({
 
             <button
               type="submit"
-              className="mt-5 w-full rounded-2xl bg-slate-900 px-4 py-2 font-bold text-white transition hover:bg-indigo-700"
+              disabled={loading}
+              className="mt-5 w-full rounded-2xl bg-slate-900 px-4 py-2 font-bold text-white transition hover:bg-indigo-700 disabled:opacity-50"
             >
-              Entrar
+              {loading ? "Entrando..." : "Entrar"}
             </button>
           </form>
 
