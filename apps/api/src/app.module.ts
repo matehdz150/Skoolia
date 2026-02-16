@@ -14,6 +14,7 @@ import { FavoritesModule } from './schools/favorites.module';
 import { CoursesModule } from './courses/courses.module';
 import { AppResolver } from './app.resolver';
 import { RatingsModule } from './ratings/ratings.module';
+import { StudentsModule } from './students/students.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { RatingsModule } from './ratings/ratings.module';
     FavoritesModule,
     CoursesModule,
     RatingsModule,
+    StudentsModule,
   ],
   controllers: [AppController],
   providers: [AppService, AppResolver],

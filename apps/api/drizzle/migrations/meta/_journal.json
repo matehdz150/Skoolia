@@ -50,6 +50,13 @@
       "when": 1771194827152,
       "tag": "0006_known_rogue",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1771280719686,
+      "tag": "0007_slimy_jane_foster",
+      "breakpoints": true
     }
   ]
 }
