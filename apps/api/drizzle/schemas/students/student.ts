@@ -7,7 +7,7 @@ import {
   integer,
   timestamp,
   doublePrecision,
-  index,
+  uniqueIndex,
 } from 'drizzle-orm/pg-core';
 
 import { publicUsers } from '../users/public-users';
@@ -31,6 +31,8 @@ export const students = pgTable(
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
   },
   (table) => ({
-    userIdx: index('students_user_idx').on(table.publicUserId),
+    uniqueUser: uniqueIndex('students_public_user_unique').on(
+      table.publicUserId,
+    ),
   }),
 );

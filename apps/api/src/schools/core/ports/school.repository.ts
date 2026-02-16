@@ -1,5 +1,5 @@
-import { SchoolsConnection } from 'src/schools/core/types/schools-connection';
-import type { School } from '../types/school.types';
+import { SchoolsConnection } from 'src/schools/core/entities/schools-connection';
+import type { School } from '../entities/school.types';
 
 export interface SchoolRepository {
   create(params: {
