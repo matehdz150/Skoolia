@@ -4,6 +4,12 @@ import { api } from "../api";
 
 export type UserRole = 'public' | 'private';
 
+export interface AuthUser {
+  id: string;
+  email: string;
+  role: UserRole;
+}
+
 export interface RegisterInput {
   email: string;
   password: string;
@@ -22,7 +28,7 @@ export interface AuthMessageResponse {
 
 export const authService = {
   async register(data: RegisterInput) {
-    return api<AuthMessageResponse>('/auth/register', {
+    return api<AuthUser>('/auth/register', {
       method: 'POST',
       body: data,
     });
