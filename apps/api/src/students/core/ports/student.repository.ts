@@ -10,4 +10,14 @@ export interface StudentRepository {
     monthlyBudget?: number;
     categoryIds: string[];
   }): Promise<Student>;
+
+  update(
+    studentId: string,
+    data: {
+      name?: string;
+      age?: number;
+      monthlyBudget?: number;
+      categoryIds?: string[];
+    },
+  ): Promise<Student>;
 }

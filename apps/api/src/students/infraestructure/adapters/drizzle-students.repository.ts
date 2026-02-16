@@ -55,4 +55,48 @@ export class DrizzleStudentRepository implements StudentRepository {
       return student;
     });
   }
+
+  async update(
+    studentId: string,
+    data: {
+      name?: string;
+      age?: number;
+      monthlyBudget?: number;
+      categoryIds?: string[];
+    },
+  ): Promise<Student> {
+    return await this.db.transaction(async (tx) => {
+      // 1️⃣ Update base info
+      const [updated] = await tx
+        .update(students)
+        .set({
+          name: data.name,
+          age: data.age,
+          monthlyBudget:
+            data.monthlyBudget !== undefined ? data.monthlyBudget : undefined,
+        })
+        .where(eq(students.id, studentId))
+        .returning();
+
+      // 2️⃣ Si mandaron categorías → reemplazarlas
+      if (data.categoryIds) {
+        // borrar existentes
+        await tx
+          .delete(studentInterests)
+          .where(eq(studentInterests.studentId, studentId));
+
+        // insertar nuevas
+        if (data.categoryIds.length > 0) {
+          await tx.insert(studentInterests).values(
+            data.categoryIds.map((categoryId) => ({
+              studentId,
+              categoryId,
+            })),
+          );
+        }
+      }
+
+      return updated;
+    });
+  }
 }
