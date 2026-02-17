@@ -6,6 +6,7 @@ export interface AuthUser {
 }
 
 export interface CreateUserParams {
+  name: string;
   email: string;
   passwordHash: string;
   role: 'public' | 'private';
