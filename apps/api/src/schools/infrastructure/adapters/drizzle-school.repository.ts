@@ -137,15 +137,32 @@ export class DrizzleSchoolRepository implements SchoolRepository {
       id: schools.id,
       name: schools.name,
       description: schools.description,
+
       logoUrl: schools.logoUrl,
       coverImageUrl: schools.coverImageUrl,
+
       address: schools.address,
       city: schools.city,
       latitude: schools.latitude,
       longitude: schools.longitude,
+
+      educationalLevel: schools.educationalLevel,
+      institutionType: schools.institutionType,
+      schedule: schools.schedule,
+      languages: schools.languages,
+      maxStudentsPerClass: schools.maxStudentsPerClass,
+      enrollmentYear: schools.enrollmentYear,
+      enrollmentOpen: schools.enrollmentOpen,
+      monthlyPrice: schools.monthlyPrice,
+
       averageRating: schools.averageRating,
+      ratingsCount: schools.ratingsCount,
       favoritesCount: schools.favoritesCount,
+      rankingScore: schools.rankingScore,
+
+      isFeatured: schools.isFeatured,
       isVerified: schools.isVerified,
+
       ownerId: schools.ownerId,
       createdAt: schools.createdAt,
       updatedAt: schools.updatedAt,

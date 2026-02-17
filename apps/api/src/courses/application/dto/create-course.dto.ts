@@ -13,10 +13,12 @@ export class CreateCourseDto {
   @IsString()
   coverImageUrl?: string;
 
+  @Type(() => Number)
   @IsNumber()
-  price?: number;
+  price!: number;
 
   @IsOptional()
+  @Type(() => Number)
   @IsNumber()
   capacity?: number;
 

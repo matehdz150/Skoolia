@@ -8,23 +8,9 @@ export interface SchoolRepository {
     ownerId: string;
   }): Promise<School>;
 
-  findByOwner(ownerId: string): Promise<School | null>;
-
   findById(id: string): Promise<School | null>;
 
-  update(params: {
-    ownerId: string;
-    data: {
-      name?: string;
-      description?: string;
-      logoUrl?: string;
-      coverImageUrl?: string;
-      address?: string;
-      city?: string;
-      latitude?: number;
-      longitude?: number;
-    };
-  }): Promise<School>;
+  update(params: { ownerId: string; data: Partial<School> }): Promise<School>;
 
   list(): Promise<School[]>;
 
