@@ -10,6 +10,13 @@ export interface School {
   longitude: number | null;
   averageRating: number;
   favoritesCount: number;
+  educationalLevel: string;
+  enrollmentYear: string;
+  enrollmentOpen: string;
+  monthlyPrice: string;
+  schedule: string;
+  languages: string;
+  maxStudentsPerClass: string;
   isVerified: boolean;
   ownerId: string;
   createdAt: Date;
