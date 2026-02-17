@@ -29,6 +29,20 @@
       "when": 1771131755668,
       "tag": "0003_brave_green_goblin",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1771301001409,
+      "tag": "0004_puzzling_longshot",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1771301029194,
+      "tag": "0005_soft_the_hood",
+      "breakpoints": true
     }
   ]
 }

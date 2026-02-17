@@ -11,6 +11,8 @@ export const privateUsers = pgTable(
 
     email: text('email').notNull().unique(),
 
+    name: text('name'),
+
     passwordHash: text('password_hash').notNull(),
 
     // flags útiles para el futuro

@@ -12,7 +12,12 @@ export class RegisterUserUseCase {
     private readonly passwordHasher: passwordHasherPort.PasswordHasher,
   ) {}
 
-  async execute(email: string, password: string, role: 'public' | 'private') {
+  async execute(
+    name: string,
+    email: string,
+    password: string,
+    role: 'public' | 'private',
+  ) {
     // 1️⃣ Verificar que no exista
     const existing = await this.userRepository.findByEmail(email);
 
@@ -25,6 +30,7 @@ export class RegisterUserUseCase {
 
     // 3️⃣ Crear usuario
     const user = await this.userRepository.create({
+      name,
       email,
       passwordHash,
       role,
