@@ -2,23 +2,36 @@ export interface School {
   id: string;
   name: string;
   description: string | null;
+
   logoUrl: string | null;
   coverImageUrl: string | null;
+
   address: string | null;
   city: string | null;
   latitude: number | null;
   longitude: number | null;
+
+  educationalLevel: string | null;
+  institutionType: string | null;
+  schedule: string | null;
+  languages: string | null;
+
+  maxStudentsPerClass: number | null;
+  enrollmentYear: number | null;
+  enrollmentOpen: boolean | null;
+
+  monthlyPrice: number | null;
+
   averageRating: number;
+  ratingsCount: number;
   favoritesCount: number;
-  educationalLevel: string;
-  enrollmentYear: string;
-  enrollmentOpen: string;
-  monthlyPrice: string;
-  schedule: string;
-  languages: string;
-  maxStudentsPerClass: string;
+  rankingScore: number;
+
+  isFeatured: boolean;
   isVerified: boolean;
+
   ownerId: string;
+
   createdAt: Date;
   updatedAt: Date;
 }

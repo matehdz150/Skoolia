@@ -1,4 +1,8 @@
-import { Inject, ForbiddenException } from '@nestjs/common';
+import {
+  Inject,
+  ForbiddenException,
+  BadRequestException,
+} from '@nestjs/common';
 import { COURSE_REPOSITORY } from '../ports/tokens';
 import type { CourseRepository } from '../ports/course.repository';
 import { SCHOOL_REPOSITORY } from 'src/schools/core/ports/tokens';
@@ -26,7 +30,21 @@ export class CreateCourseUseCase {
     modality?: string;
   }) {
     if (params.role !== 'private') {
-      throw new ForbiddenException();
+      throw new ForbiddenException('Only school owners can create courses');
+    }
+
+    if (params.startDate && params.endDate) {
+      if (params.startDate > params.endDate) {
+        throw new BadRequestException('Start date must be before end date');
+      }
+    }
+
+    if (params.price <= 0) {
+      throw new BadRequestException('Price must be greater than zero');
+    }
+
+    if (params.capacity && params.capacity <= 0) {
+      throw new BadRequestException('Capacity must be greater than zero');
     }
 
     const school = await this.schoolRepository.findByOwner(params.ownerId);

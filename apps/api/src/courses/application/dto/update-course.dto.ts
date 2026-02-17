@@ -1,4 +1,12 @@
-import { IsOptional, IsString, IsNumber, IsBoolean } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsOptional,
+  IsString,
+  IsNumber,
+  IsBoolean,
+  IsDate,
+  IsIn,
+} from 'class-validator';
 
 export class UpdateCourseDto {
   @IsOptional()
@@ -22,9 +30,13 @@ export class UpdateCourseDto {
   capacity?: number;
 
   @IsOptional()
+  @Type(() => Date)
+  @IsDate()
   startDate?: Date;
 
   @IsOptional()
+  @Type(() => Date)
+  @IsDate()
   endDate?: Date;
 
   @IsOptional()
@@ -32,6 +44,7 @@ export class UpdateCourseDto {
   modality?: string;
 
   @IsOptional()
+  @IsIn(['draft', 'published', 'archived'])
   status?: 'draft' | 'published' | 'archived';
 
   @IsOptional()
