@@ -14,12 +14,26 @@ export default function SchoolRegistrationWizard({ isOpen, onClose }: Props) {
     const [step, setStep] = useState<2 | 3 | 4>(2);
 
     const [name, setName] = useState("");
-    const [category, setCategory] = useState("");
-    const [location, setLocation] = useState("");
+    const [educationalLevel, setEducationalLevel] = useState("");
+    const [institutionType, setInstitutionType] = useState("");
+    const [address, setAddress] = useState("");
+    const [city, setCity] = useState("");
     const [description, setDescription] = useState("");
 
     const [phone, setPhone] = useState("");
     const [contactEmail, setContactEmail] = useState("");
+
+    // Campos adicionales
+    const [languages, setLanguages] = useState("");
+    const [schedule, setSchedule] = useState("");
+    const [monthlyPrice, setMonthlyPrice] = useState<number | null>(null);
+    const [logoUrl, setLogoUrl] = useState("");
+    const [coverImageUrl, setCoverImageUrl] = useState("");
+    const [latitude, setLatitude] = useState<number | null>(null);
+    const [longitude, setLongitude] = useState<number | null>(null);
+    const [maxStudentsPerClass, setMaxStudentsPerClass] = useState<number | null>(null);
+    const [enrollmentYear, setEnrollmentYear] = useState<number | null>(null);
+    const [enrollmentOpen, setEnrollmentOpen] = useState<boolean>(false);
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -50,11 +64,22 @@ export default function SchoolRegistrationWizard({ isOpen, onClose }: Props) {
                 description,
             });
 
-            // 2️⃣ Guardar información adicional usando update (dirección / ciudad)
-            const locationTrimmed = location.trim();
+            // 2️⃣ Guardar información adicional usando update
             await schoolsService.update({
-                address: locationTrimmed || undefined,
-                city: locationTrimmed || undefined,
+                address: address.trim() || undefined,
+                city: city.trim() || undefined,
+                educationalLevel: educationalLevel || undefined,
+                institutionType: institutionType || undefined,
+                languages: languages.trim() || undefined,
+                schedule: schedule.trim() || undefined,
+                monthlyPrice: monthlyPrice ?? undefined,
+                logoUrl: logoUrl.trim() || undefined,
+                coverImageUrl: coverImageUrl.trim() || undefined,
+                latitude: latitude ?? undefined,
+                longitude: longitude ?? undefined,
+                maxStudentsPerClass: maxStudentsPerClass ?? undefined,
+                enrollmentYear: enrollmentYear ?? undefined,
+                enrollmentOpen: enrollmentOpen ?? undefined,
             });
             onClose();
         } catch (err: any) {
@@ -115,11 +140,11 @@ export default function SchoolRegistrationWizard({ isOpen, onClose }: Props) {
                             <div className="grid gap-4 sm:grid-cols-2">
                                 <div>
                                     <label className="mb-1 block text-[11px] font-bold uppercase tracking-wide text-slate-400">
-                                        Categoría principal
+                                        Nivel educativo
                                     </label>
                                     <select
-                                        value={category}
-                                        onChange={(e) => setCategory(e.target.value)}
+                                        value={educationalLevel}
+                                        onChange={(e) => setEducationalLevel(e.target.value)}
                                         className="h-11 w-full rounded-2xl bg-slate-50 px-4 text-sm text-slate-900 outline-none ring-1 ring-slate-200 focus:bg-white focus:ring-2 focus:ring-indigo-500"
                                     >
                                         <option value="">Selecciona...</option>
@@ -133,11 +158,39 @@ export default function SchoolRegistrationWizard({ isOpen, onClose }: Props) {
 
                                 <div>
                                     <label className="mb-1 block text-[11px] font-bold uppercase tracking-wide text-slate-400">
-                                        Ubicación / modalidad
+                                        Tipo de institución
+                                    </label>
+                                    <select
+                                        value={institutionType}
+                                        onChange={(e) => setInstitutionType(e.target.value)}
+                                        className="h-11 w-full rounded-2xl bg-slate-50 px-4 text-sm text-slate-900 outline-none ring-1 ring-slate-200 focus:bg-white focus:ring-2 focus:ring-indigo-500"
+                                    >
+                                        <option value="">Selecciona...</option>
+                                        <option value="privada">Privada</option>
+                                        <option value="publica">Pública</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div className="grid gap-4 sm:grid-cols-2 mt-4">
+                                <div>
+                                    <label className="mb-1 block text-[11px] font-bold uppercase tracking-wide text-slate-400">
+                                        Dirección
                                     </label>
                                     <input
-                                        value={location}
-                                        onChange={(e) => setLocation(e.target.value)}
+                                        value={address}
+                                        onChange={(e) => setAddress(e.target.value)}
+                                        placeholder="Calle y número"
+                                        className="h-11 w-full rounded-2xl bg-slate-50 px-4 text-sm text-slate-900 outline-none ring-1 ring-slate-200 focus:bg-white focus:ring-2 focus:ring-indigo-500"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="mb-1 block text-[11px] font-bold uppercase tracking-wide text-slate-400">
+                                        Ciudad
+                                    </label>
+                                    <input
+                                        value={city}
+                                        onChange={(e) => setCity(e.target.value)}
                                         placeholder="Ej. Guadalajara, Jal."
                                         className="h-11 w-full rounded-2xl bg-slate-50 px-4 text-sm text-slate-900 outline-none ring-1 ring-slate-200 focus:bg-white focus:ring-2 focus:ring-indigo-500"
                                     />
@@ -196,12 +249,141 @@ export default function SchoolRegistrationWizard({ isOpen, onClose }: Props) {
                                 <p className="mt-1 text-xs text-slate-500">
                                     Sube el logo de tu escuela y fotos de portada.
                                 </p>
-                                <button
-                                    type="button"
-                                    className="mt-4 inline-flex items-center rounded-full bg-white px-4 py-2 text-xs font-bold text-slate-700 shadow-sm ring-1 ring-slate-200 hover:bg-slate-50"
-                                >
-                                    Seleccionar archivos
-                                </button>
+                                <div className="mt-4 grid gap-4 sm:grid-cols-2 text-left">
+                                    <div>
+                                        <label className="mb-1 block text-[11px] font-bold uppercase tracking-wide text-slate-400">Logo URL</label>
+                                        <input
+                                            value={logoUrl}
+                                            onChange={(e) => setLogoUrl(e.target.value)}
+                                            placeholder="https://..."
+                                            className="h-11 w-full rounded-2xl bg-slate-50 px-4 text-sm text-slate-900 outline-none ring-1 ring-slate-200 focus:bg-white focus:ring-2 focus:ring-indigo-500"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="mb-1 block text-[11px] font-bold uppercase tracking-wide text-slate-400">Portada URL</label>
+                                        <input
+                                            value={coverImageUrl}
+                                            onChange={(e) => setCoverImageUrl(e.target.value)}
+                                            placeholder="https://..."
+                                            className="h-11 w-full rounded-2xl bg-slate-50 px-4 text-sm text-slate-900 outline-none ring-1 ring-slate-200 focus:bg-white focus:ring-2 focus:ring-indigo-500"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="grid gap-4 sm:grid-cols-2 mt-6">
+                                <div>
+                                    <label className="mb-1 block text-[11px] font-bold uppercase tracking-wide text-slate-400">
+                                        Idiomas
+                                    </label>
+                                    <input
+                                        value={languages}
+                                        onChange={(e) => setLanguages(e.target.value)}
+                                        placeholder="Ej. Español, Inglés"
+                                        className="h-11 w-full rounded-2xl bg-slate-50 px-4 text-sm text-slate-900 outline-none ring-1 ring-slate-200 focus:bg-white focus:ring-2 focus:ring-indigo-500"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="mb-1 block text-[11px] font-bold uppercase tracking-wide text-slate-400">
+                                        Horario
+                                    </label>
+                                    <input
+                                        value={schedule}
+                                        onChange={(e) => setSchedule(e.target.value)}
+                                        placeholder="Ej. 8:00 - 14:00"
+                                        className="h-11 w-full rounded-2xl bg-slate-50 px-4 text-sm text-slate-900 outline-none ring-1 ring-slate-200 focus:bg-white focus:ring-2 focus:ring-indigo-500"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid gap-4 sm:grid-cols-2 mt-4">
+                                <div>
+                                    <label className="mb-1 block text-[11px] font-bold uppercase tracking-wide text-slate-400">
+                                        Precio mensual
+                                    </label>
+                                    <input
+                                        value={monthlyPrice ?? ""}
+                                        onChange={(e) => {
+                                            const v = e.target.value;
+                                            setMonthlyPrice(v === "" ? null : Number(v));
+                                        }}
+                                        placeholder="Ej. 2500"
+                                        type="number"
+                                        min={0}
+                                        className="h-11 w-full rounded-2xl bg-slate-50 px-4 text-sm text-slate-900 outline-none ring-1 ring-slate-200 focus:bg-white focus:ring-2 focus:ring-indigo-500"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="mb-1 block text-[11px] font-bold uppercase tracking-wide text-slate-400">Máx. alumnos por clase</label>
+                                    <input
+                                        value={maxStudentsPerClass ?? ""}
+                                        onChange={(e) => {
+                                            const v = e.target.value;
+                                            setMaxStudentsPerClass(v === "" ? null : Number(v));
+                                        }}
+                                        placeholder="Ej. 25"
+                                        type="number"
+                                        min={1}
+                                        className="h-11 w-full rounded-2xl bg-slate-50 px-4 text-sm text-slate-900 outline-none ring-1 ring-slate-200 focus:bg-white focus:ring-2 focus:ring-indigo-500"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid gap-4 sm:grid-cols-2 mt-4">
+                                <div>
+                                    <label className="mb-1 block text-[11px] font-bold uppercase tracking-wide text-slate-400">Año de inscripción</label>
+                                    <input
+                                        value={enrollmentYear ?? ""}
+                                        onChange={(e) => {
+                                            const v = e.target.value;
+                                            setEnrollmentYear(v === "" ? null : Number(v));
+                                        }}
+                                        placeholder="Ej. 2026"
+                                        type="number"
+                                        className="h-11 w-full rounded-2xl bg-slate-50 px-4 text-sm text-slate-900 outline-none ring-1 ring-slate-200 focus:bg-white focus:ring-2 focus:ring-indigo-500"
+                                    />
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <input
+                                        id="enrollmentOpen"
+                                        type="checkbox"
+                                        checked={enrollmentOpen}
+                                        onChange={(e) => setEnrollmentOpen(e.target.checked)}
+                                        className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                                    />
+                                    <label htmlFor="enrollmentOpen" className="text-xs font-bold text-slate-600">Inscripción abierta</label>
+                                </div>
+                            </div>
+
+                            <div className="grid gap-4 sm:grid-cols-2 mt-4">
+                                <div>
+                                    <label className="mb-1 block text-[11px] font-bold uppercase tracking-wide text-slate-400">Latitud</label>
+                                    <input
+                                        value={latitude ?? ""}
+                                        onChange={(e) => {
+                                            const v = e.target.value;
+                                            setLatitude(v === "" ? null : Number(v));
+                                        }}
+                                        placeholder="Ej. 20.6597"
+                                        type="number"
+                                        step="0.000001"
+                                        className="h-11 w-full rounded-2xl bg-slate-50 px-4 text-sm text-slate-900 outline-none ring-1 ring-slate-200 focus:bg-white focus:ring-2 focus:ring-indigo-500"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="mb-1 block text-[11px] font-bold uppercase tracking-wide text-slate-400">Longitud</label>
+                                    <input
+                                        value={longitude ?? ""}
+                                        onChange={(e) => {
+                                            const v = e.target.value;
+                                            setLongitude(v === "" ? null : Number(v));
+                                        }}
+                                        placeholder="Ej. -103.3496"
+                                        type="number"
+                                        step="0.000001"
+                                        className="h-11 w-full rounded-2xl bg-slate-50 px-4 text-sm text-slate-900 outline-none ring-1 ring-slate-200 focus:bg-white focus:ring-2 focus:ring-indigo-500"
+                                    />
+                                </div>
                             </div>
                         </div>
                     )}
