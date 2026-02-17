@@ -2,26 +2,52 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { X, User, Building2 } from "lucide-react";
+import { authService } from "@/lib/services/services/auth.service";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
   onSwitchToRegister?: () => void;
+  prefill?: {
+    email?: string;
+    success?: string;
+  } | null;
 };
 
-export default function LoginModal({ isOpen, onClose, onSwitchToRegister }: Props) {
+export default function LoginModal({
+  isOpen,
+  onClose,
+  onSwitchToRegister,
+  prefill,
+}: Props) {
   const [audience, setAudience] = useState<"parents" | "schools">("parents");
   const panelRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [message, setMessage] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  // ✅ cuando llegue prefill (ej. tras register)
+  useEffect(() => {
+    if (!isOpen) return;
+
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (prefill?.email) setEmail(prefill.email);
+    if (prefill?.success) setMessage(prefill.success);
+  }, [prefill, isOpen]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
+
     if (isOpen) {
       document.addEventListener("keydown", onKey);
       document.body.style.overflow = "hidden";
     }
+
     return () => {
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = "";
@@ -56,12 +82,24 @@ export default function LoginModal({ isOpen, onClose, onSwitchToRegister }: Prop
 
         {/* Content */}
         <div className="px-5 pt-8 pb-6">
-          <h2 className="text-2xl font-extrabold text-slate-900">¡Hola de nuevo!</h2>
-          <p className="mt-1 text-sm font-medium text-slate-500">Accede a tu cuenta</p>
+          <h2 className="text-2xl font-extrabold text-slate-900">
+            ¡Hola de nuevo!
+          </h2>
+          <p className="mt-1 text-sm font-medium text-slate-500">
+            Accede a tu cuenta
+          </p>
+
+          {/* ✅ success message */}
+          {message && (
+            <div className="mt-3 rounded-xl border border-green-200 bg-green-50 px-3 py-2 text-sm font-medium text-green-700">
+              {message}
+            </div>
+          )}
 
           {/* Audience tabs */}
           <div className="mt-5 grid grid-cols-2 gap-2 rounded-2xl bg-slate-100 p-1">
             <button
+              type="button"
               onClick={() => setAudience("parents")}
               className={`flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-bold transition-colors ${
                 audience === "parents"
@@ -71,7 +109,9 @@ export default function LoginModal({ isOpen, onClose, onSwitchToRegister }: Prop
             >
               <User size={16} /> Padre
             </button>
+
             <button
+              type="button"
               onClick={() => setAudience("schools")}
               className={`flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-bold transition-colors ${
                 audience === "schools"
@@ -86,39 +126,77 @@ export default function LoginModal({ isOpen, onClose, onSwitchToRegister }: Prop
           {/* Form */}
           <form
             className="mt-4"
-            onSubmit={(e) => {
+            onSubmit={async (e) => {
               e.preventDefault();
+
+              setMessage(null);
+              setLoading(true);
+
               try {
-                localStorage.setItem('skoolia:auth', audience);
-              } catch {}
-              onClose();
-              router.push(audience === "schools" ? "/schools" : "/parents");
+                await authService.login({
+                  email,
+                  password,
+                });
+
+                // 🔐 cookies ya quedaron seteadas por el backend
+
+                try {
+                  localStorage.setItem("skoolia:auth", audience);
+                } catch {}
+
+                onClose();
+
+                router.push(
+                  audience === "schools"
+                    ? "/?audience=parents"
+                    : "/?audience=schools",
+                );
+              } catch (err: any) {
+                console.error(err);
+                setMessage("No se pudo iniciar sesión. Revisa tus datos.");
+              } finally {
+                setLoading(false);
+              }
             }}
           >
-            <label className="block text-xs font-bold text-slate-500">EMAIL</label>
+            <label className="block text-xs font-bold text-slate-500">
+              EMAIL
+            </label>
             <input
+              name="email"
               type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               placeholder="correo@ejemplo.com"
               className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-slate-800 outline-none ring-indigo-500 focus:ring-2"
+              autoComplete="email"
             />
 
-            <label className="mt-4 block text-xs font-bold text-slate-500">CONTRASEÑA</label>
+            <label className="mt-4 block text-xs font-bold text-slate-500">
+              CONTRASEÑA
+            </label>
             <input
+              name="password"
               type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
               className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-slate-800 outline-none ring-indigo-500 focus:ring-2"
+              autoComplete="current-password"
             />
 
             <button
               type="submit"
-              className="mt-5 w-full rounded-2xl bg-slate-900 px-4 py-2 font-bold text-white transition hover:bg-indigo-700"
+              disabled={loading}
+              className="mt-5 w-full rounded-2xl bg-slate-900 px-4 py-2 font-bold text-white transition hover:bg-indigo-700 disabled:opacity-50"
             >
-              Entrar
+              {loading ? "Entrando..." : "Entrar"}
             </button>
           </form>
 
           <div className="mt-3 text-center text-xs text-slate-500">
-            ¿No tienes cuenta? {onSwitchToRegister ? (
+            ¿No tienes cuenta?{" "}
+            {onSwitchToRegister ? (
               <button
                 type="button"
                 onClick={onSwitchToRegister}
