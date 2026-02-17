@@ -1,4 +1,11 @@
-import { IsInt, IsString, IsArray, IsUUID, Min } from 'class-validator';
+import {
+  IsInt,
+  IsString,
+  IsArray,
+  IsUUID,
+  Min,
+  IsOptional,
+} from 'class-validator';
 
 export class CreateStudentDto {
   @IsString()
@@ -10,9 +17,11 @@ export class CreateStudentDto {
 
   @IsInt()
   @Min(0)
+  @IsOptional()
   monthlyBudget?: number;
 
   @IsArray()
   @IsUUID('all', { each: true })
-  categoryIds!: string[];
+  @IsOptional()
+  categoryIds?: string[];
 }

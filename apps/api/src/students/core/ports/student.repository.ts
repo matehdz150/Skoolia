@@ -1,14 +1,16 @@
-import { Student } from '../entities/student';
+import { Student, StudentWithInterests } from '../entities/student';
 
 export interface StudentRepository {
-  findByPublicUserId(publicUserId: string): Promise<Student | null>;
+  findByPublicUserId(
+    publicUserId: string,
+  ): Promise<StudentWithInterests | null>;
 
   create(data: {
     publicUserId: string;
     name: string;
     age: number;
     monthlyBudget?: number;
-    categoryIds: string[];
+    categoryIds?: string[];
   }): Promise<Student>;
 
   update(
