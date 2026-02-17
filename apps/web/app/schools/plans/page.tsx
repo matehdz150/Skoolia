@@ -11,7 +11,8 @@ export default function SchoolsPlansPage() {
 				<div className="grid grid-cols-1 gap-6 lg:grid-cols-[260px_1fr]">
 					<SchoolsSidebar active="plans" />
 					<div className="space-y-5 sm:space-y-6">
-						<SchoolSummaryHeader />
+						{/* <SchoolSummaryHeader /> */}
+
 						<SchoolPlansSection />
 					</div>
 				</div>
