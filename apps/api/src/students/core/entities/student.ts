@@ -9,3 +9,11 @@ export interface Student {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface StudentWithInterests extends Student {
+  interests: {
+    id: string;
+    name: string;
+    slug: string;
+  }[];
+}

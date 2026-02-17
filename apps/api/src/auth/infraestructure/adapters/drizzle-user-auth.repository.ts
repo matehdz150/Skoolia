@@ -52,6 +52,7 @@ export class DrizzleUserAuthRepository implements UserAuthRepository {
   }
 
   async create(params: {
+    name: string;
     email: string;
     passwordHash: string;
     role: 'public' | 'private';
@@ -61,6 +62,7 @@ export class DrizzleUserAuthRepository implements UserAuthRepository {
         .insert(publicUsers)
         .values({
           id: randomUUID(),
+          name: params.name,
           email: params.email,
           passwordHash: params.passwordHash,
         })

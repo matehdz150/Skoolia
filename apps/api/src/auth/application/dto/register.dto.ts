@@ -6,6 +6,9 @@ export enum UserRole {
 }
 
 export class RegisterDto {
+  @IsString()
+  name!: string;
+
   @IsEmail()
   email!: string;
 

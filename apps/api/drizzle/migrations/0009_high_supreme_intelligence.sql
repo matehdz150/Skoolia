@@ -1,0 +1,1 @@
+ALTER TABLE "private_users" ADD COLUMN "name" text;

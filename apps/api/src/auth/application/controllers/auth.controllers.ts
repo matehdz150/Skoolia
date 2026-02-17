@@ -57,7 +57,12 @@ export class AuthController {
 
   @Post('register')
   async register(@Body() dto: RegisterDto) {
-    return this.registerUseCase.execute(dto.email, dto.password, dto.role);
+    return this.registerUseCase.execute(
+      dto.name,
+      dto.email,
+      dto.password,
+      dto.role,
+    );
   }
 
   @Post('login')
