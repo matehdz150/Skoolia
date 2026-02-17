@@ -24,12 +24,12 @@ export default function FavoriteDetailModal({ open, onClose, item }: { open: boo
     : (String(item.price).includes('MXN/mes') ? 'MXN/mes' : '');
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center">
+    <div className="fixed inset-0 z-100 flex items-center justify-center">
       {/* Backdrop */}
       <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onClick={onClose} />
 
       {/* Modal */}
-      <div className="relative z-[101] mx-4 w-full max-w-6xl overflow-hidden rounded-2xl sm:rounded-[32px] bg-white shadow-2xl max-h-[90vh]">
+      <div className="relative z-101 mx-4 w-full max-w-6xl overflow-hidden rounded-2xl sm:rounded-4xl bg-white surface max-h-[90vh]">
         <button
           className="absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-full bg-white text-slate-700 shadow"
           aria-label="Cerrar"
@@ -40,7 +40,7 @@ export default function FavoriteDetailModal({ open, onClose, item }: { open: boo
 
         <div className="grid grid-cols-1 md:grid-cols-[1fr_520px]">
           {/* Left media */}
-          <div className="relative h-[260px] sm:h-[320px] md:h-[72vh] w-full bg-slate-100">
+          <div className="relative h-65 sm:h-80 md:h-[72vh] w-full bg-slate-100">
             {item.imageUrl ? (
               <Image src={item.imageUrl} alt={item.title} fill className="object-cover" />
             ) : (
@@ -73,7 +73,7 @@ export default function FavoriteDetailModal({ open, onClose, item }: { open: boo
 
             {/* Info pills grid */}
             <div className="mt-6 grid grid-cols-1 gap-3 sm:gap-4 sm:grid-cols-2">
-              <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3">
+              <div className="surface flex items-center justify-between rounded-2xl bg-white px-4 py-3">
                 <div className="flex items-center gap-3">
                   <Clock className="h-4 w-4 text-indigo-600" />
                   <div>
@@ -82,7 +82,7 @@ export default function FavoriteDetailModal({ open, onClose, item }: { open: boo
                   </div>
                 </div>
               </div>
-              <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3">
+              <div className="surface flex items-center justify-between rounded-2xl bg-white px-4 py-3">
                 <div className="flex items-center gap-3">
                   <Users className="h-4 w-4 text-indigo-600" />
                   <div>
@@ -91,7 +91,7 @@ export default function FavoriteDetailModal({ open, onClose, item }: { open: boo
                   </div>
                 </div>
               </div>
-              <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3">
+              <div className="surface flex items-center justify-between rounded-2xl bg-white px-4 py-3">
                 <div className="flex items-center gap-3">
                   <Languages className="h-4 w-4 text-indigo-600" />
                   <div>
@@ -100,7 +100,7 @@ export default function FavoriteDetailModal({ open, onClose, item }: { open: boo
                   </div>
                 </div>
               </div>
-              <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3">
+              <div className="surface flex items-center justify-between rounded-2xl bg-white px-4 py-3">
                 <div className="flex items-center gap-3">
                   <ClipboardCheck className="h-4 w-4 text-indigo-600" />
                   <div>
