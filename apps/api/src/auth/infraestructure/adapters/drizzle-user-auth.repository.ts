@@ -12,9 +12,13 @@ export class DrizzleUserAuthRepository implements UserAuthRepository {
   constructor(@Inject(DATABASE) private readonly db: Database) {}
 
   async findByEmail(email: string): Promise<AuthUser | null> {
-    // 🔎 Buscar primero en public users
+    // 🔎 Buscar primero en public users (selección explícita)
     const publicResult = await this.db
-      .select()
+      .select({
+        id: publicUsers.id,
+        email: publicUsers.email,
+        passwordHash: publicUsers.passwordHash,
+      })
       .from(publicUsers)
       .where(eq(publicUsers.email, email))
       .limit(1);
@@ -30,9 +34,13 @@ export class DrizzleUserAuthRepository implements UserAuthRepository {
       };
     }
 
-    // 🔎 Buscar en private users
+    // 🔎 Buscar en private users (selección explícita, evita columna opcional `name`)
     const privateResult = await this.db
-      .select()
+      .select({
+        id: privateUsers.id,
+        email: privateUsers.email,
+        passwordHash: privateUsers.passwordHash,
+      })
       .from(privateUsers)
       .where(eq(privateUsers.email, email))
       .limit(1);
