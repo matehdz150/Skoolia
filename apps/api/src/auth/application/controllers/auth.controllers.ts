@@ -15,8 +15,8 @@ import { LogoutUseCase } from 'src/auth/core/use-cases/logOut.use-case';
 import { RefreshUseCase } from 'src/auth/core/use-cases/refresh.use-case';
 import { RegisterUserUseCase } from 'src/auth/core/use-cases/register.use-case';
 
-import type { LoginDto } from '../dto/login.dto';
-import type { RegisterDto } from '../dto/register.dto';
+import { LoginDto } from '../dto/login.dto';
+import { RegisterDto } from '../dto/register.dto';
 
 @Controller('auth')
 export class AuthController {

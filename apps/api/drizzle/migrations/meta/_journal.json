@@ -33,15 +33,36 @@
     {
       "idx": 4,
       "version": "7",
-      "when": 1771301001409,
-      "tag": "0004_puzzling_longshot",
+      "when": 1771138534409,
+      "tag": "0004_pink_king_cobra",
       "breakpoints": true
     },
     {
       "idx": 5,
       "version": "7",
-      "when": 1771301029194,
-      "tag": "0005_soft_the_hood",
+      "when": 1771194307671,
+      "tag": "0005_dizzy_rhino",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1771194827152,
+      "tag": "0006_known_rogue",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1771280719686,
+      "tag": "0007_slimy_jane_foster",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1771280944793,
+      "tag": "0008_redundant_polaris",
       "breakpoints": true
     }
   ]

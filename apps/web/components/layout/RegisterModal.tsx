@@ -2,15 +2,25 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { X, User, Building2, ArrowRight } from "lucide-react";
+import { authService } from "../../lib/services/services/auth.service";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
   onSwitchToLogin?: () => void;
+  onRegisterSuccess?: (data: { email: string }) => void;
 };
 
-export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }: Props) {
+export default function RegisterModal({
+  isOpen,
+  onClose,
+  onSwitchToLogin,
+  onRegisterSuccess
+}: Props) {
   const [audience, setAudience] = useState<"parents" | "schools">("parents");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   const panelRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
@@ -18,10 +28,12 @@ export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }: Prop
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
+
     if (isOpen) {
       document.addEventListener("keydown", onKey);
       document.body.style.overflow = "hidden";
     }
+
     return () => {
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = "";
@@ -34,6 +46,32 @@ export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }: Prop
     if (e.target === e.currentTarget) onClose();
   };
 
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+
+    try {
+      // 1️⃣ Register
+      await authService.register({
+        email,
+        password,
+        role: audience === "schools" ? "private" : "public",
+      });
+
+      onRegisterSuccess?.({ email });
+    } catch (err: any) {
+      console.error(err);
+      setError("No se pudo completar el registro");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div
       className="fixed inset-0 z-100 flex items-center justify-center bg-black/50"
@@ -41,10 +79,7 @@ export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }: Prop
       aria-modal
       role="dialog"
     >
-      <div
-        ref={panelRef}
-        className="relative w-md max-w-[92vw] rounded-3xl bg-white shadow-2xl"
-      >
+      <div className="relative w-md max-w-[92vw] rounded-3xl bg-white shadow-2xl">
         {/* Close */}
         <button
           onClick={onClose}
@@ -54,16 +89,19 @@ export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }: Prop
           <X size={18} />
         </button>
 
-        {/* Content */}
         <div className="px-5 pt-8 pb-6">
-          <h2 className="text-2xl font-extrabold text-slate-900">Únete a Skoolia</h2>
+          <h2 className="text-2xl font-extrabold text-slate-900">
+            Únete a Skoolia
+          </h2>
+
           <p className="mt-1 text-sm font-medium text-slate-500">
             Regístrate como {audience === "parents" ? "padre" : "escuela"}
           </p>
 
-          {/* Audience tabs */}
+          {/* Audience selector */}
           <div className="mt-5 grid grid-cols-2 gap-2 rounded-2xl bg-slate-100 p-1">
             <button
+              type="button"
               onClick={() => setAudience("parents")}
               className={`flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-bold transition-colors ${
                 audience === "parents"
@@ -73,7 +111,9 @@ export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }: Prop
             >
               <User size={16} /> Padre
             </button>
+
             <button
+              type="button"
               onClick={() => setAudience("schools")}
               className={`flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-bold transition-colors ${
                 audience === "schools"
@@ -86,45 +126,43 @@ export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }: Prop
           </div>
 
           {/* Form */}
-          <form
-            className="mt-4"
-            onSubmit={(e) => {
-              e.preventDefault();
-              onClose();
-              router.push(audience === "schools" ? "/schools" : "/parents");
-            }}
-          >
-            <label className="block text-xs font-bold text-slate-500">NOMBRE COMPLETO</label>
+          <form className="mt-4" onSubmit={handleSubmit}>
+            <label className="block text-xs font-bold text-slate-500">
+              EMAIL
+            </label>
             <input
-              type="text"
-              placeholder="Tu nombre"
-              className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-slate-800 outline-none ring-indigo-500 focus:ring-2"
-            />
-
-            <label className="mt-4 block text-xs font-bold text-slate-500">EMAIL</label>
-            <input
+              name="email"
               type="email"
-              placeholder="correo@ejemplo.com"
-              className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-slate-800 outline-none ring-indigo-500 focus:ring-2"
+              required
+              className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-slate-800 outline-none focus:ring-2 focus:ring-indigo-500"
             />
 
-            <label className="mt-4 block text-xs font-bold text-slate-500">CONTRASEÑA</label>
+            <label className="mt-4 block text-xs font-bold text-slate-500">
+              CONTRASEÑA
+            </label>
             <input
+              name="password"
               type="password"
-              placeholder="••••••••"
-              className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-slate-800 outline-none ring-indigo-500 focus:ring-2"
+              required
+              minLength={6}
+              className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-slate-800 outline-none focus:ring-2 focus:ring-indigo-500"
             />
+
+            {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
 
             <button
               type="submit"
-              className="mt-5 w-full rounded-2xl bg-slate-900 px-4 py-2 font-bold text-white transition hover:bg-indigo-700 flex items-center justify-center gap-2"
+              disabled={loading}
+              className="mt-5 w-full rounded-2xl bg-slate-900 px-4 py-2 font-bold text-white transition hover:bg-indigo-700 flex items-center justify-center gap-2 disabled:opacity-50"
             >
-              Registrarme <ArrowRight size={16} />
+              {loading ? "Creando cuenta..." : "Registrarme"}
+              <ArrowRight size={16} />
             </button>
           </form>
 
           <div className="mt-3 text-center text-xs text-slate-500">
-            ¿Ya tienes cuenta? {onSwitchToLogin ? (
+            ¿Ya tienes cuenta?{" "}
+            {onSwitchToLogin && (
               <button
                 type="button"
                 onClick={onSwitchToLogin}
@@ -132,8 +170,6 @@ export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }: Prop
               >
                 Inicia sesión
               </button>
-            ) : (
-              <span className="font-bold text-indigo-700">Inicia sesión</span>
             )}
           </div>
         </div>

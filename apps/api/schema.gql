@@ -1,0 +1,57 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type SchoolModel {
+  id: ID!
+  name: String!
+  description: String
+  logoUrl: String
+  coverImageUrl: String
+  address: String
+  city: String
+  averageRating: Float!
+  favoritesCount: Int!
+  isVerified: Boolean!
+}
+
+type SchoolEdgeModel {
+  node: SchoolModel!
+  cursor: String!
+}
+
+type PageInfoModel {
+  hasNextPage: Boolean!
+  endCursor: String
+}
+
+type SchoolsConnectionModel {
+  edges: [SchoolEdgeModel!]!
+  pageInfo: PageInfoModel!
+}
+
+type Query {
+  health: String!
+  schoolsFeed(filters: SchoolsFeedInput, pagination: PaginationInput): SchoolsConnectionModel!
+}
+
+input SchoolsFeedInput {
+  city: String
+  categoryId: String
+  search: String
+  sortBy: SchoolSortEnum
+  onlyVerified: Boolean
+  latitude: Float
+  longitude: Float
+}
+
+enum SchoolSortEnum {
+  FAVORITES
+  RATING
+  RECENT
+}
+
+input PaginationInput {
+  first: Int!
+  after: String
+}
