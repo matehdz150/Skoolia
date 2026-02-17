@@ -1,9 +1,21 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import CatalogCard from "@/components/layout/CatalogCard";
 import FavoriteDetailModal from "@/components/parents/FavoriteDetailModal";
 import SearchToolbar from "@/components/search/SearchToolbar";
+import { schoolsFeedService } from "@/lib/services/services/school-feeed.service";
+
+type CatalogItem = {
+  id: string;
+  imageSrc: string;
+  tags: string[];
+  typeLabel: string;
+  title: string;
+  location: string;
+  price: number | string;
+};
 
 export default function SearchPage() {
   const sp = useSearchParams();
@@ -11,47 +23,70 @@ export default function SearchPage() {
   const loc = sp.get("loc") ?? "";
   const tab = (sp.get("tab") ?? "escuelas").toUpperCase();
 
-  const items = [
-    {
-      imageSrc: "",
-      tags: ["BILINGÜE", "PRIVADA"],
-      typeLabel: "ESCUELA",
-      title: "Colegio Sierra Nevada",
-      location: "Polanco, CDMX",
-      price: 12500,
-    },
-    {
-      imageSrc:
-        "https://images.unsplash.com/photo-1513258496099-48168024aec0?q=80&w=1887&auto=format&fit=crop",
-      tags: ["MONTESSORI", "MATERNAL"],
-      typeLabel: "ESCUELA",
-      title: "Montessori GDL",
-      location: "Zapopan, GDL",
-      price: 8200,
-    },
-    {
-      imageSrc:
-        "https://images.unsplash.com/photo-1517048676732-d65bcf865c42?q=80&w=1887&auto=format&fit=crop",
-      tags: ["INTERNACIONAL", "EXCELENCIA"],
-      typeLabel: "ESCUELA",
-      title: "Liceo del Sol",
-      location: "Monterrey, NL",
-      price: 9500,
-    },
-    {
-      imageSrc:
-        "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?q=80&w=1887&auto=format&fit=crop",
-      tags: ["BACHILLERATO", "TECNOLOGÍA"],
-      typeLabel: "ESCUELA",
-      title: "Instituto Alfa",
-      location: "Guadalajara, JAL",
-      price: 7300,
-    },
-  ];
+  const [items, setItems] = useState<CatalogItem[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let active = true;
+
+    const load = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const normalizedLoc =
+          loc && loc !== "México (Todas las zonas)" ? loc : undefined;
+
+        const connection = await schoolsFeedService.list({
+          filters: {
+            search: q || undefined,
+            city: normalizedLoc,
+          },
+          pagination: { first: 24 },
+        });
+
+        if (!active) return;
+
+        const mapped: CatalogItem[] = connection.edges.map(({ node }) => {
+          const tags: string[] = [];
+          if (node.isVerified) tags.push("VERIFICADA");
+          if (node.city) tags.push(node.city);
+
+          return {
+            id: node.id,
+            imageSrc: node.coverImageUrl || node.logoUrl || "",
+            tags,
+            typeLabel: "ESCUELA",
+            title: node.name,
+            location: node.city || node.address || "Ubicación no disponible",
+            // Aún no mostramos precios reales, dejamos un placeholder.
+            price: "Por definir",
+          };
+        });
+
+        setItems(mapped);
+      } catch (err) {
+        console.error(err);
+        if (active) setError("No se pudieron cargar las escuelas.");
+      } finally {
+        if (active) setLoading(false);
+      }
+    };
+
+    void load();
+
+    return () => {
+      active = false;
+    };
+  }, [q, loc]);
 
   const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState<typeof items[number] | undefined>();
-  const openModal = (item: typeof items[number]) => { setSelected(item); setOpen(true); };
+  const [selected, setSelected] = useState<CatalogItem | undefined>();
+  const openModal = (item: CatalogItem) => {
+    setSelected(item);
+    setOpen(true);
+  };
 
   return (
     <>
@@ -63,7 +98,9 @@ export default function SearchPage() {
           <p className="flex items-center gap-2 text-[11px] font-extrabold tracking-widest text-indigo-600">
             <span className="grid h-2 w-2 place-items-center rounded-full bg-indigo-600" /> ENCONTRADOS
           </p>
-          <h1 className="mt-2 text-3xl font-extrabold text-slate-900">{items.length} Escuelas disponibles</h1>
+          <h1 className="mt-2 text-3xl font-extrabold text-slate-900">
+            {loading ? "Cargando escuelas..." : `${items.length} Escuelas disponibles`}
+          </h1>
           {q || loc ? (
             <p className="mt-1 text-sm text-slate-600">
               Mostrando resultados para {q ? `"${q}"` : "todos"}{loc ? ` en ${loc}` : ""}
@@ -79,7 +116,7 @@ export default function SearchPage() {
       <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-3">
         {items.map((it) => (
           <CatalogCard
-            key={it.title}
+            key={it.id}
             {...it}
             onCardClick={() => openModal(it)}
             onAction={() => openModal(it)}
@@ -90,14 +127,16 @@ export default function SearchPage() {
       <FavoriteDetailModal
         open={open}
         onClose={() => setOpen(false)}
-        item={selected && {
-          imageUrl: selected.imageSrc,
-          badges: selected.tags,
-          level: selected.typeLabel,
-          title: selected.title,
-          location: selected.location,
-          price: selected.price,
-        }}
+        item={
+          selected && {
+            imageUrl: selected.imageSrc,
+            badges: selected.tags,
+            level: selected.typeLabel,
+            title: selected.title,
+            location: selected.location,
+            price: selected.price,
+          }
+        }
       />
     </section>
     </>

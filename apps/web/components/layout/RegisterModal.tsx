@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -64,7 +65,7 @@ export default function RegisterModal({
       });
 
       onRegisterSuccess?.({ email });
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
       setError("No se pudo completar el registro");
     } finally {

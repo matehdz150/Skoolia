@@ -4,7 +4,7 @@ import { Settings } from 'lucide-react';
 export default function ParentProfileHeader() {
   return (
     <section className="mx-auto w-full max-w-6xl px-6">
-      <div className="rounded-4xl bg-white p-5 sm:p-6 shadow-sm ring-1 ring-black/5">
+      <div className="surface rounded-4xl bg-white p-5 sm:p-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 sm:gap-6">
           <div className="flex items-center gap-3 sm:gap-4">
             <div className="h-16 w-16 sm:h-20 sm:w-20 overflow-hidden rounded-full ring-4 ring-indigo-100">

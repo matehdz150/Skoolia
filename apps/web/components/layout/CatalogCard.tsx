@@ -43,7 +43,7 @@ export default function CatalogCard({
 	return (
 		<article
 			onClick={onCardClick}
-			className={`group overflow-hidden rounded-[32px] border border-black/5 bg-white shadow-sm transition-all duration-300 ${onCardClick ? 'cursor-pointer hover:-translate-y-[2px] hover:shadow-lg' : 'hover:-translate-y-[2px] hover:shadow-lg'} ${className}`}
+			className={`surface group overflow-hidden rounded-4xl bg-white transition-all duration-300 ${onCardClick ? 'cursor-pointer hover:-translate-y-0.5 hover:shadow-lg' : 'hover:-translate-y-0.5 hover:shadow-lg'} ${className}`}
 		>
 			{/* Media */}
 			<div className="relative h-48 sm:h-56 md:h-64 w-full">
@@ -59,7 +59,7 @@ export default function CatalogCard({
 					/>
 				) : (
 					<div className="flex h-full w-full items-center justify-center bg-slate-100">
-						<div className="rounded-2xl border border-slate-300 bg-white p-4 text-slate-400">
+						<div className="surface rounded-2xl bg-white p-4 text-slate-400">
 							<ImageIcon className="h-8 w-8" />
 						</div>
 					</div>
@@ -94,7 +94,7 @@ export default function CatalogCard({
 				<p className="text-[10px] sm:text-[11px] font-extrabold tracking-widest text-indigo-600">
 					{typeLabel}
 				</p>
-				<h3 className="mt-2 text-base md:text-lg font-extrabold text-slate-900 transition-all duration-300 group-hover:text-indigo-600 group-hover:-translate-y-[1px]">{title}</h3>
+				<h3 className="mt-2 text-base md:text-lg font-extrabold text-slate-900 transition-all duration-300 group-hover:text-indigo-600 group-hover:-translate-y-px">{title}</h3>
 
 				<div className="mt-2 flex items-center gap-2 text-xs sm:text-sm text-slate-600">
 					<MapPin className="h-4 w-4" />

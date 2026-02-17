@@ -30,7 +30,7 @@ export default function BussinessSections() {
 	];
 
 	return (
-		<section className="w-full py-14 bg-gradient-to-br from-slate-900 to-indigo-900 text-white">
+		<section className="w-full py-14 bg-linear-to-br from-slate-900 to-indigo-900 text-white">
 			<div className="mx-auto max-w-7xl px-6">
 				{/* Header */}
 				<div className="max-w-3xl">
@@ -49,7 +49,7 @@ export default function BussinessSections() {
 
 				<div className="mt-10 grid grid-cols-1 gap-8 lg:grid-cols-2">
 					{/* Metrics card */}
-					<div className="rounded-[32px] bg-slate-800/60 p-8 shadow-sm">
+					<div className="rounded-4xl bg-slate-800/60 p-8 shadow-sm">
 						<div className="flex items-center gap-3">
 							<div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-600 text-white">
 								<Target className="h-6 w-6" />
