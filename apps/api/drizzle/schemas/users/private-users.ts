@@ -9,6 +9,8 @@ export const privateUsers = pgTable(
   {
     id: uuid('id').defaultRandom().primaryKey(),
 
+    name: text('name'),
+
     email: text('email').notNull().unique(),
 
     name: text('name'),
