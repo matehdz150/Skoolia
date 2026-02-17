@@ -1,4 +1,12 @@
-import { IsOptional, IsString, IsNumber } from 'class-validator';
+import {
+  IsOptional,
+  IsString,
+  IsNumber,
+  IsBoolean,
+  IsInt,
+  Min,
+} from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class UpdateSchoolDto {
   @IsOptional()
@@ -9,6 +17,7 @@ export class UpdateSchoolDto {
   @IsString()
   description?: string;
 
+  // 🖼 imágenes
   @IsOptional()
   @IsString()
   logoUrl?: string;
@@ -17,6 +26,7 @@ export class UpdateSchoolDto {
   @IsString()
   coverImageUrl?: string;
 
+  // 📍 ubicación
   @IsOptional()
   @IsString()
   address?: string;
@@ -26,10 +36,52 @@ export class UpdateSchoolDto {
   city?: string;
 
   @IsOptional()
+  @Type(() => Number)
   @IsNumber()
   latitude?: number;
 
   @IsOptional()
+  @Type(() => Number)
   @IsNumber()
   longitude?: number;
+
+  // 🎓 info académica
+  @IsOptional()
+  @IsString()
+  educationalLevel?: string;
+
+  @IsOptional()
+  @IsString()
+  institutionType?: string;
+
+  @IsOptional()
+  @IsString()
+  schedule?: string;
+
+  @IsOptional()
+  @IsString()
+  languages?: string;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  maxStudentsPerClass?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  enrollmentYear?: number;
+
+  @IsOptional()
+  @Type(() => Boolean)
+  @IsBoolean()
+  enrollmentOpen?: boolean;
+
+  // 💰 precios
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  monthlyPrice?: number;
 }

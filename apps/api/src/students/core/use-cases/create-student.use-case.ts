@@ -15,7 +15,7 @@ export class CreateStudentUseCase {
       name: string;
       age: number;
       monthlyBudget?: number;
-      categoryIds: string[];
+      categoryIds?: string[];
     },
   ) {
     if (user.role !== 'public') {
