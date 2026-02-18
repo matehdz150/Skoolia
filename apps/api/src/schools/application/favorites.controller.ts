@@ -1,6 +1,5 @@
 import {
   Controller,
-  // Get,
   Inject,
   Param,
   Post,
@@ -30,9 +29,4 @@ export class FavoritesController {
   async toggle(@Param('id') schoolId: string, @CurrentUser() user: JwtPayload) {
     return this.toggleFavoriteUseCase.execute(user, schoolId);
   }
-
-  /**
-   * 📄 List favorites of current user
-   * GET /schools/favorites
-   */
 }

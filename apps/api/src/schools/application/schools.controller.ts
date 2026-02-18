@@ -25,6 +25,7 @@ import { UpdateSchoolUseCase } from '../core/use-cases/update-school.use-case';
 import { AssignCategoriesDto } from './dto/assign-categories.dto';
 import { AssignSchoolCategoriesUseCase } from '../core/use-cases/assign-school-categories.use-case';
 import { GetSchoolByIdUseCase } from '../core/use-cases/get-school-by-id.use-case';
+import { ListFavoritesUseCase } from '../core/use-cases/list-favorites.use-case';
 
 @Controller('schools')
 export class SchoolsController {
@@ -43,6 +44,9 @@ export class SchoolsController {
 
     @Inject(GetSchoolByIdUseCase)
     private readonly getSchoolById: GetSchoolByIdUseCase,
+
+    @Inject(ListFavoritesUseCase)
+    private readonly listFavorites: ListFavoritesUseCase,
   ) {}
 
   /**
@@ -101,6 +105,16 @@ export class SchoolsController {
     });
 
     return { success: true };
+  }
+
+  /**
+   * 📄 List favorites of current user
+   * GET /schools/favorites
+   */
+  @Get('favorites')
+  @UseGuards(AuthGuard)
+  async getFavorites(@CurrentUser() user: JwtPayload) {
+    return this.listFavorites.execute(user);
   }
 
   /**
