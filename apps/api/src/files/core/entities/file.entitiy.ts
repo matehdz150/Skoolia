@@ -1,12 +1,15 @@
 // core/entities/file-object.ts
 
+export type FileOwnerType = 'school' | 'course' | 'student' | 'user';
+
 export interface FileObject {
   id: string;
   key: string;
   url: string;
   mimeType: string;
   sizeBytes: number;
-  folder: string | null;
+  ownerId: string;
+  ownerType: FileOwnerType;
   createdAt: Date;
 }
 
