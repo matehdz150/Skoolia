@@ -16,6 +16,7 @@ import { AppResolver } from './app.resolver';
 import { RatingsModule } from './ratings/ratings.module';
 import { StudentsModule } from './students/students.module';
 import { FilesModule } from './files/files.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { FilesModule } from './files/files.module';
     RatingsModule,
     StudentsModule,
     FilesModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService, AppResolver],

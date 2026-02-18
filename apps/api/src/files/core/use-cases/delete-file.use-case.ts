@@ -1,13 +1,14 @@
 import { Inject } from '@nestjs/common';
 import * as fileStorageRepository from '../ports/file-storage.repository';
 import * as fileRepository from '../ports/file.repository';
+import { FILE_REPOSITORY, FILE_STORAGE } from '../ports/tokens';
 
 export class DeleteFileUseCase {
   constructor(
-    @Inject('FILE_STORAGE')
+    @Inject(FILE_STORAGE)
     private readonly storage: fileStorageRepository.FileStorage,
 
-    @Inject('FILE_REPOSITORY')
+    @Inject(FILE_REPOSITORY)
     private readonly repository: fileRepository.FileRepository,
   ) {}
 

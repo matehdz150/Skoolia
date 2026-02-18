@@ -1,4 +1,5 @@
 import { index, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
+import { files } from '../files';
 
 /**
  * Public users
@@ -12,7 +13,9 @@ export const publicUsers = pgTable(
 
     name: text('name'),
 
-    avatarUrl: text('avatarUrl'),
+    avatarUrl: uuid('avatarUrl').references(() => files.id, {
+      onDelete: 'set null',
+    }),
 
     email: text('email').notNull().unique(),
 
