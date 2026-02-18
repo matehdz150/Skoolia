@@ -22,4 +22,6 @@ export interface StudentRepository {
       categoryIds?: string[];
     },
   ): Promise<Student>;
+
+  delete(studentId: string): Promise<void>;
 }

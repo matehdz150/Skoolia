@@ -121,4 +121,14 @@ export class DrizzleStudentRepository implements StudentRepository {
       return updated;
     });
   }
+
+  async delete(studentId: string): Promise<void> {
+    await this.db.transaction(async (tx) => {
+      await tx
+        .delete(studentInterests)
+        .where(eq(studentInterests.studentId, studentId));
+
+      await tx.delete(students).where(eq(students.id, studentId));
+    });
+  }
 }

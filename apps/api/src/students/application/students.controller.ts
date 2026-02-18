@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Inject,
   Patch,
@@ -16,6 +17,7 @@ import { CreateStudentDto } from './dto/create-student.dto';
 import { CreateStudentUseCase } from '../core/use-cases/create-student.use-case';
 import { GetMyStudentUseCase } from '../core/use-cases/get-my-student.use-case';
 import { UpdateStudentUseCase } from '../core/use-cases/update-student.use-case';
+import { DeleteStudentUseCase } from '../core/use-cases/delete-student.use-case';
 import { UpdateStudentDto } from './dto/update-student.dto';
 
 @Controller('students')
@@ -29,6 +31,9 @@ export class StudentsController {
 
     @Inject(UpdateStudentUseCase)
     private readonly updateStudent: UpdateStudentUseCase,
+    
+    @Inject(DeleteStudentUseCase)
+    private readonly deleteStudent: DeleteStudentUseCase,
   ) {}
 
   @Post()
@@ -47,5 +52,12 @@ export class StudentsController {
   @UseGuards(AuthGuard)
   async update(@CurrentUser() user: JwtPayload, @Body() dto: UpdateStudentDto) {
     return this.updateStudent.execute(user, dto);
+  }
+
+  @Delete()
+  @UseGuards(AuthGuard)
+  async delete(@CurrentUser() user: JwtPayload) {
+    await this.deleteStudent.execute(user);
+    return { success: true };
   }
 }
