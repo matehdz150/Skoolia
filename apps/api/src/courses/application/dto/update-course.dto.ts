@@ -18,10 +18,6 @@ export class UpdateCourseDto {
   description?: string;
 
   @IsOptional()
-  @IsString()
-  coverImageUrl?: string;
-
-  @IsOptional()
   @IsNumber()
   price?: number;
 

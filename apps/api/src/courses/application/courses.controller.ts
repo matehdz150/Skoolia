@@ -21,6 +21,8 @@ import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
 import { UpdateCourseUseCase } from '../core/use-cases/update-course.use-case';
 import { DeleteCourseUseCase } from '../core/use-cases/delete-course.use-case';
+import { UpdateCourseImageDto } from './dto/update-image.dto';
+import { UpdateCourseImageUseCase } from '../core/use-cases/update-image.use-case';
 
 @Controller('courses')
 export class CoursesController {
@@ -33,6 +35,9 @@ export class CoursesController {
 
     @Inject(DeleteCourseUseCase)
     private readonly deleteCourse: DeleteCourseUseCase,
+
+    @Inject(UpdateCourseImageUseCase)
+    private readonly updateCourseImageUseCase: UpdateCourseImageUseCase,
   ) {}
 
   /**
@@ -54,6 +59,22 @@ export class CoursesController {
       startDate: dto.startDate,
       endDate: dto.endDate,
       modality: dto.modality,
+    });
+  }
+
+  @Patch(':id/image')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('private')
+  async updateImage(
+    @Param('id') courseId: string,
+    @Body() dto: UpdateCourseImageDto,
+    @CurrentUser() user: JwtPayload,
+  ) {
+    return this.updateCourseImageUseCase.execute({
+      ownerId: user.sub,
+      role: user.role,
+      courseId,
+      fileId: dto.fileId,
     });
   }
 

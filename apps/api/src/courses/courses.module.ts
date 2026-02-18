@@ -11,12 +11,15 @@ import { COURSE_REPOSITORY } from './core/ports/tokens';
 import { DrizzleCourseRepository } from './infrastructure/adapters/drizzle-course.repository';
 import { UpdateCourseUseCase } from './core/use-cases/update-course.use-case';
 import { DeleteCourseUseCase } from './core/use-cases/delete-course.use-case';
+import { UpdateCourseImageUseCase } from './core/use-cases/update-image.use-case';
+import { FilesModule } from 'src/files/files.module';
 
 @Module({
   imports: [
-    DbModule, // 🔌 acceso a DB
-    SchoolsModule, // 🔗 porque CreateCourseUseCase usa SCHOOL_REPOSITORY
-    AuthModule, // 🔐 para guards
+    DbModule,
+    SchoolsModule, // porque CreateCourseUseCase usa SCHOOL_REPOSITORY
+    AuthModule,
+    FilesModule,
   ],
   controllers: [CoursesController],
   providers: [
@@ -24,6 +27,7 @@ import { DeleteCourseUseCase } from './core/use-cases/delete-course.use-case';
     DrizzleCourseRepository,
     UpdateCourseUseCase,
     DeleteCourseUseCase,
+    UpdateCourseImageUseCase,
     {
       provide: COURSE_REPOSITORY,
       useClass: DrizzleCourseRepository,

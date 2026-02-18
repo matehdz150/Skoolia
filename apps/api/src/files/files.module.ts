@@ -23,5 +23,6 @@ import { CloudinaryFileStorageAdapter } from './infrastructure/adapters/cloudina
       useClass: CloudinaryFileStorageAdapter,
     },
   ],
+  exports: [DeleteFileUseCase],
 })
 export class FilesModule {}

@@ -11,9 +11,11 @@ import { DbModule } from 'src/db/db.module';
 import { Module } from '@nestjs/common';
 import { SchoolsFeedResolver } from './application/graphql/school-feed.resolver';
 import { ListSchoolsFeedUseCase } from './core/use-cases/list-schools.use-case';
+import { UpdateSchoolImageUseCase } from './core/use-cases/UpdateSchooImage.use-case';
+import { FilesModule } from 'src/files/files.module';
 
 @Module({
-  imports: [DbModule, AuthModule],
+  imports: [DbModule, AuthModule, FilesModule],
   controllers: [SchoolsController],
   providers: [
     CreateSchoolUseCase,
@@ -24,6 +26,7 @@ import { ListSchoolsFeedUseCase } from './core/use-cases/list-schools.use-case';
     DrizzleSchoolRepository,
     SchoolsFeedResolver,
     ListSchoolsFeedUseCase,
+    UpdateSchoolImageUseCase,
     {
       provide: SCHOOL_REPOSITORY,
       useClass: DrizzleSchoolRepository,

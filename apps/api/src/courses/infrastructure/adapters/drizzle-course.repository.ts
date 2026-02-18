@@ -1,10 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { eq } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 import { courses } from 'drizzle/schemas/courses/courses';
 import { CourseRepository } from 'src/courses/core/ports/course.repository';
 import { Course } from 'src/courses/core/entities/course.types';
 import { DATABASE } from 'src/db/db.module';
 import * as dbTypes from 'src/db/db.types';
+import { schools } from 'drizzle/schemas';
 
 @Injectable()
 export class DrizzleCourseRepository implements CourseRepository {
@@ -71,5 +72,65 @@ export class DrizzleCourseRepository implements CourseRepository {
         updatedAt: new Date(),
       })
       .where(eq(courses.id, courseId));
+  }
+
+  async findRawById(courseId: string): Promise<{
+    id: string;
+    schoolId: string;
+    coverImageFileId: string | null;
+  } | null> {
+    const rows = await this.db
+      .select({
+        id: courses.id,
+        schoolId: courses.schoolId,
+        coverImageFileId: courses.coverImageUrl,
+      })
+      .from(courses)
+      .where(eq(courses.id, courseId))
+      .limit(1);
+
+    return rows[0] ?? null;
+  }
+
+  async updateImageAtomic(params: {
+    courseId: string;
+    ownerId: string;
+    newFileId: string;
+  }): Promise<{
+    oldFileId: string | null;
+  }> {
+    return this.db.transaction(async (tx) => {
+      // 1️⃣ Obtener curso con validación de owner
+      const rows = await tx
+        .select({
+          coverImageFileId: courses.coverImageUrl,
+        })
+        .from(courses)
+        .innerJoin(schools, eq(schools.id, courses.schoolId))
+        .where(
+          and(
+            eq(courses.id, params.courseId),
+            eq(schools.ownerId, params.ownerId),
+          ),
+        )
+        .limit(1);
+
+      if (!rows.length) {
+        throw new Error('Course not found or not owned by user');
+      }
+
+      const oldFileId = rows[0].coverImageFileId;
+
+      // 2️⃣ Update FK
+      await tx
+        .update(courses)
+        .set({
+          coverImageUrl: params.newFileId,
+          updatedAt: new Date(),
+        })
+        .where(eq(courses.id, params.courseId));
+
+      return { oldFileId };
+    });
   }
 }
