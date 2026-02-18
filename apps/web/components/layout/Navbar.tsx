@@ -26,7 +26,10 @@ export default function Navbar(): JSX.Element {
   }, []);
   useEffect(() => {
     if (searchParams.get("loginPrompt") === "1") {
-      setLoginOpen(true);
+      // Use a microtask to defer state update outside the effect
+      Promise.resolve().then(() => {
+        setLoginOpen(true);
+      });
     }
   }, [searchParams]);
 

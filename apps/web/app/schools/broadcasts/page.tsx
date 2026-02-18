@@ -1,20 +1,18 @@
 import SchoolsNavbar from "@/components/schools/SchoolsNavbar";
 import SchoolsSidebar from "@/components/schools/SchoolsSidebar";
 import SchoolSummaryHeader from "@/components/schools/SchoolSummaryHeader";
-import SchoolKpiCards from "@/components/schools/SchoolKpiCards";
-import SchoolRecentActivity from "@/components/schools/SchoolRecentActivity";
+import SchoolBroadcastsSection from "@/components/schools/SchoolBroadcastsSection";
 
-export default function SchoolsDashboardPage() {
+export default function SchoolsBroadcastsPage() {
 	return (
 		<>
 			<SchoolsNavbar />
 			<main className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
 				<div className="grid grid-cols-1 gap-6 lg:grid-cols-[260px_1fr]">
-					<SchoolsSidebar active="summary" />
+					<SchoolsSidebar active="broadcasts" />
 					<div className="space-y-5 sm:space-y-6">
-						{/* {/* <SchoolSummaryHeader /> */}
-						<SchoolKpiCards />
-						<SchoolRecentActivity />
+						{/* <SchoolSummaryHeader /> */}
+						<SchoolBroadcastsSection />
 					</div>
 				</div>
 			</main>

@@ -4,6 +4,7 @@ import { AssignSchoolCategoriesUseCase } from './core/use-cases/assign-school-ca
 import { CreateSchoolUseCase } from './core/use-cases/create-school.use-case';
 import { GetMySchoolUseCase } from './core/use-cases/get-my-school.use-case';
 import { UpdateSchoolUseCase } from './core/use-cases/update-school.use-case';
+import { GetSchoolByIdUseCase } from './core/use-cases/get-school-by-id.use-case';
 import { DrizzleSchoolRepository } from './infrastructure/adapters/drizzle-school.repository';
 import { SchoolsController } from './application/schools.controller';
 import { DbModule } from 'src/db/db.module';
@@ -18,6 +19,7 @@ import { ListSchoolsFeedUseCase } from './core/use-cases/list-schools.use-case';
     CreateSchoolUseCase,
     GetMySchoolUseCase,
     UpdateSchoolUseCase,
+    GetSchoolByIdUseCase,
     AssignSchoolCategoriesUseCase,
     DrizzleSchoolRepository,
     SchoolsFeedResolver,

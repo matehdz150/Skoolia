@@ -17,7 +17,7 @@ export default function ChallengeInstitutionsSection() {
 			{/* Cards */}
 			<div className="mt-10 grid grid-cols-1 gap-8 lg:grid-cols-2">
 				{/* Parents card */}
-				<div className="relative rounded-[40px] bg-gradient-to-br from-indigo-50 to-indigo-100 p-10 text-slate-900 shadow-sm">
+				<div className="relative rounded-[40px] bg-linear-to-br from-indigo-50 to-indigo-100 p-10 text-slate-900 shadow-sm">
 					<div className="flex items-center gap-3">
 						<div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-indigo-600 shadow-sm">
 							<Users className="h-6 w-6" />
@@ -49,7 +49,7 @@ export default function ChallengeInstitutionsSection() {
 				</div>
 
 				{/* Institutions card */}
-				<div className="relative rounded-[40px] bg-gradient-to-br from-slate-900 to-indigo-900 p-10 text-white shadow-md">
+				<div className="relative rounded-[40px] bg-linear-to-br from-slate-900 to-indigo-900 p-10 text-white shadow-md">
 					<div className="flex items-center gap-3">
 						<div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 text-white backdrop-blur-sm">
 							<LineChart className="h-6 w-6" />

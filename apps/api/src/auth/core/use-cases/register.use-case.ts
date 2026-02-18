@@ -1,4 +1,4 @@
-import { Inject } from '@nestjs/common';
+import { ConflictException, Inject } from '@nestjs/common';
 import type * as passwordHasherPort from '../ports/password-hasher.port';
 import { PASSWORD_HASHER, USER_AUTH_REPOSITORY } from '../ports/tokens';
 import type * as userAuthRepository from '../ports/user-auth.repository';
@@ -22,7 +22,7 @@ export class RegisterUserUseCase {
     const existing = await this.userRepository.findByEmail(email);
 
     if (existing) {
-      throw new Error('User already exists');
+      throw new ConflictException('User already exists');
     }
 
     // 2️⃣ Hashear contraseña

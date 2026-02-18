@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { X, User, Building2, ArrowRight } from "lucide-react";
 import { authService } from "../../lib/services/services/auth.service";
+import { ApiError } from "../../lib/services/api";
 
 type Props = {
   isOpen: boolean;
@@ -52,21 +54,35 @@ export default function RegisterModal({
     setLoading(true);
 
     const formData = new FormData(e.currentTarget);
+    const name = formData.get("name") as string;
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
 
     try {
-      // 1️⃣ Register
+      // 1️⃣ Register (incluye nombre requerido por backend)
       await authService.register({
+        name,
         email,
         password,
         role: audience === "schools" ? "private" : "public",
       });
 
       onRegisterSuccess?.({ email });
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      setError("No se pudo completar el registro");
+      if (err instanceof ApiError) {
+        const data = err.data as { message?: string } | undefined;
+        setError(
+          data?.message ??
+            (err.status === 409
+              ? "El correo ya existe. Intenta iniciar sesión."
+              : err.status === 500
+              ? "Error del servidor (500). Intenta más tarde."
+              : `Error ${err.status}. No se pudo completar el registro.`),
+        );
+      } else {
+        setError("Ha ocurrido un error inesperado");
+      }
     } finally {
       setLoading(false);
     }
@@ -127,6 +143,16 @@ export default function RegisterModal({
 
           {/* Form */}
           <form className="mt-4" onSubmit={handleSubmit}>
+            <label className="block text-xs font-bold text-slate-500">
+              NOMBRE
+            </label>
+            <input
+              name="name"
+              type="text"
+              required
+              className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-slate-800 outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+
             <label className="block text-xs font-bold text-slate-500">
               EMAIL
             </label>

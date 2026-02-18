@@ -33,7 +33,7 @@ export default function LoginModal({
   useEffect(() => {
     if (!isOpen) return;
 
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+
     if (prefill?.email) setEmail(prefill.email);
     if (prefill?.success) setMessage(prefill.success);
   }, [prefill, isOpen]);
@@ -69,7 +69,7 @@ export default function LoginModal({
     >
       <div
         ref={panelRef}
-        className="relative w-md max-w-[92vw] rounded-3xl bg-white shadow-2xl"
+        className="relative w-md max-w-[92vw] rounded-3xl bg-white surface"
       >
         {/* Close */}
         <button
@@ -146,12 +146,8 @@ export default function LoginModal({
 
                 onClose();
 
-                router.push(
-                  audience === "schools"
-                    ? "/?audience=parents"
-                    : "/?audience=schools",
-                );
-              } catch (err: any) {
+                router.push(audience === "schools" ? "/schools" : "/parents");
+              } catch (err: unknown) {
                 console.error(err);
                 setMessage("No se pudo iniciar sesión. Revisa tus datos.");
               } finally {

@@ -9,7 +9,7 @@ export default function StudentConfigForm() {
   const [interests, setInterests] = useState('');
 
   return (
-    <section className="w-full rounded-4xl bg-white p-5 sm:p-6 shadow-sm ring-1 ring-black/5">
+    <section className="surface w-full rounded-4xl bg-white p-5 sm:p-6">
       <div className="flex items-center justify-between">
         <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900">Configuración del Alumno</h3>
         <Wand2 className="text-indigo-600" />

@@ -6,6 +6,7 @@ import {
   Patch,
   Post,
   UseGuards,
+  Param,
 } from '@nestjs/common';
 
 import { AuthGuard } from 'src/auth/application/guards/auth.guard';
@@ -23,6 +24,7 @@ import { GetMySchoolUseCase } from '../core/use-cases/get-my-school.use-case';
 import { UpdateSchoolUseCase } from '../core/use-cases/update-school.use-case';
 import { AssignCategoriesDto } from './dto/assign-categories.dto';
 import { AssignSchoolCategoriesUseCase } from '../core/use-cases/assign-school-categories.use-case';
+import { GetSchoolByIdUseCase } from '../core/use-cases/get-school-by-id.use-case';
 
 @Controller('schools')
 export class SchoolsController {
@@ -38,6 +40,9 @@ export class SchoolsController {
 
     @Inject(AssignSchoolCategoriesUseCase)
     private readonly assignCategoriesUseCase: AssignSchoolCategoriesUseCase,
+
+    @Inject(GetSchoolByIdUseCase)
+    private readonly getSchoolById: GetSchoolByIdUseCase,
   ) {}
 
   /**
@@ -96,5 +101,13 @@ export class SchoolsController {
     });
 
     return { success: true };
+  }
+
+  /**
+   * Público: obtener escuela por ID
+   */
+  @Get(':id')
+  async getById(@Param('id') id: string) {
+    return this.getSchoolById.execute({ id });
   }
 }
