@@ -69,8 +69,7 @@ export default function SearchPage() {
             typeLabel: "ESCUELA",
             title: node.name,
             location: node.city || node.address || "Ubicación no disponible",
-            // Aún no mostramos precios reales, dejamos un placeholder.
-            price: "Por definir",
+            price: node.monthlyPrice ?? "Por definir",
             description: node.description ?? undefined,
             rating: node.averageRating ?? undefined,
             // Campos adicionales (cuando el backend los exponga en este feed):
@@ -79,7 +78,7 @@ export default function SearchPage() {
             studentsPerClass: undefined,
             enrollmentOpen: undefined,
             enrollmentYear: undefined,
-            monthlyPrice: undefined,
+            monthlyPrice: node.monthlyPrice ?? undefined,
           };
         });
 
