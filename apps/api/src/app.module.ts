@@ -15,6 +15,7 @@ import { CoursesModule } from './courses/courses.module';
 import { AppResolver } from './app.resolver';
 import { RatingsModule } from './ratings/ratings.module';
 import { StudentsModule } from './students/students.module';
+import { FilesModule } from './files/files.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { StudentsModule } from './students/students.module';
     CoursesModule,
     RatingsModule,
     StudentsModule,
+    FilesModule,
   ],
   controllers: [AppController],
   providers: [AppService, AppResolver],

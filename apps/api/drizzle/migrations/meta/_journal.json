@@ -71,6 +71,13 @@
       "when": 1771300532989,
       "tag": "0009_high_supreme_intelligence",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1771389061271,
+      "tag": "0010_many_outlaw_kid",
+      "breakpoints": true
     }
   ]
 }
