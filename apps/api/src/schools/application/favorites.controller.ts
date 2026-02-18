@@ -1,4 +1,11 @@
-import { Controller, Get, Inject, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  // Get,
+  Inject,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 
 import { AuthGuard } from 'src/auth/application/guards/auth.guard';
 import { CurrentUser } from 'src/auth/application/decorators/current-user.decorator';
@@ -6,15 +13,12 @@ import { CurrentUser } from 'src/auth/application/decorators/current-user.decora
 import type { JwtPayload } from 'src/auth/core/types/jwt-payload';
 
 import { ToggleFavoriteUseCase } from '../core/use-cases/toggle-favorite.use-case';
-import { ListFavoritesUseCase } from '../core/use-cases/list-favorites.use-case';
 
 @Controller('schools')
 export class FavoritesController {
   constructor(
     @Inject(ToggleFavoriteUseCase)
     private readonly toggleFavoriteUseCase: ToggleFavoriteUseCase,
-    @Inject(ListFavoritesUseCase)
-    private readonly listFavoritesUseCase: ListFavoritesUseCase,
   ) {}
 
   /**
@@ -31,9 +35,4 @@ export class FavoritesController {
    * 📄 List favorites of current user
    * GET /schools/favorites
    */
-  @Get('favorites')
-  @UseGuards(AuthGuard)
-  async list(@CurrentUser() user: JwtPayload) {
-    return this.listFavoritesUseCase.execute(user);
-  }
 }

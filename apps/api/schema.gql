@@ -13,6 +13,7 @@ type SchoolModel {
   averageRating: Float!
   favoritesCount: Int!
   isVerified: Boolean!
+  monthlyPrice: Int
 }
 
 type SchoolEdgeModel {
