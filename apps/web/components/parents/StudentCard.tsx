@@ -20,39 +20,47 @@ function formatCurrency(value: number | null) {
 
 export default function StudentCard({ student, interests = [], onEdit, onDelete }: Props) {
   return (
-    <section className="surface w-full rounded-4xl bg-white p-5 sm:p-6">
-      <div className="flex items-center justify-between">
-        <h3 className="flex items-center gap-2 text-xl sm:text-2xl font-extrabold text-slate-900">
-          <UserRound className="text-indigo-600" /> Alumno
-        </h3>
+    <section className="surface w-full rounded-4xl bg-white p-6 sm:p-8">
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 rounded-2xl bg-indigo-100 flex items-center justify-center">
+            <UserRound className="text-indigo-600 w-6 h-6" />
+          </div>
+          <div>
+            <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900">Información del Hijo</h3>
+            <p className="text-sm text-slate-600">Datos del estudiante</p>
+          </div>
+        </div>
         <div className="flex gap-2">
           <button
             onClick={onEdit}
-            className="inline-flex items-center gap-1 rounded-2xl border border-slate-200 px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50"
+            className="w-10 h-10 rounded-xl border-2 border-slate-300 flex items-center justify-center text-slate-700 hover:bg-slate-50 hover:border-indigo-400 hover:text-indigo-600 transition-all"
+            title="Editar"
           >
-            <Pencil size={16} /> Editar
+            <Pencil size={18} />
           </button>
           <button
             onClick={onDelete}
-            className="inline-flex items-center gap-1 rounded-2xl bg-red-500 px-3 py-2 text-sm font-bold text-white hover:bg-red-600"
+            className="w-10 h-10 rounded-xl bg-red-500 flex items-center justify-center text-white hover:bg-red-600 transition-colors"
+            title="Eliminar"
           >
-            <Trash2 size={16} /> Eliminar
+            <Trash2 size={18} />
           </button>
         </div>
       </div>
 
-      <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-          <p className="text-xs font-bold text-slate-500">NOMBRE</p>
-          <p className="mt-1 text-slate-900 font-semibold">{student.name}</p>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div className="rounded-2xl border-2 border-slate-200 bg-gradient-to-br from-white to-slate-50 p-4">
+          <p className="text-xs font-bold text-slate-500 uppercase tracking-wide">Nombre</p>
+          <p className="mt-2 text-lg text-slate-900 font-bold">{student.name}</p>
         </div>
-        <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-          <p className="text-xs font-bold text-slate-500">EDAD</p>
-          <p className="mt-1 text-slate-900 font-semibold">{student.age}</p>
+        <div className="rounded-2xl border-2 border-slate-200 bg-gradient-to-br from-white to-slate-50 p-4">
+          <p className="text-xs font-bold text-slate-500 uppercase tracking-wide">Edad</p>
+          <p className="mt-2 text-lg text-slate-900 font-bold">{student.age} años</p>
         </div>
-        <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-          <p className="text-xs font-bold text-slate-500">PRESUPUESTO MENSUAL</p>
-          <p className="mt-1 text-slate-900 font-semibold">{formatCurrency(student.monthlyBudget)}</p>
+        <div className="rounded-2xl border-2 border-slate-200 bg-gradient-to-br from-white to-emerald-50 p-4">
+          <p className="text-xs font-bold text-emerald-700 uppercase tracking-wide">Presupuesto</p>
+          <p className="mt-2 text-lg text-emerald-900 font-bold">{formatCurrency(student.monthlyBudget)}</p>
         </div>
       </div>
 

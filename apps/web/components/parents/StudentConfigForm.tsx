@@ -67,48 +67,55 @@ export default function StudentConfigForm({ mode, initial, presetInterests = [],
   };
 
   return (
-    <section className="surface w-full rounded-4xl bg-white p-5 sm:p-6">
-      <div className="flex items-center justify-between">
-        <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900">Configuración del Alumno</h3>
-        <Wand2 className="text-indigo-600" />
-      </div>
-      <p className="mt-1 text-xs sm:text-sm text-slate-600">Define los intereses y presupuesto para mejores resultados.</p>
-
-      <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
+    <section className="surface w-full rounded-4xl bg-white p-6 sm:p-8">
+      <div className="flex items-center gap-3 mb-6">
+        <div className="w-12 h-12 rounded-2xl bg-indigo-100 flex items-center justify-center">
+          <Wand2 className="text-indigo-600 w-6 h-6" />
+        </div>
         <div>
-          <label className="block text-xs font-bold text-slate-500">NOMBRE</label>
+          <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900">{mode === 'create' ? 'Agregar Hijo' : 'Editar Información'}</h3>
+          <p className="text-xs sm:text-sm text-slate-600">Completa la información para personalizar la búsqueda</p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+        <div>
+          <label className="block text-sm font-semibold text-slate-700 mb-2">Nombre</label>
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Ej. Carlos"
-            className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-slate-800 outline-none ring-indigo-500 focus:ring-2"
+            className="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-slate-900 outline-none transition-all focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
           />
         </div>
         <div>
-          <label className="block text-xs font-bold text-slate-500">EDAD</label>
+          <label className="block text-sm font-semibold text-slate-700 mb-2">Edad</label>
           <input
             value={age}
             inputMode="numeric"
             pattern="[0-9]*"
             onChange={(e) => handleAgeChange(e.target.value)}
             placeholder="Ej. 12"
-            className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-slate-800 outline-none ring-indigo-500 focus:ring-2"
+            className="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-slate-900 outline-none transition-all focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
           />
         </div>
-        <div>
-          <label className="block text-xs font-bold text-slate-500">PRESUPUESTO MENSUAL</label>
-          <input
-            value={budget}
-            inputMode="numeric"
-            pattern="[0-9]*"
-            onChange={(e) => handleBudgetChange(e.target.value)}
-            placeholder="Ej. 12000"
-            className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-slate-800 outline-none ring-indigo-500 focus:ring-2"
-          />
+        <div className="md:col-span-2">
+          <label className="block text-sm font-semibold text-slate-700 mb-2">Presupuesto Mensual</label>
+          <div className="relative">
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 font-semibold">$</span>
+            <input
+              value={budget}
+              inputMode="numeric"
+              pattern="[0-9]*"
+              onChange={(e) => handleBudgetChange(e.target.value)}
+              placeholder="12000"
+              className="w-full rounded-xl border border-slate-300 bg-white pl-8 pr-4 py-2.5 text-slate-900 outline-none transition-all focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+            />
+          </div>
         </div>
-        <div>
-          <label className="block text-xs font-bold text-slate-500">INTERESES</label>
-          <div className="mt-2 flex flex-wrap gap-2">
+        <div className="md:col-span-2">
+          <label className="block text-sm font-semibold text-slate-700 mb-3">Intereses (opcional)</label>
+          <div className="flex flex-wrap gap-2">
             {presetInterests.map((opt) => {
               const selected = selectedInterests.includes(opt);
               return (
@@ -155,12 +162,12 @@ export default function StudentConfigForm({ mode, initial, presetInterests = [],
         </p>
       )}
 
-      <div className="mt-4 flex items-center gap-3">
+      <div className="mt-8 flex items-center gap-3">
         {onCancel && (
           <button
             type="button"
             onClick={onCancel}
-            className="flex items-center justify-center gap-2 rounded-3xl border border-slate-200 px-4 py-3 text-sm sm:text-base font-extrabold text-slate-700 hover:bg-slate-50"
+            className="flex-1 flex items-center justify-center gap-2 rounded-2xl border-2 border-slate-300 px-6 py-3 text-base font-bold text-slate-700 hover:bg-slate-50 transition-colors"
           >
             Cancelar
           </button>
@@ -169,9 +176,9 @@ export default function StudentConfigForm({ mode, initial, presetInterests = [],
       <button
         disabled={!isValid || isSaving}
         onClick={handleSave}
-        className="mt-6 flex w-full items-center justify-center gap-2 rounded-3xl bg-orange-500 px-4 py-3 text-sm sm:text-base font-extrabold text-white shadow-orange-200 hover:bg-orange-600 disabled:opacity-60 disabled:cursor-not-allowed"
+        className={`${onCancel ? 'flex-1' : 'w-full'} flex items-center justify-center gap-2 rounded-2xl bg-indigo-600 px-6 py-3 text-base font-bold text-white shadow-lg shadow-indigo-200 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all`}
       >
-        <Save size={18} /> {isSaving ? 'Guardando…' : 'Guardar Información'}
+        <Save size={20} /> {isSaving ? 'Guardando…' : mode === 'create' ? 'Crear Perfil' : 'Guardar Cambios'}
       </button>
       </div>
     </section>
