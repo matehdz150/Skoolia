@@ -7,6 +7,7 @@ import FavoriteDetailModal from "@/components/parents/FavoriteDetailModal";
 import SearchToolbar from "@/components/search/SearchToolbar";
 import { schoolsFeedService } from "@/lib/services/services/school-feeed.service";
 import { schoolsService } from "@/lib/services/services/schools.service";
+import { favoritesService } from "@/lib/services/services/favorites.service";
 
 type CatalogItem = {
   id: string;
@@ -35,6 +36,25 @@ export default function SearchPage() {
   const [items, setItems] = useState<CatalogItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
+
+  // Cargar favoritos del usuario
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      try {
+        const favorites = await favoritesService.listForMe();
+        if (!active) return;
+        setFavoriteIds(new Set(favorites.map(f => f.id)));
+      } catch (err) {
+        // Usuario no autenticado o error - continuar sin favoritos
+        console.log("No se pudieron cargar favoritos:", err);
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -137,6 +157,29 @@ export default function SearchPage() {
     })();
   };
 
+  const handleFavoriteToggle = async (schoolId: string, e?: React.MouseEvent) => {
+    // Evitar que el click se propague al card
+    e?.stopPropagation();
+    
+    try {
+      const result = await favoritesService.toggle(schoolId);
+      
+      // Actualizar el estado local optimistamente
+      setFavoriteIds(prev => {
+        const newSet = new Set(prev);
+        if (result.isFavorite) {
+          newSet.add(schoolId);
+        } else {
+          newSet.delete(schoolId);
+        }
+        return newSet;
+      });
+    } catch (err) {
+      console.error("Error al actualizar favorito:", err);
+      // Aquí podrías mostrar un toast de error
+    }
+  };
+
   return (
     <>
       <SearchToolbar q={q} loc={loc || "México (Todas las zonas)"} />
@@ -167,6 +210,8 @@ export default function SearchPage() {
           <CatalogCard
             key={it.id}
             {...it}
+            isFavorite={favoriteIds.has(it.id)}
+            onFavoriteToggle={(e) => handleFavoriteToggle(it.id, e)}
             onCardClick={() => openModal(it)}
             onAction={() => openModal(it)}
           />
