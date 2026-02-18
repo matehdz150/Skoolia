@@ -15,6 +15,8 @@ import { GetMyProfileUseCase } from '../core/use-cases/get-my-profile.use-case';
 import { UpdateMyProfileUseCase } from '../core/use-cases/update-profile.use-case';
 
 import { UpdateProfileDto } from './dto/update-user.dto';
+import { UpdateUserAvatarUseCase } from '../core/use-cases/update-user-image.use-case';
+import { UpdateUserAvatarDto } from './dto/update-user-image.dto';
 
 @Controller('users')
 @UseGuards(AuthGuard)
@@ -25,6 +27,9 @@ export class UsersController {
 
     @Inject(UpdateMyProfileUseCase)
     private readonly updateProfile: UpdateMyProfileUseCase,
+
+    @Inject(UpdateUserAvatarUseCase)
+    private readonly updateAvatar: UpdateUserAvatarUseCase,
   ) {}
 
   @Get('me')
@@ -38,5 +43,18 @@ export class UsersController {
     @Body() dto: UpdateProfileDto,
   ) {
     return this.updateProfile.execute(user.sub, dto);
+  }
+
+  // 🔥 PATCH /users/me/image
+  @Patch('me/image')
+  async updateAvatarRoute(
+    @Body() dto: UpdateUserAvatarDto,
+    @CurrentUser() user: JwtPayload,
+  ) {
+    return this.updateAvatar.execute({
+      userId: user.sub,
+      role: user.role,
+      fileId: dto.fileId,
+    });
   }
 }

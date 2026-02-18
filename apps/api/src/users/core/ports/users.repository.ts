@@ -12,4 +12,13 @@ export interface UserRepository {
       avatarUrl?: string;
     },
   ): Promise<User>;
+
+  findRawById(userId: string): Promise<{
+    id: string;
+    avatarFileId: string | null;
+  } | null>;
+
+  updateAvatarAtomic(params: { userId: string; newFileId: string }): Promise<{
+    oldFileId: string | null;
+  }>;
 }

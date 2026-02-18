@@ -5,7 +5,8 @@ import { CourseRepository } from 'src/courses/core/ports/course.repository';
 import { Course } from 'src/courses/core/entities/course.types';
 import { DATABASE } from 'src/db/db.module';
 import * as dbTypes from 'src/db/db.types';
-import { schools } from 'drizzle/schemas';
+import { files, schools } from 'drizzle/schemas';
+import { alias } from 'drizzle-orm/pg-core';
 
 @Injectable()
 export class DrizzleCourseRepository implements CourseRepository {
@@ -40,16 +41,44 @@ export class DrizzleCourseRepository implements CourseRepository {
     return course;
   }
 
-  async findById(id: string) {
+  async findById(id: string): Promise<Course | null> {
+    const coverFile = alias(files, 'cover_file');
+
     const rows = await this.db
-      .select()
+      .select({
+        id: courses.id,
+        schoolId: courses.schoolId,
+
+        name: courses.name,
+        description: courses.description,
+
+        // 👇 URL real que viene de files
+        coverImageUrl: coverFile.url,
+
+        price: courses.price,
+        capacity: courses.capacity,
+
+        startDate: courses.startDate,
+        endDate: courses.endDate,
+
+        modality: courses.modality,
+
+        averageRating: courses.averageRating,
+        enrollmentsCount: courses.enrollmentsCount,
+
+        status: courses.status,
+        isActive: courses.isActive,
+
+        createdAt: courses.createdAt,
+        updatedAt: courses.updatedAt,
+      })
       .from(courses)
+      .leftJoin(coverFile, eq(coverFile.id, courses.coverImageUrl))
       .where(eq(courses.id, id))
       .limit(1);
 
     return rows[0] ?? null;
   }
-
   async update(params: { courseId: string; data: Partial<Course> }) {
     const [updated] = await this.db
       .update(courses)

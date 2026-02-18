@@ -1,59 +1,70 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { privateUsers, publicUsers } from 'drizzle/schemas';
+import { files, privateUsers, publicUsers } from 'drizzle/schemas';
 import { DATABASE } from 'src/db/db.module';
 import * as dbTypes from 'src/db/db.types';
 import { User } from 'src/users/core/entitites/user.entity';
 import { UserRepository } from 'src/users/core/ports/users.repository';
 import { eq } from 'drizzle-orm';
+import { alias } from 'drizzle-orm/pg-core';
 
 @Injectable()
 export class DrizzleUserRepository implements UserRepository {
   constructor(@Inject(DATABASE) private readonly db: dbTypes.Database) {}
 
   async findById(id: string): Promise<User | null> {
-    const publicUser = await this.db
-      .select()
+    const avatarFile = alias(files, 'avatar_file');
+
+    // 🔹 PUBLIC USER
+    const publicRows = await this.db
+      .select({
+        id: publicUsers.id,
+        name: publicUsers.name,
+        email: publicUsers.email,
+        avatarUrl: avatarFile.url, // 👈 URL real
+        createdAt: publicUsers.createdAt,
+      })
       .from(publicUsers)
+      .leftJoin(avatarFile, eq(avatarFile.id, publicUsers.avatarUrl))
       .where(eq(publicUsers.id, id))
       .limit(1);
 
-    if (publicUser[0]) {
+    if (publicRows[0]) {
       return {
-        ...publicUser[0],
+        ...publicRows[0],
         role: 'public',
       };
     }
 
-    const privateUser = await this.db
-      .select()
+    // 🔹 PRIVATE USER (no avatar)
+    const privateRows = await this.db
+      .select({
+        id: privateUsers.id,
+        name: privateUsers.name,
+        email: privateUsers.email,
+        createdAt: privateUsers.createdAt,
+      })
       .from(privateUsers)
       .where(eq(privateUsers.id, id))
       .limit(1);
 
-    if (privateUser[0]) {
-      const row = privateUser[0];
-
+    if (privateRows[0]) {
       return {
-        id: row.id,
-        name: row.name,
-        email: row.email,
-        avatarUrl: null, // 🔥 private no tiene avatar
+        ...privateRows[0],
+        avatarUrl: null,
         role: 'private',
-        createdAt: row.createdAt,
       };
     }
 
     return null;
   }
 
-  async update(
-    id: string,
-    data: { name?: string; avatarUrl?: string },
-  ): Promise<User> {
+  async update(id: string, data: { name?: string }): Promise<User> {
     // 1️⃣ intentar actualizar public
     const [updatedPublic] = await this.db
       .update(publicUsers)
-      .set(data)
+      .set({
+        name: data.name,
+      })
       .where(eq(publicUsers.id, id))
       .returning();
 
@@ -63,7 +74,7 @@ export class DrizzleUserRepository implements UserRepository {
         name: updatedPublic.name,
         email: updatedPublic.email,
         avatarUrl: updatedPublic.avatarUrl ?? null,
-        role: 'public', // 🔥 literal correcto
+        role: 'public',
         createdAt: updatedPublic.createdAt,
       };
     }
@@ -71,7 +82,9 @@ export class DrizzleUserRepository implements UserRepository {
     // 2️⃣ intentar private
     const [updatedPrivate] = await this.db
       .update(privateUsers)
-      .set(data)
+      .set({
+        name: data.name,
+      })
       .where(eq(privateUsers.id, id))
       .returning();
 
@@ -80,12 +93,55 @@ export class DrizzleUserRepository implements UserRepository {
         id: updatedPrivate.id,
         name: updatedPrivate.name,
         email: updatedPrivate.email,
-        avatarUrl: null, // 🔥 private no tiene avatar
-        role: 'private', // 🔥 literal correcto
+        avatarUrl: null,
+        role: 'private',
         createdAt: updatedPrivate.createdAt,
       };
     }
 
     throw new Error('User not found');
+  }
+
+  async findRawById(userId: string) {
+    const rows = await this.db
+      .select({
+        id: publicUsers.id,
+        avatarFileId: publicUsers.avatarUrl,
+      })
+      .from(publicUsers)
+      .where(eq(publicUsers.id, userId))
+      .limit(1);
+
+    return rows[0] ?? null;
+  }
+
+  async updateAvatarAtomic(params: {
+    userId: string;
+    newFileId: string;
+  }): Promise<{ oldFileId: string | null }> {
+    return this.db.transaction(async (tx) => {
+      const row = await tx
+        .select({
+          avatarUrl: publicUsers.avatarUrl,
+        })
+        .from(publicUsers)
+        .where(eq(publicUsers.id, params.userId))
+        .limit(1);
+
+      if (!row[0]) {
+        throw new Error('User not found');
+      }
+
+      const oldFileId = row[0].avatarUrl;
+
+      await tx
+        .update(publicUsers)
+        .set({
+          avatarUrl: params.newFileId,
+        })
+        .where(eq(publicUsers.id, params.userId));
+
+      return { oldFileId };
+    });
   }
 }

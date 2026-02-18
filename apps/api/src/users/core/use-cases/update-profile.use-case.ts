@@ -12,7 +12,6 @@ export class UpdateMyProfileUseCase {
     userId: string,
     data: {
       name?: string;
-      avatarUrl?: string;
     },
   ) {
     return this.repository.update(userId, data);
