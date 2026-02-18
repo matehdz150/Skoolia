@@ -6,6 +6,7 @@ import CatalogCard from "@/components/layout/CatalogCard";
 import FavoriteDetailModal from "@/components/parents/FavoriteDetailModal";
 import SearchToolbar from "@/components/search/SearchToolbar";
 import { schoolsFeedService } from "@/lib/services/services/school-feeed.service";
+import { schoolsService } from "@/lib/services/services/schools.service";
 
 type CatalogItem = {
   id: string;
@@ -15,6 +16,14 @@ type CatalogItem = {
   title: string;
   location: string;
   price: number | string;
+  description?: string;
+  rating?: number;
+  schedule?: string;
+  languages?: string;
+  studentsPerClass?: number | string;
+  enrollmentOpen?: boolean;
+  enrollmentYear?: number;
+  monthlyPrice?: number;
 };
 
 export default function SearchPage() {
@@ -62,6 +71,15 @@ export default function SearchPage() {
             location: node.city || node.address || "Ubicación no disponible",
             // Aún no mostramos precios reales, dejamos un placeholder.
             price: "Por definir",
+            description: node.description ?? undefined,
+            rating: node.averageRating ?? undefined,
+            // Campos adicionales (cuando el backend los exponga en este feed):
+            schedule: undefined,
+            languages: undefined,
+            studentsPerClass: undefined,
+            enrollmentOpen: undefined,
+            enrollmentYear: undefined,
+            monthlyPrice: undefined,
           };
         });
 
@@ -86,6 +104,38 @@ export default function SearchPage() {
   const openModal = (item: CatalogItem) => {
     setSelected(item);
     setOpen(true);
+    // Enriquecer datos del modal con detalles completos
+    // si el backend expone más campos vía REST
+    (async () => {
+      try {
+        const full = await schoolsService.getById(item.id);
+        setSelected((prev) => (
+          prev && prev.id === item.id
+            ? {
+                ...prev,
+                description: full.description ?? prev.description,
+                rating: full.averageRating ?? prev.rating,
+                schedule: full.schedule ?? prev.schedule,
+                languages: full.languages ?? prev.languages,
+                studentsPerClass:
+                  full.maxStudentsPerClass ?? prev.studentsPerClass,
+                enrollmentOpen:
+                  full.enrollmentOpen ?? prev.enrollmentOpen,
+                enrollmentYear: full.enrollmentYear ?? prev.enrollmentYear,
+                monthlyPrice: full.monthlyPrice ?? prev.monthlyPrice,
+                // Prefer cover/logo if present
+                imageSrc:
+                  full.coverImageUrl || full.logoUrl || prev.imageSrc,
+                location:
+                  full.city || full.address || prev.location,
+              }
+            : prev
+        ));
+      } catch (e) {
+        // Silencioso: mantenemos datos del feed
+        console.warn('No se pudo cargar detalle de la escuela', e);
+      }
+    })();
   };
 
   return (
@@ -135,6 +185,14 @@ export default function SearchPage() {
             title: selected.title,
             location: selected.location,
             price: selected.price,
+            description: selected.description,
+            rating: selected.rating,
+            schedule: selected.schedule,
+            languages: selected.languages,
+            studentsPerClass: selected.studentsPerClass,
+            enrollmentOpen: selected.enrollmentOpen,
+            enrollmentYear: selected.enrollmentYear,
+            monthlyPrice: selected.monthlyPrice,
           }
         }
       />

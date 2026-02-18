@@ -60,6 +60,10 @@ export const schoolsService = {
     return api<School>("/schools/me");
   },
 
+  async getById(id: string) {
+    return api<School>(`/schools/${id}`);
+  },
+
   async update(data: {
     name?: string;
     description?: string;

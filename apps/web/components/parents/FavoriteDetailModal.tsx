@@ -10,18 +10,26 @@ type Item = {
   title: string;
   location: string;
   price: string | number;
+  description?: string;
+  rating?: number;
+  schedule?: string; // e.g., "7:30 AM - 2:30 PM"
+  studentsPerClass?: number | string; // e.g., 20
+  languages?: string; // e.g., "Bilingüe (Cert. Oxford)"
+  enrollmentStatus?: string; // e.g., "Abiertas 2026"
+  enrollmentOpen?: boolean;
+  enrollmentYear?: number;
+  monthlyPrice?: number;
 };
 
 export default function FavoriteDetailModal({ open, onClose, item }: { open: boolean; onClose: () => void; item?: Item }): JSX.Element | null {
   if (!open || !item) return null;
 
-  const isNumeric = typeof item.price === 'number';
-  const priceValue = isNumeric
-    ? `$${item.price.toLocaleString()}`
+  const isNumeric = typeof item.price === 'number' || typeof item.monthlyPrice === 'number';
+  const numericPrice = typeof item.price === 'number' ? item.price : (typeof item.monthlyPrice === 'number' ? item.monthlyPrice : undefined);
+  const priceValue = numericPrice != null
+    ? `$${numericPrice.toLocaleString()}`
     : (String(item.price).match(/\$\s?[\d,.]+/)?.[0] ?? String(item.price));
-  const priceUnit = isNumeric
-    ? 'MXN/mes'
-    : (String(item.price).includes('MXN/mes') ? 'MXN/mes' : '');
+  const priceUnit = numericPrice != null ? 'MXN/mes' : (String(item.price).includes('MXN/mes') ? 'MXN/mes' : '');
 
   return (
     <div className="fixed inset-0 z-100 flex items-center justify-center">
@@ -42,7 +50,14 @@ export default function FavoriteDetailModal({ open, onClose, item }: { open: boo
           {/* Left media */}
           <div className="relative h-65 sm:h-80 md:h-[72vh] w-full bg-slate-100">
             {item.imageUrl ? (
-              <Image src={item.imageUrl} alt={item.title} fill className="object-cover" />
+              <Image
+                src={item.imageUrl}
+                alt={item.title}
+                fill
+                sizes="(min-width: 768px) 50vw, 100vw"
+                className="object-cover"
+                priority={false}
+              />
             ) : (
               <div className="flex h-full items-center justify-center text-slate-400">Imagen</div>
             )}
@@ -62,14 +77,18 @@ export default function FavoriteDetailModal({ open, onClose, item }: { open: boo
               <MapPin className="h-4 w-4" />
               <span>{item.location}</span>
               <Star className="h-4 w-4 text-amber-400" />
-              <span>4.7 (84 reseñas)</span>
+              <span>
+                {typeof item.rating === 'number' ? item.rating.toFixed(1) : '—'}
+                {typeof item.rating === 'number' ? ' (valoración)' : ''}
+              </span>
             </div>
 
             {/* Short description */}
-            <p className="mt-4 text-xs sm:text-sm leading-relaxed text-slate-700">
-              Institución de excelencia comprometida con el desarrollo integral. Ofrecemos un ambiente seguro y estimulante donde
-              cada alumno puede alcanzar su máximo potencial a través de metodologías innovadoras y un enfoque humano.
-            </p>
+            {item.description ? (
+              <p className="mt-4 text-xs sm:text-sm leading-relaxed text-slate-700">
+                {item.description}
+              </p>
+            ) : null}
 
             {/* Info pills grid */}
             <div className="mt-6 grid grid-cols-1 gap-3 sm:gap-4 sm:grid-cols-2">
@@ -78,7 +97,7 @@ export default function FavoriteDetailModal({ open, onClose, item }: { open: boo
                   <Clock className="h-4 w-4 text-indigo-600" />
                   <div>
                     <p className="text-[10px] sm:text-[11px] font-extrabold tracking-widest text-slate-500">HORARIO</p>
-                    <p className="text-xs sm:text-sm font-bold text-slate-900">7:30 AM - 2:30 PM</p>
+                    <p className="text-xs sm:text-sm font-bold text-slate-900">{item.schedule ?? 'Por definir'}</p>
                   </div>
                 </div>
               </div>
@@ -87,7 +106,7 @@ export default function FavoriteDetailModal({ open, onClose, item }: { open: boo
                   <Users className="h-4 w-4 text-indigo-600" />
                   <div>
                     <p className="text-[10px] sm:text-[11px] font-extrabold tracking-widest text-slate-500">ALUMNOS/SALÓN</p>
-                    <p className="text-xs sm:text-sm font-bold text-slate-900">Máximo 20</p>
+                    <p className="text-xs sm:text-sm font-bold text-slate-900">{item.studentsPerClass ?? 'Por definir'}</p>
                   </div>
                 </div>
               </div>
@@ -96,7 +115,7 @@ export default function FavoriteDetailModal({ open, onClose, item }: { open: boo
                   <Languages className="h-4 w-4 text-indigo-600" />
                   <div>
                     <p className="text-[10px] sm:text-[11px] font-extrabold tracking-widest text-slate-500">IDIOMAS</p>
-                    <p className="text-xs sm:text-sm font-bold text-slate-900">Bilingüe (Cert. Oxford)</p>
+                    <p className="text-xs sm:text-sm font-bold text-slate-900">{item.languages ?? 'Por definir'}</p>
                   </div>
                 </div>
               </div>
@@ -105,7 +124,14 @@ export default function FavoriteDetailModal({ open, onClose, item }: { open: boo
                   <ClipboardCheck className="h-4 w-4 text-indigo-600" />
                   <div>
                     <p className="text-[10px] sm:text-[11px] font-extrabold tracking-widest text-slate-500">INSCRIPCIONES</p>
-                    <p className="text-xs sm:text-sm font-bold text-slate-900">Abiertas 2026</p>
+                    <p className="text-xs sm:text-sm font-bold text-slate-900">
+                      {item.enrollmentStatus
+                        ?? (item.enrollmentOpen === true
+                              ? `Abiertas${item.enrollmentYear ? ` ${item.enrollmentYear}` : ''}`
+                              : item.enrollmentOpen === false
+                                ? 'Cerradas'
+                                : 'Por definir')}
+                    </p>
                   </div>
                 </div>
               </div>
