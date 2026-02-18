@@ -1,0 +1,2 @@
+CREATE TYPE "public"."file_owner_type" AS ENUM('school', 'course', 'student', 'user');--> statement-breakpoint
+ALTER TABLE "files" ALTER COLUMN "owner_type" SET DATA TYPE "public"."file_owner_type" USING "owner_type"::"public"."file_owner_type";

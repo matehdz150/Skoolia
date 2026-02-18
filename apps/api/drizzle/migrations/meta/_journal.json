@@ -78,6 +78,13 @@
       "when": 1771389061271,
       "tag": "0010_many_outlaw_kid",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1771435552721,
+      "tag": "0011_typical_jubilee",
+      "breakpoints": true
     }
   ]
 }

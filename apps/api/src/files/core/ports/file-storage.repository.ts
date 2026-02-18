@@ -1,9 +1,13 @@
 // core/ports/file-storage.port.ts
 
-import { FileObject, UploadInput } from '../entities/file.entitiy';
+import { UploadInput } from '../entities/file.entitiy';
 
 export interface FileStorage {
-  upload(input: UploadInput): Promise<FileObject>;
+  upload(input: UploadInput): Promise<{
+    key: string;
+    url: string;
+    sizeBytes: number;
+  }>;
 
   delete(key: string): Promise<void>;
 }

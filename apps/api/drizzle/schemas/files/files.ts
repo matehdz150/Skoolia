@@ -5,7 +5,15 @@ import {
   integer,
   timestamp,
   index,
+  pgEnum,
 } from 'drizzle-orm/pg-core';
+
+export const fileOwnerTypeEnum = pgEnum('file_owner_type', [
+  'school',
+  'course',
+  'student',
+  'user',
+]);
 
 export const files = pgTable(
   'files',
@@ -24,7 +32,7 @@ export const files = pgTable(
 
     // 🧠 ownership
     ownerId: uuid('owner_id').notNull(),
-    ownerType: text('owner_type').notNull(),
+    ownerType: fileOwnerTypeEnum('owner_type').notNull(),
     // ejemplo: 'school' | 'course' | 'student' | 'user'
 
     createdAt: timestamp('created_at').defaultNow().notNull(),
