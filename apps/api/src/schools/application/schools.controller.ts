@@ -7,6 +7,7 @@ import {
   Post,
   UseGuards,
   Param,
+  BadRequestException,
 } from '@nestjs/common';
 
 import { AuthGuard } from 'src/auth/application/guards/auth.guard';
@@ -25,6 +26,8 @@ import { UpdateSchoolUseCase } from '../core/use-cases/update-school.use-case';
 import { AssignCategoriesDto } from './dto/assign-categories.dto';
 import { AssignSchoolCategoriesUseCase } from '../core/use-cases/assign-school-categories.use-case';
 import { GetSchoolByIdUseCase } from '../core/use-cases/get-school-by-id.use-case';
+import { UpdateSchoolImageUseCase } from '../core/use-cases/UpdateSchooImage.use-case';
+import { UpdateSchoolImageDto } from './dto/update-school-image.dto';
 
 @Controller('schools')
 export class SchoolsController {
@@ -43,6 +46,9 @@ export class SchoolsController {
 
     @Inject(GetSchoolByIdUseCase)
     private readonly getSchoolById: GetSchoolByIdUseCase,
+
+    @Inject(UpdateSchoolImageUseCase)
+    private readonly updateSchoolImage: UpdateSchoolImageUseCase,
   ) {}
 
   /**
@@ -109,5 +115,28 @@ export class SchoolsController {
   @Get(':id')
   async getById(@Param('id') id: string) {
     return this.getSchoolById.execute({ id });
+  }
+
+  /**
+   * 🔒 Actualizar imagen de escuela (logo o cover)
+   */
+  @Patch('me/image/:field')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('private')
+  async updateImage(
+    @Param('field') field: 'logoUrl' | 'coverImageUrl',
+    @Body() dto: UpdateSchoolImageDto,
+    @CurrentUser() user: JwtPayload,
+  ) {
+    if (!['logoUrl', 'coverImageUrl'].includes(field)) {
+      throw new BadRequestException('Invalid image field');
+    }
+
+    return this.updateSchoolImage.execute({
+      ownerId: user.sub,
+      role: user.role,
+      field,
+      fileId: dto.fileId,
+    });
   }
 }

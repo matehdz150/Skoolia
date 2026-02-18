@@ -17,15 +17,6 @@ export class UpdateSchoolDto {
   @IsString()
   description?: string;
 
-  // 🖼 imágenes
-  @IsOptional()
-  @IsString()
-  logoUrl?: string;
-
-  @IsOptional()
-  @IsString()
-  coverImageUrl?: string;
-
   // 📍 ubicación
   @IsOptional()
   @IsString()

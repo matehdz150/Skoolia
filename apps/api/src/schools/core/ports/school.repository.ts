@@ -31,4 +31,16 @@ export interface SchoolRepository {
       after?: string;
     };
   }): Promise<SchoolsConnection>;
+
+  findRawByOwner(ownerId: string): Promise<{
+    id: string;
+    logoFileId: string | null;
+    coverImageFileId: string | null;
+  } | null>;
+
+  updateImageAtomic(params: {
+    ownerId: string;
+    field: 'logoUrl' | 'coverImageUrl';
+    newFileId: string;
+  }): Promise<{ oldFileId: string | null }>;
 }

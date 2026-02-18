@@ -11,6 +11,8 @@ import {
   SchoolEdge,
   SchoolsConnection,
 } from 'src/schools/core/entities/schools-connection';
+import { files } from 'drizzle/schemas';
+import { alias } from 'drizzle-orm/pg-core';
 
 function encodeCursor(date: Date): string {
   return Buffer.from(date.toISOString()).toString('base64');
@@ -42,20 +44,96 @@ export class DrizzleSchoolRepository implements SchoolRepository {
     return school;
   }
 
-  async findByOwner(ownerId: string) {
+  async findByOwner(ownerId: string): Promise<School | null> {
+    const logoFile = alias(files, 'logo_file');
+    const coverFile = alias(files, 'cover_file');
+
     const rows = await this.db
-      .select()
+      .select({
+        id: schools.id,
+        name: schools.name,
+        description: schools.description,
+
+        logoUrl: logoFile.url,
+        coverImageUrl: coverFile.url,
+
+        address: schools.address,
+        city: schools.city,
+        latitude: schools.latitude,
+        longitude: schools.longitude,
+
+        educationalLevel: schools.educationalLevel,
+        institutionType: schools.institutionType,
+        schedule: schools.schedule,
+        languages: schools.languages,
+        maxStudentsPerClass: schools.maxStudentsPerClass,
+        enrollmentYear: schools.enrollmentYear,
+        enrollmentOpen: schools.enrollmentOpen,
+        monthlyPrice: schools.monthlyPrice,
+
+        averageRating: schools.averageRating,
+        ratingsCount: schools.ratingsCount,
+        favoritesCount: schools.favoritesCount,
+        rankingScore: schools.rankingScore,
+
+        isFeatured: schools.isFeatured,
+        isVerified: schools.isVerified,
+
+        ownerId: schools.ownerId,
+        createdAt: schools.createdAt,
+        updatedAt: schools.updatedAt,
+      })
       .from(schools)
+      .leftJoin(logoFile, eq(logoFile.id, schools.logoUrl))
+      .leftJoin(coverFile, eq(coverFile.id, schools.coverImageUrl))
       .where(eq(schools.ownerId, ownerId))
       .limit(1);
 
     return rows[0] ?? null;
   }
 
-  async findById(id: string) {
+  async findById(id: string): Promise<School | null> {
+    const logoFile = alias(files, 'logo_file');
+    const coverFile = alias(files, 'cover_file');
+
     const rows = await this.db
-      .select()
+      .select({
+        id: schools.id,
+        name: schools.name,
+        description: schools.description,
+
+        logoUrl: logoFile.url,
+        coverImageUrl: coverFile.url,
+
+        address: schools.address,
+        city: schools.city,
+        latitude: schools.latitude,
+        longitude: schools.longitude,
+
+        educationalLevel: schools.educationalLevel,
+        institutionType: schools.institutionType,
+        schedule: schools.schedule,
+        languages: schools.languages,
+        maxStudentsPerClass: schools.maxStudentsPerClass,
+        enrollmentYear: schools.enrollmentYear,
+        enrollmentOpen: schools.enrollmentOpen,
+        monthlyPrice: schools.monthlyPrice,
+
+        averageRating: schools.averageRating,
+        ratingsCount: schools.ratingsCount,
+        favoritesCount: schools.favoritesCount,
+        rankingScore: schools.rankingScore,
+
+        isFeatured: schools.isFeatured,
+        isVerified: schools.isVerified,
+
+        ownerId: schools.ownerId,
+        createdAt: schools.createdAt,
+        updatedAt: schools.updatedAt,
+      })
       .from(schools)
+      .leftJoin(logoFile, eq(logoFile.id, schools.logoUrl))
+      .leftJoin(coverFile, eq(coverFile.id, schools.coverImageUrl))
       .where(eq(schools.id, id))
       .limit(1);
 
@@ -133,13 +211,16 @@ export class DrizzleSchoolRepository implements SchoolRepository {
     }
 
     // 🔥 Construcción dinámica SIN romper tipos
+    const logoFile = alias(files, 'logo_file');
+    const coverFile = alias(files, 'cover_file');
+
     const queryBuilder = this.db.select({
       id: schools.id,
       name: schools.name,
       description: schools.description,
 
-      logoUrl: schools.logoUrl,
-      coverImageUrl: schools.coverImageUrl,
+      logoUrl: logoFile.url,
+      coverImageUrl: coverFile.url,
 
       address: schools.address,
       city: schools.city,
@@ -171,11 +252,16 @@ export class DrizzleSchoolRepository implements SchoolRepository {
     const fromBuilder = filters.categoryId
       ? queryBuilder
           .from(schools)
+          .leftJoin(logoFile, eq(logoFile.id, schools.logoUrl))
+          .leftJoin(coverFile, eq(coverFile.id, schools.coverImageUrl))
           .innerJoin(
             schoolCategories,
             eq(schoolCategories.schoolId, schools.id),
           )
-      : queryBuilder.from(schools);
+      : queryBuilder
+          .from(schools)
+          .leftJoin(logoFile, eq(logoFile.id, schools.logoUrl))
+          .leftJoin(coverFile, eq(coverFile.id, schools.coverImageUrl));
 
     const whereBuilder =
       whereConditions.length > 0
@@ -211,5 +297,57 @@ export class DrizzleSchoolRepository implements SchoolRepository {
             : null,
       },
     };
+  }
+
+  async findRawByOwner(ownerId: string): Promise<{
+    id: string;
+    logoFileId: string | null;
+    coverImageFileId: string | null;
+  } | null> {
+    const rows = await this.db
+      .select({
+        id: schools.id,
+        logoFileId: schools.logoUrl, // 👈 UUID real
+        coverImageFileId: schools.coverImageUrl, // 👈 UUID real
+      })
+      .from(schools)
+      .where(eq(schools.ownerId, ownerId))
+      .limit(1);
+
+    return rows[0] ?? null;
+  }
+
+  async updateImageAtomic(params: {
+    ownerId: string;
+    field: 'logoUrl' | 'coverImageUrl';
+    newFileId: string;
+  }): Promise<{ oldFileId: string | null }> {
+    return this.db.transaction(async (tx) => {
+      const row = await tx
+        .select({
+          logoUrl: schools.logoUrl,
+          coverImageUrl: schools.coverImageUrl,
+        })
+        .from(schools)
+        .where(eq(schools.ownerId, params.ownerId))
+        .limit(1);
+
+      if (!row[0]) {
+        throw new Error('School not found');
+      }
+
+      const oldFileId =
+        params.field === 'logoUrl' ? row[0].logoUrl : row[0].coverImageUrl;
+
+      await tx
+        .update(schools)
+        .set({
+          [params.field]: params.newFileId,
+          updatedAt: new Date(),
+        })
+        .where(eq(schools.ownerId, params.ownerId));
+
+      return { oldFileId };
+    });
   }
 }
