@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import CatalogCard from "../layout/CatalogCard";
 import FavoriteDetailModal from "./FavoriteDetailModal";
 import { favoritesService } from "@/lib/services/services/favorites.service";
+import { schoolsService } from "@/lib/services/services/schools.service";
 
 type FavoriteItem = {
   id: string;
@@ -10,6 +11,14 @@ type FavoriteItem = {
   title: string;
   location: string;
   price: number | string;
+  description?: string;
+  rating?: number;
+  schedule?: string;
+  languages?: string;
+  studentsPerClass?: number | string;
+  enrollmentOpen?: boolean;
+  enrollmentYear?: number;
+  monthlyPrice?: number;
 };
 
 export default function FavoritesGrid() {
@@ -44,6 +53,32 @@ export default function FavoritesGrid() {
   const openModal = (item: FavoriteItem) => {
     setSelected(item);
     setOpen(true);
+    
+    // Enriquecer datos del modal con detalles completos
+    (async () => {
+      try {
+        const full = await schoolsService.getById(item.id);
+        setSelected((prev) => (
+          prev && prev.id === item.id
+            ? {
+                ...prev,
+                description: full.description ?? prev.description,
+                rating: full.averageRating ?? prev.rating,
+                schedule: full.schedule ?? prev.schedule,
+                languages: full.languages ?? prev.languages,
+                studentsPerClass: full.maxStudentsPerClass ?? prev.studentsPerClass,
+                enrollmentOpen: full.enrollmentOpen ?? prev.enrollmentOpen,
+                enrollmentYear: full.enrollmentYear ?? prev.enrollmentYear,
+                monthlyPrice: full.monthlyPrice ?? prev.monthlyPrice,
+                imageUrl: full.coverImageUrl || full.logoUrl || prev.imageUrl,
+                location: full.city || full.address || prev.location,
+              }
+            : prev
+        ));
+      } catch (e) {
+        console.warn('No se pudo cargar detalle de la escuela', e);
+      }
+    })();
   };
 
   const gridContent = useMemo(() => {
@@ -94,6 +129,14 @@ export default function FavoritesGrid() {
             title: selected.title,
             location: selected.location,
             price: typeof selected.price === "number" ? `$${selected.price.toLocaleString()}` : selected.price,
+            description: selected.description,
+            rating: selected.rating,
+            schedule: selected.schedule,
+            languages: selected.languages,
+            studentsPerClass: selected.studentsPerClass,
+            enrollmentOpen: selected.enrollmentOpen,
+            enrollmentYear: selected.enrollmentYear,
+            monthlyPrice: selected.monthlyPrice,
           }
         }
       />
