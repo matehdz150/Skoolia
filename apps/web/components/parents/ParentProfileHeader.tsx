@@ -1,7 +1,41 @@
 'use client';
+import { useEffect, useState } from 'react';
 import { Settings } from 'lucide-react';
+import { studentService, type Student } from '@/lib/services/services/student.service';
+
+function formatMoney(value: number | null | undefined): string {
+  if (typeof value !== 'number') return 'N/A';
+  return `$${value.toLocaleString()}`;
+}
 
 export default function ParentProfileHeader() {
+  const [student, setStudent] = useState<Student | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const data = await studentService.getMyStudent();
+        if (!mounted) return;
+        setStudent(data);
+      } finally {
+        setLoading(false);
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const childLabel = student
+    ? `${student.name} · ${student.age} años`
+    : loading
+      ? 'Cargando perfil…'
+      : 'Sin perfil';
+
+  const budgetLabel = `Presupuesto: ${formatMoney(student?.monthlyBudget)}`;
+
   return (
     <section className="mx-auto w-full max-w-6xl px-6">
       <div className="surface rounded-4xl bg-white p-5 sm:p-6">
@@ -12,15 +46,15 @@ export default function ParentProfileHeader() {
             </div>
             <div>
               <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
-                ¡Hola, Mariana! <span className="inline-block">👋</span>
+                ¡Hola! <span className="inline-block">👋</span>
               </h2>
               <div className="mt-2 sm:mt-3 flex flex-wrap items-center gap-2 text-xs sm:text-sm">
                 <span className="inline-flex items-center rounded-full bg-indigo-50 px-3 py-1 font-bold text-indigo-700 shadow-sm">
                   <span className="mr-2 inline-block h-2 w-2 rounded-full bg-indigo-600" />
-                  Carlos · 12 años
+                  {childLabel}
                 </span>
                 <span className="inline-flex items-center rounded-full bg-emerald-50 px-3 py-1 font-bold text-emerald-700 shadow-sm">
-                  Presupuesto: $12,000+
+                  {budgetLabel}
                 </span>
               </div>
             </div>

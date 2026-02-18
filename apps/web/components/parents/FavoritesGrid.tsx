@@ -1,66 +1,102 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import CatalogCard from "../layout/CatalogCard";
 import FavoriteDetailModal from "./FavoriteDetailModal";
+import { favoritesService } from "@/lib/services/services/favorites.service";
 
-const demo = [
-  {
-    id: 1,
-    imageUrl: '',
-    badges: ['Bilingüe', 'Excelencia'],
-    level: 'PRIMARIA / SECUNDARIA',
-    title: 'Instituto Tecnológico del Norte',
-    location: 'Monterrey, NL',
-    price: '$4,500 MXN/mes',
-  },
-  {
-    id: 2,
-    imageUrl: 'https://images.unsplash.com/photo-1588072432836-e10032774350?q=80&w=1600&auto=format&fit=crop',
-    badges: ['STEM', 'SABATINO'],
-    level: 'CURSO EXTRACURRICULAR',
-    title: 'Academia de Robótica "Future"',
-    location: 'CDMX, Polanco',
-    price: '$1,200 MXN/mes',
-  },
-];
+type FavoriteItem = {
+  id: string;
+  imageUrl: string | null;
+  title: string;
+  location: string;
+  price: number | string;
+};
 
 export default function FavoritesGrid() {
   const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState<typeof demo[number] | undefined>();
+  const [items, setItems] = useState<FavoriteItem[]>([]);
+  const [selected, setSelected] = useState<FavoriteItem | undefined>();
+  const [loading, setLoading] = useState(true);
 
-  const openModal = (item: typeof demo[number]) => {
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const data = await favoritesService.listForMe();
+        if (!mounted) return;
+        const mapped: FavoriteItem[] = data.map((s) => ({
+          id: s.id,
+          imageUrl: s.coverImageUrl,
+          title: s.name,
+          location: s.city ?? "",
+          price: s.monthlyPrice ?? "N/A",
+        }));
+        setItems(mapped);
+      } finally {
+        setLoading(false);
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const openModal = (item: FavoriteItem) => {
     setSelected(item);
     setOpen(true);
   };
 
-  return (
-    <>
+  const gridContent = useMemo(() => {
+    if (loading) {
+      return <p className="text-sm text-slate-600">Cargando favoritos…</p>;
+    }
+    if (!items.length) {
+      return <p className="text-sm text-slate-600">Aún no tienes favoritos.</p>;
+    }
+    return (
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        {demo.map((item) => (
+        {items.map((item) => (
           <CatalogCard
             key={item.id}
-            imageSrc={item.imageUrl}
+            imageSrc={item.imageUrl ?? undefined}
             imageAlt={item.title}
-            tags={item.badges}
-            typeLabel={item.level}
+            typeLabel={"INSTITUCIÓN"}
             title={item.title}
             location={item.location}
             priceLabel="MENSUALIDAD"
             price={item.price}
             onCardClick={() => openModal(item)}
             onAction={() => openModal(item)}
+            isFavorite={true}
+            onFavoriteToggle={async () => {
+              await favoritesService.toggle(item.id);
+              // optimistically remove from list
+              setItems((prev) => prev.filter((x) => x.id !== item.id));
+            }}
           />
         ))}
       </div>
+    );
+  }, [items, loading]);
 
-      <FavoriteDetailModal open={open} onClose={() => setOpen(false)} item={selected && {
-        imageUrl: selected.imageUrl,
-        badges: selected.badges,
-        level: selected.level,
-        title: selected.title,
-        location: selected.location,
-        price: selected.price,
-      }} />
+  return (
+    <>
+      {gridContent}
+
+      <FavoriteDetailModal
+        open={open}
+        onClose={() => setOpen(false)}
+        item={
+          selected && {
+            imageUrl: selected.imageUrl ?? undefined,
+            badges: [],
+            level: "INSTITUCIÓN",
+            title: selected.title,
+            location: selected.location,
+            price: typeof selected.price === "number" ? `$${selected.price.toLocaleString()}` : selected.price,
+          }
+        }
+      />
     </>
   );
 }
