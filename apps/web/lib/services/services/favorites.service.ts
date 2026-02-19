@@ -4,7 +4,7 @@ import { api } from "../api";
 export const favoritesService = {
   async toggle(schoolId: string) {
     return api<{ isFavorite: boolean }>(
-      `/schools/${schoolId}/favorite`,
+      `/favorites/${schoolId}`,
       { method: 'POST' }
     );
   },
@@ -15,6 +15,6 @@ export const favoritesService = {
       coverImageUrl: string | null;
       city: string | null;
       monthlyPrice: number | null;
-    }>>('/schools/favorites');
+    }>>('/favorites');
   },
 };
