@@ -1,4 +1,10 @@
-import { Controller, Inject, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Inject,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 
 import { AuthGuard } from 'src/auth/application/guards/auth.guard';
 import { CurrentUser } from 'src/auth/application/decorators/current-user.decorator';

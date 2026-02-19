@@ -1,3 +1,5 @@
+import type { School } from '../entities/school.types';
+
 export interface FavoritesRepository {
   add(params: { publicUserId: string; schoolId: string }): Promise<void>;
 
@@ -7,4 +9,9 @@ export interface FavoritesRepository {
     publicUserId: string;
     schoolId: string;
   }): Promise<boolean>;
+
+  /**
+   * Lista todas las escuelas marcadas como favoritas por un usuario público.
+   */
+  listForUser(publicUserId: string): Promise<School[]>;
 }

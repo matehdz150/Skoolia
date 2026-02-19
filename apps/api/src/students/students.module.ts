@@ -8,6 +8,7 @@ import { StudentsController } from './application/students.controller';
 import { DrizzleStudentRepository } from './infraestructure/adapters/drizzle-students.repository';
 import { UpdateStudentUseCase } from './core/use-cases/update-student.use-case';
 import { GetMyStudentUseCase } from './core/use-cases/get-my-student.use-case';
+import { DeleteStudentUseCase } from './core/use-cases/delete-student.use-case';
 
 @Module({
   imports: [DbModule, AuthModule],
@@ -16,6 +17,7 @@ import { GetMyStudentUseCase } from './core/use-cases/get-my-student.use-case';
     CreateStudentUseCase,
     UpdateStudentUseCase,
     GetMyStudentUseCase,
+    DeleteStudentUseCase,
     {
       provide: STUDENT_REPOSITORY,
       useClass: DrizzleStudentRepository,
