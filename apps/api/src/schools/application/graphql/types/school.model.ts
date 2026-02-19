@@ -31,4 +31,7 @@ export class SchoolModel {
 
   @Field()
   isVerified?: boolean;
+
+  @Field(() => Int, { nullable: true })
+  monthlyPrice?: number;
 }

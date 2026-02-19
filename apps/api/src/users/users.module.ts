@@ -8,13 +8,16 @@ import { UpdateMyProfileUseCase } from './core/use-cases/update-profile.use-case
 import { USER_REPOSITORY } from './core/ports/tokens';
 import { DrizzleUserRepository } from './infrstructure/adapters/drizzle-user.repository';
 import { AuthModule } from 'src/auth/auth.module';
+import { UpdateUserAvatarUseCase } from './core/use-cases/update-user-image.use-case';
+import { FilesModule } from 'src/files/files.module';
 
 @Module({
-  imports: [AuthModule], // 🔥 SOLO IMPORTAS
+  imports: [AuthModule, FilesModule], // 🔥 SOLO IMPORTAS
   controllers: [UsersController],
   providers: [
     GetMyProfileUseCase,
     UpdateMyProfileUseCase,
+    UpdateUserAvatarUseCase,
     {
       provide: USER_REPOSITORY,
       useClass: DrizzleUserRepository,

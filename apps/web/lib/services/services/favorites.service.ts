@@ -8,4 +8,13 @@ export const favoritesService = {
       { method: 'POST' }
     );
   },
+  async listForMe() {
+    return api<Array<{
+      id: string;
+      name: string;
+      coverImageUrl: string | null;
+      city: string | null;
+      monthlyPrice: number | null;
+    }>>('/schools/favorites');
+  },
 };

@@ -11,7 +11,8 @@ export default function ParentsNavbar(): JSX.Element {
     // TODO: replace with real sign-out
     router.push('/');
   };
-  const isFavorites = pathname?.startsWith('/parents/favorites');
+  const isSearch = pathname === '/parents';
+  const isOtherSection = pathname?.startsWith('/parents/') && pathname !== '/parents';
 
   return (
     <div className="sticky top-0 z-50">
@@ -31,20 +32,20 @@ export default function ParentsNavbar(): JSX.Element {
               <Link
                 href="/parents"
                 className={`flex h-8 w-10 sm:h-9 sm:w-12 items-center justify-center rounded-xl transition-colors ${
-                  !isFavorites ? 'bg-white text-indigo-600 shadow' : 'text-slate-500 hover:text-slate-700'
+                  isSearch ? 'bg-white shadow' : 'hover:bg-slate-50'
                 } focus:outline-none focus:ring-0`}
                 aria-label="Buscar"
               >
-                <Search size={18} />
+                <Search size={18} className={isSearch ? 'text-indigo-600' : 'text-slate-500'} />
               </Link>
               <Link
                 href="/parents/favorites"
                 className={`ml-1 flex h-8 w-10 sm:h-9 sm:w-12 items-center justify-center rounded-xl transition-colors ${
-                  isFavorites ? 'bg-white text-rose-600 shadow' : 'text-slate-500 hover:text-slate-700'
+                  isOtherSection ? 'bg-white shadow' : 'hover:bg-slate-50'
                 } focus:outline-none focus:ring-0`}
                 aria-label="Favoritos"
               >
-                <Heart size={18} />
+                <Heart size={18} className={isOtherSection ? 'text-rose-600' : 'text-rose-500'} />
               </Link>
             </div>
           </div>

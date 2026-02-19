@@ -17,7 +17,7 @@ type CatalogCardProps = {
 	onAction?: () => void; // fallback when href isn't provided
 	onCardClick?: () => void; // click on the whole card
 	isFavorite?: boolean;
-	onFavoriteToggle?: () => void;
+	onFavoriteToggle?: (e?: React.MouseEvent) => void;
 	className?: string;
 };
 
@@ -82,10 +82,13 @@ export default function CatalogCard({
 				{/* Favorite button */}
 				<button
 					aria-label={isFavorite ? "Quitar de favoritos" : "Agregar a favoritos"}
-					onClick={onFavoriteToggle}
-					className="absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-full bg-white text-slate-700 shadow-sm"
+					onClick={(e) => {
+						e.stopPropagation();
+						onFavoriteToggle?.(e);
+					}}
+					className="absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-full bg-white text-slate-700 shadow-sm transition-colors hover:bg-slate-50"
 				>
-					<Heart className={`h-5 w-5 ${isFavorite ? "fill-current" : ""}`} />
+					<Heart className={`h-5 w-5 ${isFavorite ? "fill-current text-red-500" : ""}`} />
 				</button>
 			</div>
 

@@ -12,6 +12,7 @@ export interface SchoolNode {
   averageRating: number;
   favoritesCount: number;
   isVerified: boolean;
+  monthlyPrice?: number | null;
 }
 
 export interface SchoolEdge {
@@ -62,6 +63,7 @@ export const schoolsFeedService = {
               averageRating
               favoritesCount
               isVerified
+              monthlyPrice
             }
             cursor
           }
