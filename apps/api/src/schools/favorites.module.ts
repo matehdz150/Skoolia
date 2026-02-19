@@ -7,9 +7,10 @@ import { FavoritesController } from './application/favorites.controller';
 import { DrizzleFavoritesRepository } from './infrastructure/adapters/drizzle-favorites.repository';
 import { FAVORITES_REPOSITORY } from './core/ports/tokens';
 import { Module } from '@nestjs/common';
+import { SchoolsModule } from './schools.module';
 
 @Module({
-  imports: [DbModule, AuthModule],
+  imports: [DbModule, AuthModule, SchoolsModule],
   controllers: [FavoritesController],
   providers: [
     AddFavoriteUseCase,

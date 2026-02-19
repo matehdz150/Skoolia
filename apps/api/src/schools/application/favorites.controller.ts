@@ -15,7 +15,7 @@ import type { JwtPayload } from 'src/auth/core/types/jwt-payload';
 import { ToggleFavoriteUseCase } from '../core/use-cases/toggle-favorite.use-case';
 import { ListFavoritesUseCase } from '../core/use-cases/list-favorites.use-case';
 
-@Controller('schools')
+@Controller('favorites')
 export class FavoritesController {
   constructor(
     @Inject(ToggleFavoriteUseCase)
@@ -29,13 +29,13 @@ export class FavoritesController {
    * ❤️ Toggle favorite
    * POST /schools/:id/favorite
    */
-  @Post(':id/favorite')
+  @Post(':id')
   @UseGuards(AuthGuard)
   async toggle(@Param('id') schoolId: string, @CurrentUser() user: JwtPayload) {
     return this.toggleFavoriteUseCase.execute(user, schoolId);
   }
 
-  @Get('favorites')
+  @Get('')
   @UseGuards(AuthGuard)
   async getFavorites(@CurrentUser() user: JwtPayload) {
     return this.listFavorites.execute(user);
