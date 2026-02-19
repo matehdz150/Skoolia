@@ -11,6 +11,7 @@ import {
 } from 'drizzle-orm/pg-core';
 
 import { schools } from '../schools/school';
+import { files } from '../files';
 
 /**
  * ENUM → Course status
@@ -36,7 +37,9 @@ export const courses = pgTable(
 
     description: text('description'),
 
-    coverImageUrl: text('cover_image_url'),
+    coverImageUrl: uuid('cover_image_url').references(() => files.id, {
+      onDelete: 'set null',
+    }),
 
     // 💰 pricing
     price: integer('price').notNull().default(0),

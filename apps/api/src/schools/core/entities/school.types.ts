@@ -35,3 +35,5 @@ export interface School {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export type SchoolImageField = 'logoUrl' | 'coverImageUrl';

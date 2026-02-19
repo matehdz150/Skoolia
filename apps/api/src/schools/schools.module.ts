@@ -8,17 +8,14 @@ import { GetSchoolByIdUseCase } from './core/use-cases/get-school-by-id.use-case
 import { DrizzleSchoolRepository } from './infrastructure/adapters/drizzle-school.repository';
 import { SchoolsController } from './application/schools.controller';
 import { DbModule } from 'src/db/db.module';
-import { Module, forwardRef } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { SchoolsFeedResolver } from './application/graphql/school-feed.resolver';
 import { ListSchoolsFeedUseCase } from './core/use-cases/list-schools.use-case';
-import { FavoritesModule } from './favorites.module';
+import { UpdateSchoolImageUseCase } from './core/use-cases/UpdateSchooImage.use-case';
+import { FilesModule } from 'src/files/files.module';
 
 @Module({
-  imports: [
-    DbModule, 
-    AuthModule,
-    forwardRef(() => FavoritesModule),
-  ],
+  imports: [DbModule, AuthModule, FilesModule],
   controllers: [SchoolsController],
   providers: [
     CreateSchoolUseCase,
@@ -29,6 +26,7 @@ import { FavoritesModule } from './favorites.module';
     DrizzleSchoolRepository,
     SchoolsFeedResolver,
     ListSchoolsFeedUseCase,
+    UpdateSchoolImageUseCase,
     {
       provide: SCHOOL_REPOSITORY,
       useClass: DrizzleSchoolRepository,

@@ -10,6 +10,7 @@ import {
   boolean,
 } from 'drizzle-orm/pg-core';
 import { privateUsers } from '../users/private-users';
+import { files } from '../files';
 
 export const schools = pgTable(
   'schools',
@@ -20,8 +21,12 @@ export const schools = pgTable(
     description: text('description'),
 
     // 🖼 imágenes
-    logoUrl: text('logo_url'),
-    coverImageUrl: text('cover_image_url'),
+    logoUrl: uuid('logo_url').references(() => files.id, {
+      onDelete: 'set null',
+    }),
+    coverImageUrl: uuid('cover_image_url').references(() => files.id, {
+      onDelete: 'set null',
+    }),
 
     // 📍 ubicación
     address: text('address'),

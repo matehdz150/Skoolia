@@ -6,21 +6,17 @@ import { AuthModule } from 'src/auth/auth.module';
 import { FavoritesController } from './application/favorites.controller';
 import { DrizzleFavoritesRepository } from './infrastructure/adapters/drizzle-favorites.repository';
 import { FAVORITES_REPOSITORY } from './core/ports/tokens';
-import { Module, forwardRef } from '@nestjs/common';
-import { SchoolsModule } from './schools.module';
+import { Module } from '@nestjs/common';
 
 @Module({
-  imports: [
-    DbModule, 
-    AuthModule, 
-    forwardRef(() => SchoolsModule),
-  ],
+  imports: [DbModule, AuthModule],
   controllers: [FavoritesController],
   providers: [
     AddFavoriteUseCase,
     ToggleFavoriteUseCase,
     ListFavoritesUseCase,
     DrizzleFavoritesRepository,
+    ListFavoritesUseCase,
     {
       provide: FAVORITES_REPOSITORY,
       useClass: DrizzleFavoritesRepository,

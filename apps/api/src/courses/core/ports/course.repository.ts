@@ -31,5 +31,19 @@ export interface CourseRepository {
 
   findById(id: string): Promise<Course | null>;
 
+  findRawById(courseId: string): Promise<{
+    id: string;
+    schoolId: string;
+    coverImageFileId: string | null;
+  } | null>;
+
+  updateImageAtomic(params: {
+    courseId: string;
+    ownerId: string;
+    newFileId: string;
+  }): Promise<{
+    oldFileId: string | null;
+  }>;
+
   softDelete(courseId: string): Promise<void>;
 }
