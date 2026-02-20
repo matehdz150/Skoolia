@@ -1,0 +1,10 @@
+import React from 'react'
+import Navbar from '@/components/layout/Navbar'
+
+export default function DonePage() {
+  return (
+    <div>
+      <Navbar/>
+    </div>
+  )
+}

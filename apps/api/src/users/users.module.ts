@@ -13,7 +13,7 @@ import { FilesModule } from 'src/files/files.module';
 import { SchoolsModule } from 'src/schools/schools.module';
 
 @Module({
-  imports: [AuthModule, FilesModule, SchoolsModule], // 🔥 SOLO IMPORTAS
+  imports: [AuthModule, FilesModule, SchoolsModule],
   controllers: [UsersController],
   providers: [
     GetMyProfileUseCase,
