@@ -8,10 +8,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { EducationInput } from "../parents/EducationInput";
 import { CityInput } from "../parents/CityInput";
 import { AISearchMode } from "../parents/IASearchMode";
+import GradientMagicButton from "./GradientMagicButton";
 
 export default function SearchBar() {
-  const [activeTab, setActiveTab] =
-    useState<"escuelas" | "cursos">("escuelas");
+  const [activeTab, setActiveTab] = useState<"escuelas" | "cursos">("escuelas");
 
   const [query, setQuery] = useState("");
   const [city, setCity] = useState("");
@@ -22,7 +22,6 @@ export default function SearchBar() {
 
   return (
     <div className="w-full px-30 flex flex-col items-center gap-4">
-
       {/* TABS */}
       {!aiMode && (
         <div className="w-full max-w-5xl flex items-center mb-2">
@@ -53,7 +52,6 @@ export default function SearchBar() {
 
       {/* ANIMATED SWITCH */}
       <AnimatePresence mode="wait">
-
         {!aiMode ? (
           /* ================= NORMAL SEARCH ================= */
           <motion.div
@@ -66,7 +64,6 @@ export default function SearchBar() {
           >
             <div className="w-full max-w-5xl mx-auto bg-[#f3f3f3] rounded-full px-6 sm:px-8 py-3 flex flex-col gap-4">
               <div className="flex w-full flex-col md:flex-row md:items-center">
-
                 <EducationInput value={query} onChange={setQuery} />
 
                 <div className="hidden md:block w-0.5 h-8 bg-[#d9d9d9] mx-3" />
@@ -102,43 +99,32 @@ export default function SearchBar() {
 
             {/* IA BUTTON */}
             <div className="flex flex-col items-center gap-4">
-              <motion.button
-                onClick={() => setAiMode(true)}
-                initial={false}
-                whileHover={{
-                  background:
-                    "linear-gradient(90deg, #333331 0%, #1973FC 100%)",
-                }}
-                transition={{ duration: 0.4 }}
-                className="relative flex items-center gap-3 text-white font-medium px-4 py-2 rounded-full text-base shadow-md overflow-hidden"
-                style={{ background: "#333331" }}
-              >
+              <GradientMagicButton onClick={() => setAiMode(true)}>
                 <SparkleIcon size={16} />
                 Buscar con IA
-              </motion.button>
+              </GradientMagicButton>
 
               <div className="flex flex-wrap items-center justify-center gap-3 text-sm text-neutral-700">
-                <span className="font-medium">
-                  Búsquedas populares:
-                </span>
+                <span className="font-medium">Búsquedas populares:</span>
 
-                {["Primaria bilingüe", "Secundaria en CDMX", "Universidad privada"].map(
-                  (item, index) => (
-                    <button
-                      key={index}
-                      className="px-3 py-1 bg-[#f3f3f3] hover:bg-neutral-300 rounded-full text-xs text-neutral-800 transition"
-                    >
-                      {item}
-                    </button>
-                  )
-                )}
+                {[
+                  "Primaria bilingüe",
+                  "Secundaria en CDMX",
+                  "Universidad privada",
+                ].map((item, index) => (
+                  <button
+                    key={index}
+                    className="px-3 py-1 bg-[#f3f3f3] hover:bg-neutral-300 rounded-full text-xs text-neutral-800 transition"
+                  >
+                    {item}
+                  </button>
+                ))}
               </div>
             </div>
           </motion.div>
         ) : (
           <AISearchMode onClose={() => setAiMode(false)} />
         )}
-
       </AnimatePresence>
     </div>
   );
