@@ -12,7 +12,7 @@ import Link from "next/link";
 export default function CategoriesSection() {
   return (
     <section className=" w-full  px-6 py-0 bg-[#ff6253]">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch lg:min-h-150 py-10 px-10">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch lg:min-h-170 py-10 px-10">
         {/* LEFT CARD */}
         <div className="relative overflow-hidden rounded-[32px] bg-white p-10 flex flex-col justify-between">
           <div>
