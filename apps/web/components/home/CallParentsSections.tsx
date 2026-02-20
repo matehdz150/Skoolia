@@ -1,33 +1,41 @@
 "use client";
+
 import Link from "next/link";
 
 export default function CallParentsSections() {
-	return (
-		<section aria-label="Invitación para padres" className="w-full">
-			<div className="max-w-6xl mx-auto px-8">
-				<div className="rounded-4xl bg-linear-to-br from-indigo-900 via-indigo-950 to-slate-900 text-white shadow-xl overflow-hidden">
-					<div className="px-10 sm:px-16 py-16 sm:py-24 text-center flex flex-col items-center">
-						<h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
-							<span className="block">Empieza a planear su futuro</span>
-							<span className="block text-transparent bg-clip-text bg-linear-to-r from-indigo-400 to-violet-400 mt-2">hoy mismo.</span>
-						</h2>
+  return (
+    <section className="relative overflow-hidden bg-white py-24">
+      <div className="relative z-10 max-w-6xl mx-auto px-6 text-center flex flex-col items-center">
 
-						<div className="mt-10">
-							<Link
-								href="/signup"
-								className="inline-flex items-center justify-center px-8 py-4 rounded-full bg-white text-indigo-700 font-bold shadow-lg hover:shadow-xl hover:scale-[1.03] transition-all duration-200"
-							>
-								Crear mi cuenta gratis
-							</Link>
-						</div>
+        {/* TÍTULO */}
+        <h2 className="text-4xl sm:text-6xl font-extrabold tracking-tight leading-tight text-black">
+          Empieza a planear su futuro
+          <br />
+          <span className="text-[#2D6CDF] mt-2 inline-block">
+            Hoy mismo
+          </span>
+        </h2>
 
-						<p className="mt-6 text-sm sm:text-base text-gray-300">
-							Únete a más de 5,000 familias en México.
-						</p>
-					</div>
-				</div>
-			</div>
-		</section>
-	);
+        {/* BOTÓN */}
+        <div className="mt-12">
+          <Link
+            href="/signup"
+            className="inline-flex items-center justify-center px-10 py-4 rounded-full bg-[#333331] hover:bg-[#2a2a28] text-white font-semibold text-lg shadow-lg transition-all duration-300 hover:scale-[1.03]"
+          >
+            Crear mi cuenta
+          </Link>
+        </div>
+      </div>
+
+      {/* SVG DECORATIVO PRINCIPAL */}
+      <img
+        src="/illustrations/footer.svg"
+        alt=""
+        className="pointer-events-none absolute left-0 bottom-0 w-350 max-w-none opacity-90"
+      />
+
+
+    </section>
+  );
 }
 

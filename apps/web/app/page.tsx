@@ -6,6 +6,7 @@ import CatalogSection from "@/components/home/CatalogParentsSection";
 import CallParentsSections from "@/components/home/CallParentsSections";
 import ChallengeInstitutionsSection from "@/components/home/ChallengeInstitutionsSection";
 import BussinessSections from "@/components/home/BussinessSections";
+import Footer from "@/components/home/FooterParents";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -20,13 +21,14 @@ export default async function Home({ searchParams }: { searchParams?: Promise<Se
 	return (
 		<>
 			<Navbar />
-			<main className="pt-6 md:pt-8">
+			<main className="">
 				{isParents ? (
 					<div className="space-y-10 md:space-y-14">
 						<HeroParentsSection />
-						<CategoriesSection />
 						<CatalogSection />
+						<CategoriesSection />
 						<CallParentsSections />
+						<Footer/>
 					</div>
 				) : (
 					<div className="space-y-10 md:space-y-14">

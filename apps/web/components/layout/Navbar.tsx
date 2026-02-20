@@ -41,11 +41,11 @@ export default function Navbar(): JSX.Element {
   return (
     <div className="sticky top-0 z-50">
       <nav
-        className={`w-full max-w-6xl mx-auto px-4 sm:px-8 py-3 sm:py-4 ${scrolled ? "bg-white/55 backdrop-blur-md supports-backdrop-filter:bg-white/50 supports-backdrop-filter:backdrop-blur-md shadow-lg border border-white/30" : "bg-white"} text-black rounded-4xl flex flex-wrap items-center justify-between gap-3 sm:gap-6 transition-all duration-300 outline-none`}
+        className={`w-full max-w-6xl mx-auto px-4 sm:px-8 py-3 sm:py-4 mt-5 ${scrolled ? "bg-white/55 backdrop-blur-md supports-backdrop-filter:bg-white/50 supports-backdrop-filter:backdrop-blur-md shadow-lg border border-white/30" : "bg-[#f3f3f3]"} text-black rounded-4xl flex flex-wrap items-center justify-between gap-3 sm:gap-6 transition-all duration-300 outline-none`}
       >
         {/* Logo */}
         <div className="flex items-center gap-2">
-          <div className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-indigo-600 rounded-xl shadow-indigo-200">
+          <div className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-[#1973FC] rounded-xl shadow-indigo-200">
             <GraduationCap size={28} className="text-white sm:hidden" />
             <GraduationCap size={32} className="hidden sm:block text-white" />
           </div>
@@ -61,7 +61,7 @@ export default function Navbar(): JSX.Element {
               <li>
                 <Link
                   href="/?audience=parents"
-                  className={`font-extrabold ${pathname === "/" && audience === "parents" ? "text-indigo-600" : "text-gray-400 hover:text-black"} focus:outline-none focus:ring-0`}
+                  className={`font-extrabold ${pathname === "/" && audience === "parents" ? "text-[#1973FC]" : "text-gray-400 hover:text-black"} focus:outline-none focus:ring-0`}
                 >
                   PARA PADRES
                 </Link>
@@ -69,7 +69,7 @@ export default function Navbar(): JSX.Element {
               <li>
                 <Link
                   href="/?audience=schools"
-                  className={`font-extrabold ${pathname === "/" && audience === "schools" ? "text-indigo-600" : "text-gray-400 hover:text-black"} focus:outline-none focus:ring-0`}
+                  className={`font-extrabold ${pathname === "/" && audience === "schools" ? "text-[#1973FC]" : "text-gray-400 hover:text-black"} focus:outline-none focus:ring-0`}
                 >
                   PARA ESCUELAS
                 </Link>
