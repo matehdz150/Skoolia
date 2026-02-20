@@ -10,9 +10,10 @@ import { DrizzleUserRepository } from './infrstructure/adapters/drizzle-user.rep
 import { AuthModule } from 'src/auth/auth.module';
 import { UpdateUserAvatarUseCase } from './core/use-cases/update-user-image.use-case';
 import { FilesModule } from 'src/files/files.module';
+import { SchoolsModule } from 'src/schools/schools.module';
 
 @Module({
-  imports: [AuthModule, FilesModule], // 🔥 SOLO IMPORTAS
+  imports: [AuthModule, FilesModule, SchoolsModule], // 🔥 SOLO IMPORTAS
   controllers: [UsersController],
   providers: [
     GetMyProfileUseCase,
