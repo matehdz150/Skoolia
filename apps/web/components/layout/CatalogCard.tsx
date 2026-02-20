@@ -13,6 +13,7 @@ type CatalogCardProps = {
 	location: string; // e.g., "Polanco, CDMX"
 	priceLabel?: string; // default: "MENSUALIDAD"
 	price: number | string; // e.g., 12500 or "$12,500"
+	priceFormatted: string;
 	href?: string; // destination for the action arrow
 	onAction?: () => void; // fallback when href isn't provided
 	onCardClick?: () => void; // click on the whole card
@@ -35,10 +36,9 @@ export default function CatalogCard({
 	onCardClick,
 	isFavorite = false,
 	onFavoriteToggle,
+	priceFormatted,
 	className = "",
 }: CatalogCardProps) {
-	const formattedPrice =
-		typeof price === "number" ? `$${price.toLocaleString()}` : String(price);
 
 	return (
 		<article
@@ -112,7 +112,7 @@ export default function CatalogCard({
 							{priceLabel}
 						</p>
 						<p className="mt-2 text-base md:text-lg font-extrabold text-slate-900">
-							{formattedPrice}
+							{priceFormatted}
 						</p>
 					</div>
 
