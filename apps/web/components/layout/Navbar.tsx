@@ -67,25 +67,25 @@ export default function Navbar(): JSX.Element {
             <li>
               <Link
                 href="/?audience=parents"
-                className={`font-extrabold ${
+                className={`font-medium ${
                   pathname === "/" && audience === "parents"
                     ? "text-[#1973FC]"
-                    : "text-gray-400 hover:text-black"
+                    : "text-[#2d2c2b] hover:text-black"
                 }`}
               >
-                PARA PADRES
+                Para padres
               </Link>
             </li>
             <li>
               <Link
                 href="/?audience=schools"
-                className={`font-extrabold ${
+                className={`font-medium ${
                   pathname === "/" && audience === "schools"
                     ? "text-[#1973FC]"
-                    : "text-gray-400 hover:text-black"
+                    : "text-[#2d2c2b] hover:text-black"
                 }`}
               >
-                PARA ESCUELAS
+                Para escuelas
               </Link>
             </li>
           </ul>
