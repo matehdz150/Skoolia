@@ -33,9 +33,9 @@ export default async function Home({
             <Reveal>
               <CatalogSection />
             </Reveal>
-			<Reveal>
-				<CategoriesSection />
-			</Reveal>
+            <Reveal>
+              <CategoriesSection />
+            </Reveal>
             <CallParentsSections />
             <Footer />
           </div>
