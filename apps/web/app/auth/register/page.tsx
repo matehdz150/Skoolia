@@ -6,6 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import Navbar from "@/components/layout/Navbar";
 import { LineBackground } from "@/lib/icons/LineBackground";
 import { authService } from "@/lib/services/services/auth.service";
+import { WaveVector } from "@/lib/icons/WaveVector";
 
 type Role = "public" | "private";
 
@@ -131,10 +132,10 @@ export default function RegisterPage() {
         </div>
       </div>
 
-      <LineBackground
-        className="absolute bottom-0 right-0 pointer-events-none z-0 w-300"
-        strokeWidth={20}
-      />
+      <WaveVector
+              className="absolute bottom-[-200] left-0 pointer-events-none z-0 w-400"
+              strokeWidth={24}
+            />
     </div>
   );
 }

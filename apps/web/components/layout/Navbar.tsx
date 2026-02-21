@@ -101,7 +101,6 @@ export default function Navbar(): JSX.Element {
                 onClick={() => {router.push('/auth/login')}}
                 className="px-5 py-2 text-slate-800 rounded-full font-extrabold flex items-center gap-2 hover:text-indigo-600"
               >
-                <LogIn size={16} />
                 ENTRAR
               </button>
 
@@ -124,7 +123,7 @@ export default function Navbar(): JSX.Element {
                   {displayName.charAt(0).toUpperCase()}
                 </div>
 
-                <span className="font-medium max-w-35 truncate">
+                <span className="font-medium max-w-35 truncate text-base">
                   {displayName}
                 </span>
 
