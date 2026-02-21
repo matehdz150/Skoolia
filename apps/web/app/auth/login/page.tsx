@@ -1,97 +1,113 @@
 "use client";
 
-import { useState } from "react";
-import { Input } from "@/components/ui/input";
-import { useAuth } from "@/contexts/AuthContext";
-import Navbar from "@/components/layout/Navbar";
-import { authService } from "@/lib/services/services/auth.service";
-import { WaveVector } from "@/lib/icons/WaveVector";
+import { LineBackground } from "@/lib/icons/LineBackground";
+import { ArrowLeft, HatGlasses, School } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 
-export default function LoginPage() {
-  const { refreshUser } = useAuth();
+export default function AuthLandingPage() {
   const router = useRouter();
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  async function handleLogin() {
-    try {
-      setLoading(true);
-      setError(null);
-
-      await authService.login({
-        email,
-        password,
-      });
-
-      // backend setea cookies httponly
-      await refreshUser();
-      router.push('/parents')
-    } catch (err: unknown) {
-      console.error(err);
-      setError("Credenciales inválidas.");
-    } finally {
-      setLoading(false);
-    }
-  }
-
   return (
-    <div className="min-h-screen bg-[#f4f4f4] flex flex-col relative overflow-hidden">
-      {/* NAVBAR */}
-      <div className="pt-6 px-6">
-        <Navbar />
-      </div>
-
-      {/* CONTENIDO CENTRAL */}
-      <div className="flex-1 flex items-center justify-center px-6 pb-20 z-10">
-        <div className="w-full max-w-2xl bg-white rounded-3xl shadow-xl p-10 px-20 space-y-6">
-          <h1 className="text-2xl font-bold text-center">Iniciar sesión</h1>
-
-          {/* FORM */}
-          <div className="space-y-4">
-            <Input
-              placeholder="Correo electrónico"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="h-14 rounded-full bg-[#f3f3f3] border-0 px-6 focus-visible:ring-2 focus-visible:ring-[#1973FC]"
-            />
-
-            <Input
-              type="password"
-              placeholder="Contraseña"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="h-14 rounded-full bg-[#f3f3f3] border-0 px-6 focus-visible:ring-2 focus-visible:ring-[#1973FC]"
-            />
-          </div>
-
-          {error && <p className="text-sm text-red-500 text-center">{error}</p>}
-
-          {/* LOGIN BUTTON */}
-          <button
-            onClick={handleLogin}
-            disabled={loading}
-            className="w-full h-14 rounded-full bg-linear-to-r from-[#2A6EE8] to-[#1973FC] text-white font-semibold hover:opacity-90 transition disabled:opacity-50"
+    <div className="min-h-screen flex flex-col lg:flex-row">
+      {/* LEFT 40% */}
+      <div className="lg:basis-[50%] w-full bg-white relative flex flex-col">
+        {/* Back Button */}
+        <div className="p-6">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-black hover:opacity-70 transition"
           >
-            {loading ? "Cargando..." : "Entrar"}
-          </button>
+            <ArrowLeft size={20} />
+          </Link>
+        </div>
 
-          {/* GOOGLE BUTTON */}
-          <button className="w-full h-14 rounded-full bg-[#f3f3f3] flex items-center justify-center gap-3 font-medium hover:bg-[#eaeaea] transition">
-            <img
-              src="https://www.svgrepo.com/show/475656/google-color.svg"
-              alt="Google"
-              className="w-5 h-5"
-            />
-            Continuar con Google
-          </button>
+        {/* Content */}
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: {},
+            visible: {
+              transition: {
+                staggerChildren: 0.15,
+              },
+            },
+          }}
+          className="flex-1 flex flex-col px-10 lg:px-20 space-y-0 py-6 z-3"
+        >
+          <motion.h1
+            variants={{
+              hidden: { opacity: 0, y: 30 },
+              visible: { opacity: 1, y: 0 },
+            }}
+            transition={{ duration: 0.6 }}
+            className="text-3xl font-semibold text-center lg:text-left"
+          >
+            Inicia sesión
+          </motion.h1>
 
-          {/* LINK A REGISTER */}
-          <p className="text-center text-sm text-gray-500">
+          <motion.p
+            variants={{
+              hidden: { opacity: 0, y: 30 },
+              visible: { opacity: 1, y: 0 },
+            }}
+            transition={{ duration: 0.6 }}
+            className="text-xl font-light"
+          >
+            Elige una opcion para iniciar sesion
+          </motion.p>
+
+          {/* Option 1 */}
+          <motion.button
+            variants={{
+              hidden: { opacity: 0, y: 40 },
+              visible: { opacity: 1, y: 0 },
+            }}
+            transition={{ duration: 0.6 }}
+            className="w-full border border-black bg-white rounded-2xl p-6 text-left  transition mt-6"
+            onClick={() => {
+              router.push("login/parents");
+            }}
+          >
+            <div className="flex gap-2">
+              <HatGlasses />
+              <p className="font-semibold">Skoolia para padres</p>
+            </div>
+            <p className="text-sm text-gray-600">
+              Encuentra la mejor opción para tus hijos
+            </p>
+          </motion.button>
+
+          {/* Option 2 */}
+          <motion.button
+            variants={{
+              hidden: { opacity: 0, y: 40 },
+              visible: { opacity: 1, y: 0 },
+            }}
+            transition={{ duration: 0.6 }}
+            className="w-full border border-black bg-white rounded-2xl p-6 text-left hover:bg-white transition flex justify-between items-center mt-6"
+          >
+            <div>
+              <div className="flex gap-2">
+                <School />
+                <p className="font-semibold">Skoolia para Escuelas</p>
+              </div>
+              <p className="text-sm text-gray-600">
+                Gestiona el proceso de admisión eficientemente
+              </p>
+            </div>
+            <span className="text-xl">→</span>
+          </motion.button>
+
+          <motion.p
+            variants={{
+              hidden: { opacity: 0, y: 20 },
+              visible: { opacity: 1, y: 0 },
+            }}
+            transition={{ duration: 0.6 }}
+            className="text-sm text-gray-500 pt-3"
+          >
             ¿No tienes cuenta?{" "}
             <Link
               href="/auth/register"
@@ -99,13 +115,43 @@ export default function LoginPage() {
             >
               Crear cuenta
             </Link>
+          </motion.p>
+        </motion.div>
+      </div>
+
+      {/* RIGHT 60% */}
+      <div className="lg:basis-[50%] w-full relative bg-gray-200 overflow-hidden">
+        {/* Aquí va tu imagen */}
+        <div className="absolute inset-0">
+          {/* Imagen */}
+          <img
+            alt="img"
+            src="https://plus.unsplash.com/premium_photo-1671070290623-d6f76bdbb3db?q=80&w=1036&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            className="w-full h-full object-cover z-1"
+          />
+
+          {/* Overlay negro 25% */}
+          <div className="absolute inset-0 bg-black/25 z-3" />
+        </div>
+
+        {/* Overlay content */}
+        <div className="absolute bottom-10 left-10 text-white max-w-lg z-4">
+          <h2 className="text-4xl font-bold">Conecta con Familias</h2>
+          <p className="mt-3 text-xl text-white/80">
+            Recibe leads calificados de padres <br />
+            interesados en tu institución
           </p>
         </div>
       </div>
 
-      <WaveVector
-        className="absolute bottom-0 left-0 pointer-events-none z-0 w-400"
-        strokeWidth={10}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8, x: -100, y: 100 }}
+        animate={{ opacity: 1, scale: 1, x: 0, y: 0 }}
+        transition={{
+          duration: 1.2,
+          ease: [0.16, 1, 0.3, 1], // ease-out premium
+        }}
+        className="absolute -bottom-40 -left-80 w-[500px] h-[500px] bg-[#FFCD6C] rounded-full z-0"
       />
     </div>
   );
