@@ -1,7 +1,7 @@
 "use client";
 
 import { LineBackground } from "@/lib/icons/LineBackground";
-import { ArrowLeft, HatGlasses, School } from "lucide-react";
+import { ArrowLeft, ArrowRight, HatGlasses, School } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
@@ -58,25 +58,25 @@ export default function AuthLandingPage() {
             Elige una opcion para iniciar sesion
           </motion.p>
 
-          {/* Option 1 */}
           <motion.button
             variants={{
               hidden: { opacity: 0, y: 40 },
               visible: { opacity: 1, y: 0 },
             }}
             transition={{ duration: 0.6 }}
-            className="w-full border border-black bg-white rounded-2xl p-6 text-left  transition mt-6"
-            onClick={() => {
-              router.push("login/parents");
-            }}
+            className="w-full border border-black bg-white rounded-2xl p-6 text-left hover:bg-white transition flex justify-between items-center mt-6"
+            onClick={()=>router.push('login/parents')}
           >
-            <div className="flex gap-2">
-              <HatGlasses />
-              <p className="font-semibold">Skoolia para padres</p>
+            <div>
+              <div className="flex gap-2">
+                <HatGlasses />
+                <p className="font-semibold">Skoolia para padres</p>
+              </div>
+              <p className="text-sm text-gray-600">
+                Encuentra la mejor opción para tus hijos
+              </p>
             </div>
-            <p className="text-sm text-gray-600">
-              Encuentra la mejor opción para tus hijos
-            </p>
+            <ArrowRight/>
           </motion.button>
 
           {/* Option 2 */}
@@ -97,7 +97,7 @@ export default function AuthLandingPage() {
                 Gestiona el proceso de admisión eficientemente
               </p>
             </div>
-            <span className="text-xl">→</span>
+            <ArrowRight/>
           </motion.button>
 
           <motion.p
