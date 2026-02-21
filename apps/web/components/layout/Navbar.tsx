@@ -133,7 +133,7 @@ export default function Navbar(): JSX.Element {
               {dropdownOpen && (
                 <div className="absolute right-0 mt-3 w-56 bg-white shadow-xl rounded-2xl p-2 border">
                   <Link
-                    href="/dashboard"
+                    href="/parents/favorites"
                     className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 rounded-lg text-sm"
                   >
                     <LayoutDashboard size={16} />
