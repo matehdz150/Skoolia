@@ -6,7 +6,6 @@ import StudentSection from '@/components/parents/StudentSection';
 export default function ParentsSettingsPage() {
   return (
     <>
-    <ParentsNavbar />
     <main className="mx-auto w-full max-w-6xl px-6 py-8">
       <ParentProfileHeader />
 
