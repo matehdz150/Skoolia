@@ -7,6 +7,7 @@ import Navbar from "@/components/layout/Navbar";
 import { LineBackground } from "@/lib/icons/LineBackground";
 import { authService } from "@/lib/services/services/auth.service";
 import { WaveVector } from "@/lib/icons/WaveVector";
+import Link from "next/link";
 
 type Role = "public" | "private";
 
@@ -19,6 +20,7 @@ export default function RegisterPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   async function handleRegister() {
     try {
@@ -44,19 +46,67 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f4f4f4] flex flex-col relative overflow-hidden">
-      {/* NAVBAR */}
-      <div className="pt-6 px-6">
-        <Navbar />
-      </div>
+  <div className="min-h-screen bg-white flex flex-col relative overflow-hidden">
+    
+    {/* NAVBAR */}
+    <div className="pt-0 px-6">
+      <Navbar />
+    </div>
 
-      {/* CONTENIDO CENTRAL */}
-      <div className="flex-1 flex items-center justify-center px-6 pb-20 z-10" >
-        <div className="w-full max-w-2xl bg-white rounded-3xl shadow-xl p-10 space-y-6 px-20">
-          <h1 className="text-2xl font-bold text-center">Crear cuenta</h1>
+    {/* CONTENIDO CENTRAL */}
+    <div className="flex-1 flex items-center justify-center px-20 pb-20 mt-10 relative z-10">
+      
+      <div className="w-full max-w-7xl grid md:grid-cols-[550px_minmax(0,1fr)] gap-20 items-start">
+        
+        {/* ===== LEFT SIDE (FIJO) ===== */}
+        <div className="w-[550px] min-h-100 bg-transparent rounded-3xl p-10 shrink-0 ml-20">
+          <h1 className="text-2xl font-semibold">
+            Únete a la experiencia
+          </h1>
+
+          <div className="flex gap-2 mt-1">
+            <h1 className="text-2xl font-semibold">Skoolia</h1>
+            <span className="text-2xl font-semibold text-[#1973FC]">
+              Gratuitamente hoy mismo
+            </span>
+          </div>
+
+          <h2 className="font-semibold mt-3">
+            La plataforma líder para buscar escuelas en México
+          </h2>
+
+          <span className="font-normal mt-1 block">
+            Registro gratuito y sin compromisos
+          </span>
+
+          <div className="mt-6">
+            <img
+              src="/illustrations/statsregister.svg"
+              alt=""
+              className="w-80"
+            />
+          </div>
+        </div>
+
+        {/* ===== RIGHT SIDE (REGISTER CARD) ===== */}
+        <div className="w-full max-w-lg min-h-[600px] bg-white rounded-3xl p-10 space-y-6 border border-black/5 relative z-10">
+          
+          <h1 className="text-2xl font-bold text-center">
+            Crear cuenta
+          </h1>
+
+          <div className="flex gap-1 justify-center">
+            <p className="text-base">¿Ya tienes una cuenta?</p>
+            <Link
+              href="/auth/login"
+              className="text-[#1973FC] underline"
+            >
+              Inicia sesión
+            </Link>
+          </div>
 
           {/* ROLE TOGGLE */}
-          <div className="w-full max-w-md mx-auto">
+          <div className="w-full max-w-xs mx-auto">
             <div className="flex bg-[#efefef] rounded-full p-1">
               <button
                 onClick={() => setRole("public")}
@@ -107,9 +157,44 @@ export default function RegisterPage() {
               onChange={(e) => setPassword(e.target.value)}
               className="h-14 rounded-full bg-[#f3f3f3] border-0 px-6 focus-visible:ring-2 focus-visible:ring-[#1973FC]"
             />
+
+            {/* TERMS */}
+            <div className="flex items-start gap-3">
+              <input
+                type="checkbox"
+                id="terms"
+                checked={acceptedTerms}
+                onChange={(e) => setAcceptedTerms(e.target.checked)}
+                className="mt-1 h-5 w-5 rounded-md border border-black accent-[#1973FC] cursor-pointer"
+              />
+
+              <label
+                htmlFor="terms"
+                className="text-base text-[#2D2C2B] leading-tight"
+              >
+                Acepto los{" "}
+                <Link
+                  href="/terminos"
+                  className="text-[#1973FC] underline hover:opacity-80"
+                >
+                  Términos y condiciones
+                </Link>{" "}
+                y el{" "}
+                <Link
+                  href="/privacidad"
+                  className="text-[#1973FC] underline hover:opacity-80"
+                >
+                  Aviso de privacidad
+                </Link>
+              </label>
+            </div>
           </div>
 
-          {error && <p className="text-sm text-red-500 text-center">{error}</p>}
+          {error && (
+            <p className="text-sm text-red-500 text-center">
+              {error}
+            </p>
+          )}
 
           {/* REGISTER BUTTON */}
           <button
@@ -131,11 +216,14 @@ export default function RegisterPage() {
           </button>
         </div>
       </div>
-
-      <WaveVector
-              className="absolute bottom-[-200] left-0 pointer-events-none z-0 w-400"
-              strokeWidth={24}
-            />
     </div>
-  );
+
+    {/* VECTOR FIJO ABAJO */}
+    <img
+      src="/illustrations/registervector.svg"
+      alt=""
+      className="fixed bottom-[-50] left-0 w-380 pointer-events-none z-0"
+    />
+  </div>
+);
 }
