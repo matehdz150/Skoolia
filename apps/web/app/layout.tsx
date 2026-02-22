@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Inter } from "next/font/google";
+import { Geist, Geist_Mono, Inter, Arimo } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
 
@@ -18,6 +18,8 @@ const inter = Inter({
   variable: "--font-inter", // opcional pero recomendado
   display: "swap",
 });
+
+
 
 export const metadata: Metadata = {
 	title: "Create Next App",

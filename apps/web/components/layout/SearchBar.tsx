@@ -21,10 +21,10 @@ export default function SearchBar() {
   const router = useRouter();
 
   return (
-    <div className="w-full px-30 flex flex-col items-center gap-4">
+    <div className="w-full px-30 flex flex-col items-center gap-2">
       {/* TABS */}
       {!aiMode && (
-        <div className="w-full max-w-5xl flex items-center mb-2">
+        <div className="w-full max-w-5xl flex items-center mb-1">
           <div className="flex bg-[#eeeff1] rounded-full p-1 gap-2">
             <button
               className={`px-6 py-2 rounded-full font-bold text-sm transition ${
@@ -34,7 +34,7 @@ export default function SearchBar() {
               }`}
               onClick={() => setActiveTab("escuelas")}
             >
-              ESCUELAS
+              Ecuelas
             </button>
             <button
               className={`px-6 py-2 rounded-full font-bold text-sm transition ${
@@ -44,7 +44,7 @@ export default function SearchBar() {
               }`}
               onClick={() => setActiveTab("cursos")}
             >
-              CURSOS
+              Cursos
             </button>
           </div>
         </div>
@@ -90,7 +90,7 @@ export default function SearchBar() {
                       router.push("/?loginPrompt=1");
                     }
                   }}
-                  className="flex items-center justify-center bg-black hover:bg-[#1666e3] text-white font-bold px-8 py-3 rounded-full transition text-base md:ml-4 w-full md:w-auto"
+                  className="flex items-center justify-center bg-[#2d2c2b] hover:bg-[#1666e3] text-white font-bold px-8 py-3 rounded-full transition text-base md:ml-4 w-full md:w-auto"
                 >
                   <Search strokeWidth={3} size={20} />
                 </button>
@@ -101,7 +101,7 @@ export default function SearchBar() {
             <div className="flex flex-col items-center gap-4">
               <GradientMagicButton onClick={() => setAiMode(true)}>
                 <SparkleIcon size={16} />
-                Buscar con IA
+                <span className="font-semibold">Buscar con IA</span>
               </GradientMagicButton>
 
               <div className="flex flex-wrap items-center justify-center gap-3 text-sm text-neutral-700">

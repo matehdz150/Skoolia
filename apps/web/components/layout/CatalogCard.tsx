@@ -43,7 +43,7 @@ export default function CatalogCard({
 	return (
 		<article
 			onClick={onCardClick}
-			className={`surface group overflow-hidden rounded-4xl bg-white transition-all duration-300 ${onCardClick ? 'cursor-pointer hover:-translate-y-0.5 hover:shadow-lg' : 'hover:-translate-y-0.5 hover:shadow-lg'} ${className}`}
+			className={`surface group overflow-hidden rounded-4xl bg-[#f9f4f2] transition-all duration-300 ${onCardClick ? 'cursor-pointer hover:-translate-y-0.5 hover:shadow-lg' : 'hover:-translate-y-0.5 hover:shadow-lg'} ${className}`}
 		>
 			{/* Media */}
 			<div className="relative h-48 sm:h-56 md:h-64 w-full">

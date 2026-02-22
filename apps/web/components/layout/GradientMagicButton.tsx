@@ -19,19 +19,19 @@ export default function GradientMagicButton({ children, onClick }: Props) {
       }}
       whileHover={{ scale: 1.03 }} // más sutil
       whileTap={{ scale: 0.98 }}
-      className="relative flex items-center gap-3 text-white font-medium px-6 py-3 rounded-full text-base shadow-md overflow-hidden cursor-pointer"
+      className="relative flex items-center gap-3 text-white font-medium px-6 py-2 rounded-full text-base shadow-md overflow-hidden cursor-pointer"
       style={{
-        backgroundImage: `
-          linear-gradient(
-            90deg,
-            #5227FF,
-            #FF9FFC,
-            #B19EEF,
-            #5227FF
-          )
-        `,
-        backgroundSize: "250% 100%", // menos dramático
-      }}
+  backgroundImage: `
+    linear-gradient(
+      90deg,
+      #000000,
+      #1a1a1a,
+      #2a2a2a,
+      #000000
+    )
+  `,
+  backgroundSize: "250% 100%",
+}}
     >
       {children}
     </motion.button>

@@ -1,88 +1,81 @@
-import {
-  ArrowRight,
-  BookOpen,
-  GraduationCap,
-  Rocket,
-  Sparkles,
-  Star,
-  Trophy,
-} from "lucide-react";
-import Link from "next/link";
+import { WaveVector } from "@/lib/icons/WaveVector";
+import { Star } from "lucide-react";
+import Testimonials3Cards from "./TestimonialSection";
+import TestimonialsSection from "./TestimonialSection";
 
 export default function CategoriesSection() {
   return (
-    <section className=" w-full  px-6 py-0 bg-[#ff6253]">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch lg:min-h-170 py-10 px-10">
-        {/* LEFT CARD */}
-        <div className="relative overflow-hidden rounded-[32px] bg-white p-10 flex flex-col justify-between">
-          <div>
-            <h2 className="text-3xl sm:text-4xl font-extrabold leading-tight text-neutral-900">
-              Preparando para la escuela.
-              <br />
-              Enseñando a contar,
-              <br />
-              leer y pensar.
-            </h2>
+    <section className="w-full px-6 py-16 relative ">
+       <h2 className="text-5xl md:text-6xl font-bold text-[#2D2C2B] text-center">
+        Nuestros miembros <br /> ya disfrutan
+      </h2>
+      <img
+              src="/illustrations/membersection.svg"
+              alt="svg"
+              className="absolute top-[-220] left-[-10]  z-0 h-200"
+            />
+      <div className="max-w-7xl mx-auto mt-10">
+        {/* CONTENEDOR UNIFICADO */}
+        <div className="grid grid-cols-1 lg:grid-cols-[40%_60%] overflow-hidden rounded-3xl min-h-175">
+          {/* LEFT SIDE */}
+          <div className="relative bg-[#1973FC] p-12 flex flex-col justify-center">
+            <div>
+              <h2 className="text-4xl sm:text-4xl font-bold leading-tight text-white no">
+                Resultados comprobados
+                <br />
+                mas de 15,000 familias,
+                <br />
+                confían en Skoolia.
+              </h2>
 
-            <p className="mt-6 text-neutral-600 max-w-md">
-              Despierta el amor por el aprendizaje en tu hijo. Agenda tu primera
-              cita con nosotros.
-            </p>
-          </div>
+              <p className="mt-2 text-white max-w-xl text-2xl font-light">
+                85% Aumento promedio en consultas
+                <br />
+                Mas de 500 escuelas registradas.
+              </p>
+            </div>
 
-          {/* Decorative line SVG */}
-          <img
-            src="/illustrations/line.svg"
-            alt=""
-            className="absolute bottom-25 left-50 w-224 opacity-90 pointer-events-none"
-          />
-
-          {/* CTA */}
-          <div className="mt-12 flex items-center gap-4">
-            <button className="flex-1 bg-[#111827] hover:bg-[#0f172a] text-white font-semibold py-4 rounded-full transition">
-              Agendar cita
-            </button>
-
-            <div className="h-14 w-14 flex items-center justify-center rounded-full bg-[#111827] text-white">
-              <Star className="h-5 w-5" />
+            {/* CTA */}
+            <div className="mt-6 flex items-center gap-4">
+              <button className="flex bg-white hover:bg-[#0f172a] text-black font-semibold py-3 rounded-full transition px-10">
+                Unete a Skoolia
+              </button>
             </div>
           </div>
-        </div>
 
-        {/* RIGHT IMAGE */}
-        <div className="relative overflow-hidden rounded-[32px]">
-          <img
-            src="https://plus.unsplash.com/premium_photo-1680807869780-e0876a6f3cd5?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            alt="Niños aprendiendo"
-            className="w-full h-full object-cover"
-          />
+          {/* RIGHT SIDE IMAGE */}
+          <div className="relative bg-[#1973FC] relative ">
+            <img
+              src="https://plus.unsplash.com/premium_photo-1664051271036-caea6900616e?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              alt="fam1"
+              className="h-77.75 rounded-2xl absolute top-15 left-20"
+            />
+            <img
+              src="/illustrations/families.svg"
+              alt="svg"
+              className="absolute top-3/12 left-[-10]  z-10 h-50"
+            />
+            <img
+              src="https://images.unsplash.com/photo-1476703993599-0035a21b17a9?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              alt="fam1"
+              className="h-40.75 rounded-2xl absolute top-30 right-20"
+            />
+            <img
+              src="https://plus.unsplash.com/premium_photo-1683887033875-4f520a0ec7e0?q=80&w=988&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              alt="fam1"
+              className="h-70.75 rounded-2xl absolute bottom-5 right-1/3"
+            />
+          </div>
         </div>
+        <div className="z-10 relative">
+          <TestimonialsSection/>
+        </div>
+        <img
+              src="/illustrations/line-1.svg"
+              alt="svg"
+              className="absolute bottom-0 left-0 h-260 z-0"
+            />
       </div>
     </section>
-  );
-}
-
-type CardProps = {
-  icon: React.ReactNode;
-  iconColor: string;
-  title: string;
-  description: string;
-};
-
-function CategoryCard({ icon, iconColor, title, description }: CardProps) {
-  return (
-    <div className="rounded-[32px] border border-black/5 bg-white px-7 py-6 shadow-sm">
-      <div className="flex items-start gap-4">
-        <div
-          className={`flex h-12 w-12 items-center justify-center rounded-2xl text-white ${iconColor}`}
-        >
-          {icon}
-        </div>
-        <div>
-          <h4 className="text-[18px] font-bold text-black">{title}</h4>
-          <p className="mt-1 text-[14px] text-gray-600">{description}</p>
-        </div>
-      </div>
-    </div>
   );
 }
