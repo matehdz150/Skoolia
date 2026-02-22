@@ -24,7 +24,7 @@ export default function Navbar(): JSX.Element {
   const searchParams = useSearchParams();
   const audience = searchParams.get("audience") ?? "parents";
 
-  const isAuthRoute = pathname?.startsWith("/auth");
+  const isAuthRoute = pathname?.includes('login');
 
   const [scrolled, setScrolled] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
@@ -94,7 +94,7 @@ export default function Navbar(): JSX.Element {
               <Link
                 href="/?audience=help"
                 className={`font-medium ${
-                  pathname === "/" && audience === "schools"
+                  pathname === "/" && audience === "help"
                     ? "text-[#1973FC]"
                     : "text-[#2d2c2b] hover:text-black"
                 }`}
