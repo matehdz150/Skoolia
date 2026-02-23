@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 import CatalogCard from "../layout/CatalogCard";
+import FavoritesEmptyState from "./FavoritesEmptyState";
 import FavoriteDetailModal from "./FavoriteDetailModal";
 import { favoritesService } from "@/lib/services/services/favorites.service";
 import { schoolsService } from "@/lib/services/services/schools.service";
@@ -86,7 +87,7 @@ export default function FavoritesGrid() {
       return <p className="text-sm text-slate-600">Cargando favoritos…</p>;
     }
     if (!items.length) {
-      return <p className="text-sm text-slate-600">Aún no tienes favoritos.</p>;
+      return <FavoritesEmptyState />;
     }
     return (
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
