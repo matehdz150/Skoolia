@@ -1,5 +1,6 @@
 import { ChevronRight, Link as LinkIcon } from 'lucide-react';
 import Link from 'next/link';
+import MessagesEmptyState from './MessagesEmptyState';
 
 type Item = {
   id: number;
@@ -11,12 +12,13 @@ type Item = {
   initial: string;
 };
 
-const items: Item[] = [
-  { id: 1, name: 'Liceo del Sol', group: 'GRUPO EDUCATIVO SOL', question: '¿Cuentan con transporte escolar?', date: '25 ENE 2026', status: 'RESPONDIDO', initial: 'L' },
-  { id: 2, name: 'Colegio Oxford', group: 'OXFORD EDUCATION GROUP', question: 'Solicitud de costos para maternal.', date: '23 ENE 2026', status: 'PENDIENTE', initial: 'C' },
-];
+const items: Item[] = [];
 
 export default function MessagesList() {
+  if (!items.length) {
+    return <MessagesEmptyState />;
+  }
+
   return (
     <section className="surface w-full rounded-4xl bg-white p-0 overflow-hidden">
       <div className="px-5 sm:px-6 py-4 sm:py-5">
