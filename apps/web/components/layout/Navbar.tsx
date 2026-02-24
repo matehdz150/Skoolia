@@ -24,7 +24,9 @@ export default function Navbar(): JSX.Element {
   const searchParams = useSearchParams();
   const audience = searchParams.get("audience") ?? "parents";
 
-  const isAuthRoute = pathname?.includes('login');
+  const isWhite =
+  pathname?.includes("login") ||
+  audience === "schools";
 
   const [scrolled, setScrolled] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
@@ -41,12 +43,12 @@ export default function Navbar(): JSX.Element {
   const displayName = user?.name ?? user?.email.split("@")[0] ?? "";
 
   return (
-    <div className="sticky top-0 z-50">
+    <div className="sticky top-0 z-50 bg-transparent pt-5">
       <nav
-        className={`w-full max-w-6xl mx-auto px-8 py-4 mt-5 ${
+        className={`w-full max-w-6xl mx-auto px-8 py-4 ${
           scrolled
             ? "bg-white/55 backdrop-blur-md shadow-lg border border-white/30"
-            : isAuthRoute
+            : isWhite
               ? "bg-white"
               : "bg-[#f3f3f3]"
         } text-black rounded-4xl flex items-center justify-between transition-all duration-300`}

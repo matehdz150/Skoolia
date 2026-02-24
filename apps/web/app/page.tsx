@@ -22,31 +22,41 @@ export default async function Home({
   const params = (await searchParams) ?? {};
   const rawAudience = params.audience;
   const audience = Array.isArray(rawAudience) ? rawAudience[0] : rawAudience;
-  const isParents = audience !== "schools"; // default to parents when undefined
+
+  const isParents = audience !== "schools";
+
+  const wrapperClass = isParents
+    ? "bg-background min-h-screen"
+    : "bg-[#f3f3f3] min-h-screen";
+
   return (
-    <>
+    <div className={wrapperClass}>
       <Navbar />
-      <main className="">
+
+      <main>
         {isParents ? (
           <div className="space-y-10 md:space-y-14">
             <HeroParentsSection />
+
             <Reveal>
               <CatalogSection />
             </Reveal>
+
             <Reveal>
               <CategoriesSection />
             </Reveal>
+
             <CallParentsSections />
             <Footer />
           </div>
         ) : (
-          <div className="space-y-10 md:space-y-14">
+          <div className="space-y-0 md:space-y-0 bg-white">
             <HeroInstitutionSection />
             <ChallengeInstitutionsSection />
             <BussinessSections />
           </div>
         )}
       </main>
-    </>
+    </div>
   );
 }
