@@ -8,6 +8,9 @@ import {
   LogOut,
   LayoutDashboard,
   User,
+  Crown,
+  Bell,
+  Heart,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -24,9 +27,7 @@ export default function Navbar(): JSX.Element {
   const searchParams = useSearchParams();
   const audience = searchParams.get("audience") ?? "parents";
 
-  const isWhite =
-  pathname?.includes("login") ||
-  audience === "schools";
+  const isWhite = pathname?.includes("login") || audience === "schools";
 
   const [scrolled, setScrolled] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
@@ -41,6 +42,7 @@ export default function Navbar(): JSX.Element {
   }, []);
 
   const displayName = user?.name ?? user?.email.split("@")[0] ?? "";
+  console.log(user, "navbar");
 
   return (
     <div className="sticky top-0 z-50 bg-transparent pt-5">
@@ -142,23 +144,61 @@ export default function Navbar(): JSX.Element {
             </button>
 
             {dropdownOpen && (
-              <div className="absolute right-0 mt-3 w-56 bg-white shadow-xl rounded-2xl p-2 border">
-                <Link
-                  href="/parents/favorites"
-                  className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 rounded-lg text-sm"
-                >
-                  <LayoutDashboard size={16} />
-                  Dashboard
-                </Link>
+              <div className="absolute right-0 mt-3 w-56 bg-white shadow-xl rounded-2xl p-2 border z-50">
+                {/* 🔹 PRIVATE MENU */}
+                {user.role === "private" && (
+                  <>
+                    <Link
+                      href="/schools"
+                      className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 rounded-lg text-sm"
+                    >
+                      <LayoutDashboard size={16} />
+                      Dashboard
+                    </Link>
 
-                <Link
-                  href="/profile"
-                  className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 rounded-lg text-sm"
-                >
-                  <User size={16} />
-                  Mi perfil
-                </Link>
+                    <Link
+                      href="/billing"
+                      className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 rounded-lg text-sm"
+                    >
+                      <Crown size={16} />
+                      Mejorar plan
+                    </Link>
 
+                    <Link
+                      href="/notifications"
+                      className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 rounded-lg text-sm"
+                    >
+                      <Bell size={16} />
+                      Notificaciones
+                    </Link>
+                  </>
+                )}
+
+                {/* 🔹 PUBLIC MENU */}
+                {user.role === "public" && (
+                  <>
+                    <Link
+                      href="/parents/favorites"
+                      className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 rounded-lg text-sm"
+                    >
+                      <Heart size={16} />
+                      Favoritos
+                    </Link>
+
+                    <Link
+                      href="/profile"
+                      className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 rounded-lg text-sm"
+                    >
+                      <User size={16} />
+                      Mi perfil
+                    </Link>
+                  </>
+                )}
+
+                {/* 🔹 Divider */}
+                <div className="my-2 h-px bg-gray-200" />
+
+                {/* 🔹 Logout (para ambos) */}
                 <button
                   onClick={logout}
                   className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 rounded-lg text-sm text-red-600 w-full text-left"
