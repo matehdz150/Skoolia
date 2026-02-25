@@ -13,6 +13,7 @@ interface OnboardingState {
   step: OnboardingStep;
 
   data: {
+    schoolId?: string;
     schoolName: string;
     website: string;
 
@@ -92,6 +93,7 @@ const initialState: OnboardingState = {
   step: 1,
 
   data: {
+    schoolId: undefined,
     schoolName: "",
     website: "",
 

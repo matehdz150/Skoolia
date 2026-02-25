@@ -23,46 +23,69 @@ export default function Step1() {
         añadir la razón social.
       </p>
 
-      <div className="space-y-3">
-        <Label className="text-lg font-bold">Nombre de la escuela</Label>
-        <Input
-          value={state.data.schoolName}
-          onChange={(e) => setField("schoolName", e.target.value)}
-          placeholder="Ej. Colegio Sierra Nevada"
-          className={`
-            h-16
-            rounded-full
-            bg-[#f3f3f3]
-            border-0
-            text-lg
-            px-8
-            focus-visible:ring-2
-            focus-visible:ring-black
-            focus-visible:ring-offset-0
-          `}
-        />
+      <div className="space-y-6">
+        {/* 🔹 School Name */}
+        <div className="space-y-3">
+          <Label className="text-lg font-bold">
+            Nombre de la escuela
+          </Label>
 
-        <Label className="text-lg font-bold">Pagina web <p className="font-light">(Opcional)</p></Label>
-        <Input
-          value={state.data.schoolName}
-          onChange={(e) => setField("schoolName", e.target.value)}
-          placeholder="Ej. Colegio Sierra Nevada"
-          className={`
-            h-16
-            rounded-full
-            bg-[#f3f3f3]
-            border-0
-            text-lg
-            px-8
-            focus-visible:ring-2
-            focus-visible:ring-black
-            focus-visible:ring-offset-0
-          `}
-        />
+          <Input
+            value={state.data.schoolName}
+            onChange={(e) => setField("schoolName", e.target.value)}
+            placeholder="Ej. Colegio Sierra Nevada"
+            className="
+              h-16
+              rounded-full
+              bg-[#f3f3f3]
+              border-0
+              text-lg
+              px-8
+              focus-visible:ring-2
+              focus-visible:ring-black
+              focus-visible:ring-offset-0
+            "
+          />
 
-        {state.errors.schoolName && (
-          <p className="text-sm text-red-500 px-4">{state.errors.schoolName}</p>
-        )}
+          {state.errors.schoolName && (
+            <p className="text-sm text-red-500 px-4">
+              {state.errors.schoolName}
+            </p>
+          )}
+        </div>
+
+        {/* 🔹 Website (Optional) */}
+        <div className="space-y-3">
+          <Label className="text-lg font-bold">
+            Página web{" "}
+            <span className="font-light text-neutral-500 text-base">
+              (Opcional)
+            </span>
+          </Label>
+
+          <Input
+            value={state.data.website}
+            onChange={(e) => setField("website", e.target.value)}
+            placeholder="Ej. https://colegiosierranevada.edu.mx"
+            className="
+              h-16
+              rounded-full
+              bg-[#f3f3f3]
+              border-0
+              text-lg
+              px-8
+              focus-visible:ring-2
+              focus-visible:ring-black
+              focus-visible:ring-offset-0
+            "
+          />
+
+          {state.errors.website && (
+            <p className="text-sm text-red-500 px-4">
+              {state.errors.website}
+            </p>
+          )}
+        </div>
       </div>
     </div>
   );
