@@ -17,6 +17,7 @@ import { RatingsModule } from './ratings/ratings.module';
 import { StudentsModule } from './students/students.module';
 import { FilesModule } from './files/files.module';
 import { UsersModule } from './users/users.module';
+import { CategoriesModule } from './categories/categories.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { UsersModule } from './users/users.module';
     StudentsModule,
     FilesModule,
     UsersModule,
+    CategoriesModule,
   ],
   controllers: [AppController],
   providers: [AppService, AppResolver],
