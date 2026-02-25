@@ -50,6 +50,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   async function refreshUser() {
     try {
       const data = await api<AuthUser>("/users/me");
+      console.log(data, 'context')
       setUser(data);
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) {

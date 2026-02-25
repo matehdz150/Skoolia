@@ -41,6 +41,7 @@ export default function Navbar(): JSX.Element {
   }, []);
 
   const displayName = user?.name ?? user?.email.split("@")[0] ?? "";
+  console.log(user, 'navbar')
 
   return (
     <div className="sticky top-0 z-50 bg-transparent pt-5">

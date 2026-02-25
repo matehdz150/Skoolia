@@ -91,6 +91,7 @@ export class DrizzleUserAuthRepository implements UserAuthRepository {
       .values({
         id: randomUUID(),
         email: params.email,
+        name: params.name,
         passwordHash: params.passwordHash,
       })
       .returning();
