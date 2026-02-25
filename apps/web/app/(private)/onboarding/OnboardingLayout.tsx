@@ -1,6 +1,6 @@
 "use client";
 
-import { useOnboarding } from "../../contexts/OnBoardingContext";
+import { useOnboarding } from "../../../contexts/OnBoardingContext";
 import Step1 from "@/components/onboarding/steps/Step1";
 import Step2 from "@/components/onboarding/steps/Step2";
 import Step3 from "@/components/onboarding/steps/Step3";
