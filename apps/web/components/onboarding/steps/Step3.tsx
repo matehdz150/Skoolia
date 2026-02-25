@@ -23,19 +23,18 @@ export default function Step3() {
         </h1>
 
         <p className="text-lg sm:text-xl font-light text-neutral-600 max-w-3xl">
-          Este es el nombre comercial que verán tus clientes. Más adelante podrás añadir la razón social.
+          Este es el nombre comercial que verán tus clientes. Más adelante
+          podrás añadir la razón social.
         </p>
       </div>
 
       {/* FORM */}
       <div className="space-y-8">
-
         {/* Row 1 */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-
           {/* Nivel educativo */}
           <div className="space-y-3">
-            <EducationalLevelSelect/>
+            <EducationalLevelSelect />
 
             {state.errors.educationalLevel && (
               <p className="text-sm text-red-500 px-2">
@@ -46,15 +45,11 @@ export default function Step3() {
 
           {/* Tipo de institución */}
           <div className="space-y-3">
-            <Label className="text-lg font-semibold">
-              Tipo de institución
-            </Label>
+            <Label className="text-lg font-semibold">Tipo de institución</Label>
 
             <Input
               value={state.data.institutionType}
-              onChange={(e) =>
-                setField("institutionType", e.target.value)
-              }
+              onChange={(e) => setField("institutionType", e.target.value)}
               placeholder="Ej. Privada, Pública..."
               className="
                 h-16
@@ -77,34 +72,31 @@ export default function Step3() {
           </div>
         </div>
 
-        {/* Descripción */}
+        {/* Ciudad */}
         <div className="space-y-3">
-          <Label className="text-lg font-semibold">
-            Descripción <span className="font-light text-neutral-500">(Opcional)</span>
-          </Label>
+          <Label className="text-lg font-semibold">Ciudad</Label>
 
-          <Textarea
-            value={state.data.description}
-            onChange={(e) =>
-              setField("description", e.target.value)
-            }
-            placeholder="Describe tu institución, metodología, valores..."
+          <Input
+            value={state.data.city}
+            onChange={(e) => setField("city", e.target.value)}
+            placeholder="Guadalajara, Puebla..."
             className="
-              min-h-[220px]
-              rounded-3xl
-              bg-[#f3f3f3]
-              border-0
-              text-lg
-              px-6
-              py-6
-              resize-none
-              focus-visible:ring-2
-              focus-visible:ring-black
-              focus-visible:ring-offset-0
-            "
+      h-16
+      rounded-full
+      bg-[#f3f3f3]
+      border-0
+      text-lg
+      px-8
+      focus-visible:ring-2
+      focus-visible:ring-black
+      focus-visible:ring-offset-0
+    "
           />
-        </div>
 
+          {state.errors.city && (
+            <p className="text-sm text-red-500 px-2">{state.errors.city}</p>
+          )}
+        </div>
       </div>
     </div>
   );

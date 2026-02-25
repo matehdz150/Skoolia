@@ -1,50 +1,49 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useOnboarding } from "@/contexts/OnBoardingContext";
 import { Check } from "lucide-react";
 import { CategoryIcon } from "@/components/layout/CategoryIcon";
 import { Input } from "@/components/ui/input";
-
-const initialCategories = [
-  { id: "1", name: "Deportes", slug: "dumbbell" },
-  { id: "2", name: "Bilingüe", slug: "languages" },
-  { id: "3", name: "Arte", slug: "palette" },
-  { id: "4", name: "Tecnología", slug: "cpu" },
-  { id: "5", name: "Robótica", slug: "bot" },
-  { id: "6", name: "Teatro", slug: "drama" },
-];
-
-const moreCategories = [
-  { id: "7", name: "Programación", slug: "code" },
-  { id: "8", name: "Para niños", slug: "baby" },
-  { id: "9", name: "Para hombres", slug: "mars" },
-  { id: "10", name: "Música", slug: "music" },
-  { id: "11", name: "Ciencias", slug: "flask-conical" },
-  { id: "12", name: "Libros", slug: "book-open" },
-];
+import { schoolCategoriesService, Category } from "@/lib/services/services/schools-categories.service";
 
 export default function Step2() {
   const { state, toggleCategory } = useOnboarding();
 
-  const [showMore, setShowMore] = useState(false);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    async function loadCategories() {
+      try {
+        const data = await schoolCategoriesService.getAllCategories();
+        setCategories(data);
+      } catch (err) {
+        console.error("Error loading categories", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadCategories();
+  }, []);
 
   function isSelected(id: string) {
     return state.data.categories.some((c) => c.id === id);
   }
 
-  const allCategories = showMore
-    ? [...initialCategories, ...moreCategories]
-    : initialCategories;
-
   const filteredCategories = useMemo(() => {
-    if (!search.trim()) return allCategories;
+    if (!search.trim()) return categories;
 
-    return allCategories.filter((cat) =>
+    return categories.filter((cat) =>
       cat.name.toLowerCase().includes(search.toLowerCase())
     );
-  }, [search, allCategories]);
+  }, [search, categories]);
+
+  if (loading) {
+    return <p>Cargando categorías...</p>;
+  }
 
   return (
     <div className="max-w-6xl space-y-10">
@@ -58,17 +57,15 @@ export default function Step2() {
         </h1>
       </div>
 
-      {/* SEARCH (solo cuando expandes) */}
-      {showMore && (
-        <div className="w-full">
-          <Input
-            placeholder="Buscar categorias"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="rounded-xl shadow-none border-none bg-[#f3f3f3] py-6"
-          />
-        </div>
-      )}
+      {/* SEARCH */}
+      <div className="w-full">
+        <Input
+          placeholder="Buscar categorías"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="rounded-xl shadow-none border-none bg-[#f3f3f3] py-6"
+        />
+      </div>
 
       {/* GRID */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -116,15 +113,10 @@ export default function Step2() {
         })}
       </div>
 
-      {/* VER MÁS */}
-      {!showMore && (
-        <button
-          type="button"
-          onClick={() => setShowMore(true)}
-          className="text-blue-600 font-medium hover:underline"
-        >
-          Ver más...
-        </button>
+      {state.errors.categories && (
+        <p className="text-red-500 text-sm">
+          {state.errors.categories}
+        </p>
       )}
     </div>
   );
