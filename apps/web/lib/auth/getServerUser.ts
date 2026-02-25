@@ -1,20 +1,25 @@
 import { cookies } from "next/headers";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export async function getServerUser() {
   try {
-    const res = await fetch(`${API_URL}/users/me`, {
+    const cookieStore = await cookies();
+    const cookieString = cookieStore.toString();
+
+
+    const res = await fetch(`${API_BASE_URL}/users/me`, {
       headers: {
-        cookie: cookies().toString(),
+        cookie: cookieString,
       },
       cache: "no-store",
     });
 
     if (!res.ok) return null;
 
-    return res.json();
-  } catch {
+    return await res.json();
+  } catch (e) {
+    console.log("ERROR IN FETCH:", e);
     return null;
   }
 }
