@@ -52,8 +52,12 @@ export default async function Home({
         ) : (
           <div className="space-y-0 md:space-y-0 bg-white">
             <HeroInstitutionSection />
-            <ChallengeInstitutionsSection />
-            <BussinessSections />
+            <Reveal>
+              <ChallengeInstitutionsSection />
+            </Reveal>
+            <Reveal>
+              <BussinessSections />
+            </Reveal>
           </div>
         )}
       </main>
