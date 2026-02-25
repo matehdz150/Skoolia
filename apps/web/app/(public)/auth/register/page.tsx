@@ -179,14 +179,12 @@ export default function RegisterPage() {
 
             {/* FORM */}
             <div className="space-y-4">
-              {role === "public" && (
                 <Input
                   placeholder="Nombre"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   className="h-14 rounded-full bg-[#f3f3f3] border-0 px-6 focus-visible:ring-2 focus-visible:ring-[#1973FC]"
                 />
-              )}
 
               <Input
                 placeholder="Correo electrónico"
