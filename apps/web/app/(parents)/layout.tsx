@@ -1,20 +1,10 @@
-import { redirect } from "next/navigation";
-import { getServerUser } from "@/lib/auth/getServerUser";
+import Navbar from "@/components/layout/Navbar";
 
-export default async function PrivateLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const user = await getServerUser();
-
-  if (!user) {
-    redirect("/auth/login");
-  }
-
-  if (user.role !== "public") {
-    redirect("/");
-  }
-
-  return <>{children}</>;
+export default function ParentsRootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <>
+      <Navbar />
+      {children}
+    </>
+  );
 }
