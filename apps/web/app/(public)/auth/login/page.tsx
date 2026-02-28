@@ -87,6 +87,7 @@ export default function AuthLandingPage() {
             }}
             transition={{ duration: 0.6 }}
             className="w-full border border-black bg-white rounded-2xl p-6 text-left hover:bg-white transition flex justify-between items-center mt-6"
+            onClick={()=>router.push('login/schools')}
           >
             <div>
               <div className="flex gap-2">

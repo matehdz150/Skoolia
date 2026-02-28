@@ -25,7 +25,6 @@ export default function Step2() {
         setLoading(false);
       }
     }
-
     loadCategories();
   }, []);
 
@@ -35,7 +34,6 @@ export default function Step2() {
 
   const filteredCategories = useMemo(() => {
     if (!search.trim()) return categories;
-
     return categories.filter((cat) =>
       cat.name.toLowerCase().includes(search.toLowerCase())
     );
@@ -45,79 +43,74 @@ export default function Step2() {
     return <p>Cargando categorías...</p>;
   }
 
+  // Handler para el botón continuar (ajusta según tu flujo)
+  function handleContinue() {
+    // Aquí va la lógica para continuar al siguiente paso
+    // Por ejemplo: onNextStep();
+  }
+
   return (
-    <div className="max-w-6xl space-y-10">
-      <div>
-        <p className="text-lg font-light text-neutral-600">
-          Configuración de la cuenta
-        </p>
+    <div className="relative min-h-screen bg-white overflow-hidden">
+      {/* ...existing code... */}
 
-        <h1 className="text-4xl sm:text-6xl font-extrabold leading-[1.05] tracking-tight text-black">
-          Selecciona las categorías que describen mejor a la escuela
-        </h1>
-      </div>
+      {/* Contenido principal */}
+      <div className="relative z-10 max-w-6xl mx-auto pt-16 pb-10 space-y-10">
+        <div>
+          <p className="text-lg font-light text-neutral-600">
+            Configuración de la cuenta
+          </p>
+          <h1 className="text-4xl sm:text-6xl font-extrabold leading-[1.05] tracking-tight text-black">
+            Selecciona las categorías que describen mejor a la escuela
+          </h1>
+        </div>
 
-      {/* SEARCH */}
-      <div className="w-full">
-        <Input
-          placeholder="Buscar categorías"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="rounded-xl shadow-none border-none bg-[#f3f3f3] py-6"
-        />
-      </div>
+        {/* SEARCH */}
+        <div className="w-full">
+          <Input
+            placeholder="Buscar categorías"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="rounded-xl shadow-none border-none bg-[#f3f3f3] py-6"
+          />
+        </div>
 
-      {/* GRID */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredCategories.map((category) => {
-          const selected = isSelected(category.id);
-
-          return (
-            <button
-              key={category.id}
-              type="button"
-              onClick={() => toggleCategory(category)}
-              className={`
-                relative
-                flex items-center gap-3
-                px-6
-                h-20
-                rounded-2xl
-                border
-                transition-all
-                text-lg
-                font-medium
-                ${
-                  selected
+        {/* GRID */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {filteredCategories.map((category) => {
+            const selected = isSelected(category.id);
+            return (
+              <button
+                key={category.id}
+                type="button"
+                onClick={() => toggleCategory(category)}
+                className={`
+                  relative flex items-center gap-3 px-8 h-24 rounded-2xl border transition-all text-xl font-medium shadow-sm
+                  ${selected
                     ? "border-blue-500 ring-2 ring-blue-500 bg-blue-50"
-                    : "border-neutral-300 hover:border-neutral-400"
-                }
-              `}
-            >
-              <CategoryIcon
-                slug={category.slug}
-                className={`w-5 h-5 ${
-                  selected ? "text-blue-600" : "text-neutral-700"
-                }`}
-              />
+                    : "border-neutral-300 hover:border-neutral-400 bg-white"}
+                `}
+              >
+                <CategoryIcon
+                  slug={category.slug}
+                  className={`w-7 h-7 ${selected ? "text-blue-600" : "text-neutral-700"}`}
+                />
+                {category.name}
+                {selected && (
+                  <div className="absolute top-4 right-4 bg-blue-500 text-white rounded-full w-7 h-7 flex items-center justify-center">
+                    <Check size={16} />
+                  </div>
+                )}
+              </button>
+            );
+          })}
+        </div>
 
-              {category.name}
-
-              {selected && (
-                <div className="absolute top-3 right-3 bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center">
-                  <Check size={14} />
-                </div>
-              )}
-            </button>
-          );
-        })}
+        {state.errors.categories && (
+          <p className="text-red-500 text-sm">
+            {state.errors.categories}
+          </p>
+        )}
       </div>
-
-      {state.errors.categories && (
-        <p className="text-red-500 text-sm">
-          {state.errors.categories}
-        </p>
-      )}
     </div>
   );
 }

@@ -26,11 +26,15 @@ async function seed() {
   // ==============================
 
   const categoryList = [
-    { name: 'Arte', slug: 'arte' },
     { name: 'Deportes', slug: 'deportes' },
-    { name: 'Tecnologia', slug: 'tecnologia' },
-    { name: 'Idiomas', slug: 'idiomas' },
-    { name: 'Musica', slug: 'musica' },
+    { name: 'Bilingue', slug: 'bilingue' },
+    { name: 'Arte', slug: 'arte' },
+    { name: 'Tecnología', slug: 'tecnologia' },
+    { name: 'Robótica', slug: 'robotica' },
+    { name: 'Teatro', slug: 'teatro' },
+    { name: 'Programación', slug: 'programacion' },
+    { name: 'Para niños', slug: 'para-ninos' },
+    { name: 'Para hombres', slug: 'para-hombres' },
   ];
 
   const hashedPassword = await bcrypt.hash('123456', 10);
