@@ -7,16 +7,19 @@ import Navbar from "@/components/layout/Navbar";
 import { authService } from "@/lib/services/services/auth.service";
 import { WaveVector } from "@/lib/icons/WaveVector";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function LoginPage() {
   const { refreshUser } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
 
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(searchParams.get("email") ?? "");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const showRegisteredMessage = searchParams.get("registered") === "1";
 
   async function handleLogin() {
     try {
@@ -50,6 +53,12 @@ export default function LoginPage() {
       <div className="flex-1 flex items-center justify-center px-6 pb-20 z-10">
         <div className="w-full max-w-2xl bg-white rounded-3xl shadow-xl p-10 px-20 space-y-6">
           <h1 className="text-2xl font-bold text-center">Iniciar sesión</h1>
+
+          {showRegisteredMessage && (
+            <p className="text-sm text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-2 text-center">
+              Cuenta creada correctamente. Inicia sesión para continuar.
+            </p>
+          )}
 
           {/* FORM */}
           <div className="space-y-4">
