@@ -1,21 +1,82 @@
 "use client";
-import { ArrowLeft, Link as LinkIcon, Phone, MoreVertical, Paperclip, Send } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { ArrowLeft, Link as LinkIcon, Send } from 'lucide-react';
 import Link from 'next/link';
+import {
+  messagesService,
+  type ParentMessage,
+} from '@/lib/services/services/messages.service';
 
-type Message = {
-  id: number;
-  type: 'in' | 'out';
-  text: string;
-  time: string;
-};
+function formatTime(isoDate: string) {
+  const date = new Date(isoDate);
+  if (Number.isNaN(date.getTime())) return '';
 
-const mockMessages: Message[] = [
-  { id: 1, type: 'in', text: '¡Hola! Gracias por contactar a Liceo del Sol. ¿En qué podemos apoyarte hoy?', time: '10:00 AM' },
-  { id: 2, type: 'out', text: '¿Cuentan con transporte escolar?', time: '10:05 AM' },
-  { id: 3, type: 'in', text: 'Contamos con transporte escolar en las rutas de Polanco, Lomas y Santa Fe. ¿Te gustaría conocer los costos?', time: '10:10 AM' },
-];
+  return date.toLocaleTimeString('es-MX', {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
 
-export default function MessageConversation() {
+export default function MessageConversation({ schoolId }: { schoolId: string }) {
+  const [messages, setMessages] = useState<ParentMessage[]>([]);
+  const [text, setText] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [sending, setSending] = useState(false);
+
+  const loadThread = useCallback(async () => {
+    const thread = await messagesService.listParentThreadMessages(schoolId);
+    setMessages(thread);
+  }, [schoolId]);
+
+  useEffect(() => {
+    let mounted = true;
+
+    (async () => {
+      try {
+        const thread = await messagesService.listParentThreadMessages(schoolId);
+        if (mounted) {
+          setMessages(thread);
+        }
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    })();
+
+    return () => {
+      mounted = false;
+    };
+  }, [schoolId]);
+
+  useEffect(() => {
+    if (loading) return;
+
+    const interval = setInterval(() => {
+      if (!sending) {
+        void loadThread();
+      }
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [loadThread, loading, sending]);
+
+  const schoolName = useMemo(() => {
+    return messages[0]?.schoolName ?? 'Escuela';
+  }, [messages]);
+
+  const sendMessage = async () => {
+    const content = text.trim();
+    if (!content || sending) return;
+
+    try {
+      setSending(true);
+      await messagesService.sendParentMessage(schoolId, content);
+      await loadThread();
+      setText('');
+    } finally {
+      setSending(false);
+    }
+  };
+
   return (
     <section className="surface w-full rounded-4xl bg-white p-0 overflow-hidden">
       {/* Header */}
@@ -26,55 +87,59 @@ export default function MessageConversation() {
           </Link>
           <div className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-slate-100 font-extrabold text-slate-700">L</div>
           <div>
-            <p className="text-sm sm:text-base font-extrabold text-slate-900">Liceo del Sol</p>
+            <p className="text-sm sm:text-base font-extrabold text-slate-900">{schoolName}</p>
             <p className="mt-0.5 flex items-center gap-1 text-[10px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-wide">
-              <LinkIcon size={12} className="text-slate-400" /> GRUPO EDUCATIVO SOL
+              <LinkIcon size={12} className="text-slate-400" /> MENSAJERIA
             </p>
           </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <button className="h-8 w-8 sm:h-9 sm:w-9 rounded-xl bg-slate-50 text-slate-700 hover:bg-slate-100 flex items-center justify-center" aria-label="Llamar">
-            <Phone size={16} />
-          </button>
-          <button className="h-8 w-8 sm:h-9 sm:w-9 rounded-xl bg-slate-50 text-slate-700 hover:bg-slate-100 flex items-center justify-center" aria-label="Más">
-            <MoreVertical size={16} />
-          </button>
         </div>
       </div>
 
       {/* Messages */}
-      <div className="px-5 sm:px-6 py-4 sm:py-5 space-y-6">
-        {mockMessages.map((m) => (
-          <div key={m.id} className={`flex ${m.type === 'out' ? 'justify-end' : 'justify-start'}`}>
+      <div className="px-5 sm:px-6 py-4 sm:py-5 space-y-6 min-h-80">
+        {loading ? <p className="text-sm text-slate-500">Cargando conversacion...</p> : null}
+
+        {!loading && !messages.length ? (
+          <p className="text-sm text-slate-500">Aun no hay mensajes. Escribe el primero para contactar a la escuela.</p>
+        ) : null}
+
+        {messages.map((m) => (
+          <div key={m.id} className={`flex ${m.senderRole === 'public' ? 'justify-end' : 'justify-start'}`}>
             <div className={`max-w-170 rounded-2xl px-4 py-3 text-sm sm:text-base shadow-sm ${
-              m.type === 'out'
+              m.senderRole === 'public'
                 ? 'bg-violet-600 text-white rounded-tl-2xl rounded-tr-2xl rounded-bl-2xl'
                 : 'bg-slate-50 text-slate-800 ring-1 ring-slate-200 rounded-tl-2xl rounded-tr-2xl rounded-br-2xl'
             }`}>
-              {m.text}
+              {m.content}
+              <div className={`mt-2 text-[10px] ${m.senderRole === 'public' ? 'text-violet-100' : 'text-slate-400'}`}>
+                {formatTime(m.createdAt)}
+              </div>
             </div>
           </div>
         ))}
-
-        {/* Timestamps aligned with messages for visual reference */}
-        <div className="grid grid-cols-2 text-[10px] sm:text-[11px] font-bold text-slate-400">
-          <span>10:00 AM</span>
-          <span className="text-right">10:05 AM</span>
-        </div>
-        <div className="text-[10px] sm:text-[11px] font-bold text-slate-400">10:10 AM</div>
       </div>
 
       {/* Composer */}
       <div className="px-5 sm:px-6 py-4 sm:py-5 border-t border-slate-100/60">
         <div className="flex items-center gap-2 sm:gap-3 rounded-2xl bg-slate-50 ring-1 ring-slate-200 px-3 sm:px-4 py-2">
-          <button className="h-8 w-8 rounded-xl bg-white text-slate-700 hover:bg-slate-100 flex items-center justify-center" aria-label="Adjuntar">
-            <Paperclip size={16} />
-          </button>
           <input
             className="flex-1 bg-transparent outline-none text-sm sm:text-base placeholder-slate-400"
             placeholder="Escribe un mensaje..."
+            value={text}
+            onChange={(event) => setText(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') {
+                event.preventDefault();
+                void sendMessage();
+              }
+            }}
           />
-          <button className="h-8 w-8 rounded-xl bg-violet-600 text-white hover:bg-violet-700 flex items-center justify-center" aria-label="Enviar">
+          <button
+            className="h-8 w-8 rounded-xl bg-violet-600 text-white hover:bg-violet-700 flex items-center justify-center disabled:opacity-50"
+            aria-label="Enviar"
+            onClick={() => void sendMessage()}
+            disabled={sending || !text.trim()}
+          >
             <Send size={16} />
           </button>
         </div>

@@ -1,9 +1,13 @@
 'use client';
 import Image from 'next/image';
 import { X, MapPin, Star, Clock, Users, Languages, ClipboardCheck, Heart } from 'lucide-react';
-import { JSX } from 'react';
+import { JSX, useState } from 'react';
+import { useRouter } from 'next/navigation';
+
+import { messagesService } from '@/lib/services/services/messages.service';
 
 type Item = {
+  id?: string;
   imageUrl?: string;
   badges?: string[];
   level?: string;
@@ -22,6 +26,9 @@ type Item = {
 };
 
 export default function FavoriteDetailModal({ open, onClose, item }: { open: boolean; onClose: () => void; item?: Item }): JSX.Element | null {
+  const router = useRouter();
+  const [sending, setSending] = useState(false);
+
   if (!open || !item) return null;
 
   const isNumeric = typeof item.price === 'number' || typeof item.monthlyPrice === 'number';
@@ -30,6 +37,19 @@ export default function FavoriteDetailModal({ open, onClose, item }: { open: boo
     ? `$${numericPrice.toLocaleString()}`
     : (String(item.price).match(/\$\s?[\d,.]+/)?.[0] ?? String(item.price));
   const priceUnit = numericPrice != null ? 'MXN/mes' : (String(item.price).includes('MXN/mes') ? 'MXN/mes' : '');
+
+  const handleContact = async () => {
+    if (!item.id || sending) return;
+
+    try {
+      setSending(true);
+      await messagesService.sendParentMessage(item.id, 'Hola, me interesa conocer mas informacion de su escuela.');
+      onClose();
+      router.push(`/parents/messages/${item.id}`);
+    } finally {
+      setSending(false);
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-100 flex items-center justify-center">
@@ -147,7 +167,13 @@ export default function FavoriteDetailModal({ open, onClose, item }: { open: boo
                 ) : null}
               </div>
               <div className="flex items-center gap-3">
-                <button className="flex-1 sm:flex-initial w-full sm:w-auto rounded-full bg-indigo-600 px-6 py-2 text-sm font-bold text-white shadow-sm hover:bg-indigo-700">Contactar</button>
+                <button
+                  className="flex-1 sm:flex-initial w-full sm:w-auto rounded-full bg-indigo-600 px-6 py-2 text-sm font-bold text-white shadow-sm hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed"
+                  onClick={handleContact}
+                  disabled={!item.id || sending}
+                >
+                  {sending ? 'Enviando...' : 'Contactar'}
+                </button>
                 <button className="grid h-10 w-10 sm:h-11 sm:w-11 place-items-center rounded-full bg-white text-slate-700 shadow" aria-label="Guardar">
                   <Heart className="h-5 w-5" />
                 </button>
