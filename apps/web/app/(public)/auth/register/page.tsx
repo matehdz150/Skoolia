@@ -2,18 +2,18 @@
 
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { useAuth } from "@/contexts/AuthContext";
 import Navbar from "@/components/layout/Navbar";
 import { LineBackground } from "@/lib/icons/LineBackground";
 import { authService } from "@/lib/services/services/auth.service";
 import { WaveVector } from "@/lib/icons/WaveVector";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 type Role = "public" | "private";
 
 export default function RegisterPage() {
-  const { refreshUser } = useAuth();
+  const router = useRouter();
 
   const [role, setRole] = useState<Role>("public");
   const [name, setName] = useState("");
@@ -35,9 +35,13 @@ export default function RegisterPage() {
         role, // 🔥 aquí ya está controlado por el toggle
       });
 
-      // si tu backend setea cookies httponly
-      // ahora pedimos el user real
-      await refreshUser();
+      const loginPath = role === "private" ? "/auth/login/schools" : "/auth/login/parents";
+      const params = new URLSearchParams({
+        registered: "1",
+        email,
+      });
+
+      router.push(`${loginPath}?${params.toString()}`);
     } catch (err: any) {
       console.error(err);
       setError("No se pudo crear la cuenta. Intenta nuevamente.");
@@ -57,7 +61,7 @@ export default function RegisterPage() {
       <div className="flex-1 flex items-center justify-center px-20 pb-20 mt-10 relative z-10">
         <div className="w-full max-w-7xl grid md:grid-cols-[550px_minmax(0,1fr)] gap-20 items-start">
           {/* ===== LEFT SIDE (DINÁMICO + ANIMADO) ===== */}
-          <div className="w-[550px] min-h-100 bg-transparent rounded-3xl p-10 shrink-0 ml-20 relative overflow-hidden">
+          <div className="w-137.5 min-h-100 bg-transparent rounded-3xl p-10 shrink-0 ml-20 relative overflow-hidden">
             <AnimatePresence mode="wait">
               {role === "private" ? (
                 <motion.div
@@ -140,7 +144,7 @@ export default function RegisterPage() {
           </div>
 
           {/* ===== RIGHT SIDE (REGISTER CARD) ===== */}
-          <div className="w-full max-w-lg min-h-[600px] bg-white rounded-3xl p-10 space-y-6 border border-black/5 relative z-10">
+          <div className="w-full max-w-lg min-h-150 bg-white rounded-3xl p-10 space-y-6 border border-black/5 relative z-10">
             <h1 className="text-2xl font-bold text-center">Crear cuenta</h1>
 
             <div className="flex gap-1 justify-center">
@@ -241,7 +245,7 @@ export default function RegisterPage() {
             <button
               onClick={handleRegister}
               disabled={loading}
-              className="w-full h-14 rounded-full bg-gradient-to-r from-[#2A6EE8] to-[#1973FC] text-white font-semibold hover:opacity-90 transition disabled:opacity-50"
+              className="w-full h-14 rounded-full bg-linear-to-r from-[#2A6EE8] to-[#1973FC] text-white font-semibold hover:opacity-90 transition disabled:opacity-50"
             >
               {loading ? "Cargando..." : "Registrarme"}
             </button>

@@ -18,6 +18,7 @@ import { StudentsModule } from './students/students.module';
 import { FilesModule } from './files/files.module';
 import { UsersModule } from './users/users.module';
 import { CategoriesModule } from './categories/categories.module';
+import { MessagesModule } from './messages/messages.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { CategoriesModule } from './categories/categories.module';
     FilesModule,
     UsersModule,
     CategoriesModule,
+    MessagesModule,
   ],
   controllers: [AppController],
   providers: [AppService, AppResolver],

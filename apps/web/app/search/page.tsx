@@ -223,6 +223,7 @@ export default function SearchPage() {
         onClose={() => setOpen(false)}
         item={
           selected && {
+            id: selected.id,
             imageUrl: selected.imageSrc,
             badges: selected.tags,
             level: selected.typeLabel,

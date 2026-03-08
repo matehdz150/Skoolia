@@ -124,6 +124,7 @@ export default function FavoritesGrid() {
         onClose={() => setOpen(false)}
         item={
           selected && {
+            id: selected.id,
             imageUrl: selected.imageUrl ?? undefined,
             badges: [],
             level: "INSTITUCIÓN",
