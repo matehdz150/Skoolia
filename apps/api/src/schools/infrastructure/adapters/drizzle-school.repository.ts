@@ -205,7 +205,7 @@ export class DrizzleSchoolRepository implements SchoolRepository {
     }
 
     if (filters.city) {
-      whereConditions.push(eq(schools.city, filters.city));
+      whereConditions.push(ilike(schools.city, `%${filters.city}%`));
     }
 
     if (filters.categoryId) {

@@ -249,15 +249,26 @@ export default function SearchPage() {
       <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-3">
         {items.map((it) => (
           <CatalogCard
-            key={it.id}
+            priceFormatted={""} key={it.id}
             {...it}
             isFavorite={favoriteIds.has(it.id)}
             onFavoriteToggle={(e) => handleFavoriteToggle(it.id, e)}
             onCardClick={() => openModal(it)}
-            onAction={() => openModal(it)}
-          />
+            onAction={() => openModal(it)}          />
         ))}
       </div>
+
+      {error ? (
+        <div className="mt-8 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+          {error}
+        </div>
+      ) : null}
+
+      {!loading && !error && items.length === 0 ? (
+        <div className="mt-8 rounded-2xl border border-slate-200 bg-white px-5 py-6 text-sm text-slate-600">
+          No encontramos escuelas con esos filtros. Intenta ajustar ciudad, nivel o rango de precio.
+        </div>
+      ) : null}
 
       <FavoriteDetailModal
         open={open}

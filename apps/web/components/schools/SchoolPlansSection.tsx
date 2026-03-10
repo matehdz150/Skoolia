@@ -1,4 +1,5 @@
 import { ArrowUpRight, CreditCard, ShieldCheck, Zap } from "lucide-react";
+import { JSX } from "react";
 
 type Feature = {
 	label: string;

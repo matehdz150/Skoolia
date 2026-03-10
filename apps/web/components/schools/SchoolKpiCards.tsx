@@ -2,7 +2,7 @@ import { ArrowUpRight, MessageCircle, TrendingUp, Users } from "lucide-react";
 
 const cards = [
 	{
-		label: "Leads totales",
+		label: "Prospectos totales",
 		value: "428",
 		variation: "+18%",
 		icon: Users,
