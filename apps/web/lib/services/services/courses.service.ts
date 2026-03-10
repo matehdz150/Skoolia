@@ -16,6 +16,14 @@ export interface Course {
 }
 
 export const coursesService = {
+  async listBySchoolId(schoolId: string) {
+    return api<Course[]>(`/courses/schools/${schoolId}`);
+  },
+
+  async listMine() {
+    return api<Course[]>('/courses/me');
+  },
+
   async create(data: {
     name: string;
     description?: string;
