@@ -18,62 +18,42 @@ export default function OnboardingLayout() {
 
   const isLastStep = state.step === 4;
   const progress = (state.step / 4) * 100;
+  const canSubmitStep = isLastStep ? true : state.canContinue;
 
   async function handleContinue() {
-    // fuerza validación del step actual
-    validate();
-    if (!state.canContinue) return;
+    if (!isLastStep) {
+      // fuerza validación visual antes de avanzar en steps intermedios
+      validate();
+      if (!state.canContinue) return;
+    }
     if (submitting) return;
 
     try {
       setSubmitting(true);
 
-      // ✅ STEP 1: crear escuela (solo una vez)
+      // STEP 1: solo avanzamos (sin crear escuela todavia)
       if (state.step === 1) {
-        if (!state.data.schoolId) {
-          const school = await schoolsService.create({
-            name: state.data.schoolName.trim(),
-            description: state.data.description?.trim() || undefined,
-          });
-
-          // guarda el id para usarlo en step 2 (asignar categorías)
-          setField("schoolId", school.id);
-        }
-
         next();
         return;
       }
+
+      // STEP 2: solo avanzamos (categorias se guardan al final)
       if (state.step === 2) {
-        const categoryIds = state.data.categories.map((c) => c.id);
-
-        await schoolCategoriesService.assign(categoryIds);
-
         next();
         return;
       }
-      // ✅ STEP 3: actualizar info académica + ciudad
+
+      // STEP 3: solo avanzamos (info academica se guarda al final)
       if (state.step === 3) {
-        await schoolsService.update({
-          educationalLevel: state.data.educationalLevel,
-          institutionType: state.data.institutionType,
-          city: state.data.city,
-        });
-
         next();
         return;
       }
+
       // STEP 4 (FINAL)
       if (isLastStep) {
-        await handleSubmit(); // si ya estás recompilando todo aquí
+        await handleSubmit();
         router.push("/schools");
         return;
-      }
-
-      // STEP 2/3: por ahora solo avanza (luego metemos assign categories en step 2)
-      if (isLastStep) {
-        await handleSubmit();
-      } else {
-        next();
       }
     } catch (e) {
       console.error("Onboarding error:", e);
@@ -84,8 +64,24 @@ export default function OnboardingLayout() {
   }
 
   async function handleSubmit() {
-    console.log("Enviar al backend:", state.data);
-    alert("Onboarding completado 🎉");
+    const school = await schoolsService.create({
+      name: state.data.schoolName.trim(),
+      description: state.data.description?.trim() || undefined,
+    });
+
+    setField("schoolId", school.id);
+
+    const categoryIds = state.data.categories.map((c) => c.id);
+    if (categoryIds.length > 0) {
+      await schoolCategoriesService.assign(categoryIds);
+    }
+
+    await schoolsService.update({
+      educationalLevel: state.data.educationalLevel || undefined,
+      institutionType: state.data.institutionType || undefined,
+      city: state.data.city || undefined,
+      address: state.data.address || undefined,
+    });
   }
 
   return (
@@ -122,7 +118,7 @@ export default function OnboardingLayout() {
 
         <button
           onClick={handleContinue}
-          disabled={!state.canContinue || submitting}
+          disabled={!canSubmitStep || submitting}
           className="px-6 py-2 bg-black text-white rounded disabled:opacity-30"
         >
           {submitting ? "Guardando..." : isLastStep ? "Finalizar" : "Continuar"}

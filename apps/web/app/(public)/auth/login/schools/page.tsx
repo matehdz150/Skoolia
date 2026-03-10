@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
 import Navbar from "@/components/layout/Navbar";
 import { authService } from "@/lib/services/services/auth.service";
+import { api } from "@/lib/services/api";
 import { WaveVector } from "@/lib/icons/WaveVector";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -32,7 +33,17 @@ export default function SchoolsLoginPage() {
       });
 
       await refreshUser();
-      router.push('/schools');
+
+      const me = await api<{
+        role: "public" | "private";
+        onboardingRequired: boolean;
+      }>("/users/me");
+
+      if (me.role === "private" && me.onboardingRequired) {
+        router.push("/onboarding");
+      } else {
+        router.push("/schools");
+      }
     } catch (err: unknown) {
       console.error(err);
       setError("Credenciales inválidas.");
