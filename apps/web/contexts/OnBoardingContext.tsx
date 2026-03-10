@@ -54,6 +54,14 @@ function validateStep(state: OnboardingState) {
     if (!state.data.educationalLevel.trim()) {
       errors.educationalLevel = "El nivel educativo es obligatorio";
     }
+
+    if (!state.data.institutionType.trim()) {
+      errors.institutionType = "Selecciona el tipo de institucion";
+    }
+
+    if (!state.data.city.trim()) {
+      errors.city = "Selecciona una ciudad";
+    }
   }
 
   if (state.step === 4) {

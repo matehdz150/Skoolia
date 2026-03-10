@@ -143,6 +143,27 @@ export default function SearchPage() {
 
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<CatalogItem | undefined>();
+  const handleRatingUpdated = (schoolId: string, averageRating?: number) => {
+    setItems((prev) =>
+      prev.map((item) =>
+        item.id === schoolId
+          ? {
+              ...item,
+              rating: averageRating,
+            }
+          : item,
+      ),
+    );
+
+    setSelected((prev) =>
+      prev && prev.id === schoolId
+        ? {
+            ...prev,
+            rating: averageRating,
+          }
+        : prev,
+    );
+  };
   const openModal = (item: CatalogItem) => {
     setSelected(item);
     setOpen(true);
@@ -273,6 +294,7 @@ export default function SearchPage() {
       <FavoriteDetailModal
         open={open}
         onClose={() => setOpen(false)}
+        onRatingUpdated={handleRatingUpdated}
         item={
           selected && {
             id: selected.id,

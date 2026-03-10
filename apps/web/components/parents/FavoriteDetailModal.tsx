@@ -6,6 +6,11 @@ import { useRouter } from 'next/navigation';
 
 import { messagesService } from '@/lib/services/services/messages.service';
 import { coursesService, type Course } from '@/lib/services/services/courses.service';
+import { schoolRatingsService } from '@/lib/services/services/rating.service';
+import { schoolsService } from '@/lib/services/services/schools.service';
+import { Textarea } from '@/components/ui/textarea';
+import { useToast } from '@/components/ui/toast';
+import { useAuth } from '@/contexts/AuthContext';
 
 type Item = {
   id?: string;
@@ -26,11 +31,27 @@ type Item = {
   monthlyPrice?: number;
 };
 
-export default function FavoriteDetailModal({ open, onClose, item }: { open: boolean; onClose: () => void; item?: Item }): JSX.Element | null {
+export default function FavoriteDetailModal({
+  open,
+  onClose,
+  item,
+  onRatingUpdated,
+}: {
+  open: boolean;
+  onClose: () => void;
+  item?: Item;
+  onRatingUpdated?: (schoolId: string, averageRating?: number) => void;
+}): JSX.Element | null {
   const router = useRouter();
+  const { user } = useAuth();
+  const { showToast } = useToast();
   const [sending, setSending] = useState(false);
   const [offers, setOffers] = useState<Course[]>([]);
   const [loadingOffers, setLoadingOffers] = useState(false);
+  const [loadingMyRating, setLoadingMyRating] = useState(false);
+  const [savingRating, setSavingRating] = useState(false);
+  const [myRating, setMyRating] = useState(0);
+  const [myComment, setMyComment] = useState('');
 
   useEffect(() => {
     let mounted = true;
@@ -59,6 +80,38 @@ export default function FavoriteDetailModal({ open, onClose, item }: { open: boo
     };
   }, [open, item?.id]);
 
+  useEffect(() => {
+    let mounted = true;
+
+    if (!open || !item?.id || user?.role !== 'public') {
+      setMyRating(0);
+      setMyComment('');
+      return;
+    }
+
+    (async () => {
+      try {
+        setLoadingMyRating(true);
+        const schoolId = item.id!;
+        const mine = await schoolRatingsService.getMine(schoolId);
+        if (!mounted) return;
+
+        setMyRating(mine?.rating ?? 0);
+        setMyComment(mine?.comment ?? '');
+      } catch {
+        if (!mounted) return;
+        setMyRating(0);
+        setMyComment('');
+      } finally {
+        if (mounted) setLoadingMyRating(false);
+      }
+    })();
+
+    return () => {
+      mounted = false;
+    };
+  }, [open, item?.id, user?.role]);
+
   if (!open || !item) return null;
 
   const isNumeric = typeof item.price === 'number' || typeof item.monthlyPrice === 'number';
@@ -78,6 +131,69 @@ export default function FavoriteDetailModal({ open, onClose, item }: { open: boo
       router.push(`/parents/messages/${item.id}`);
     } finally {
       setSending(false);
+    }
+  };
+
+  const refreshAverageRating = async () => {
+    if (!item?.id) return;
+
+    const updatedSchool = await schoolsService.getById(item.id);
+    onRatingUpdated?.(item.id, updatedSchool.averageRating ?? undefined);
+  };
+
+  const handleSaveRating = async () => {
+    if (!item?.id || myRating < 1 || myRating > 5 || savingRating) return;
+
+    try {
+      setSavingRating(true);
+      await schoolRatingsService.upsert({
+        schoolId: item.id,
+        rating: myRating,
+        comment: myComment.trim() || undefined,
+      });
+      await refreshAverageRating();
+
+      showToast({
+        title: 'Calificacion guardada',
+        description: 'Gracias por compartir tu experiencia con esta escuela.',
+        variant: 'success',
+      });
+    } catch (error) {
+      console.error('No se pudo guardar la calificacion', error);
+      showToast({
+        title: 'No se pudo guardar la calificacion',
+        description: 'Intenta de nuevo en unos segundos.',
+        variant: 'error',
+      });
+    } finally {
+      setSavingRating(false);
+    }
+  };
+
+  const handleDeleteRating = async () => {
+    if (!item?.id || savingRating) return;
+
+    try {
+      setSavingRating(true);
+      await schoolRatingsService.remove(item.id);
+      setMyRating(0);
+      setMyComment('');
+      await refreshAverageRating();
+
+      showToast({
+        title: 'Calificacion eliminada',
+        description: 'Tu calificacion ya no se muestra para esta escuela.',
+        variant: 'info',
+      });
+    } catch (error) {
+      console.error('No se pudo eliminar la calificacion', error);
+      showToast({
+        title: 'No se pudo eliminar la calificacion',
+        description: 'Intenta de nuevo en unos segundos.',
+        variant: 'error',
+      });
+    } finally {
+      setSavingRating(false);
     }
   };
 
@@ -139,6 +255,60 @@ export default function FavoriteDetailModal({ open, onClose, item }: { open: boo
                 {item.description}
               </p>
             ) : null}
+
+            <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <p className="text-[11px] font-extrabold tracking-widest text-slate-600">TU CALIFICACION</p>
+
+              {user?.role !== 'public' ? (
+                <p className="mt-2 text-xs text-slate-600">Inicia sesion como padre para calificar esta escuela.</p>
+              ) : loadingMyRating ? (
+                <p className="mt-2 text-xs text-slate-500">Cargando tu calificacion...</p>
+              ) : (
+                <>
+                  <div className="mt-3 flex items-center gap-1">
+                    {[1, 2, 3, 4, 5].map((value) => (
+                      <button
+                        key={value}
+                        type="button"
+                        onClick={() => setMyRating(value)}
+                        className="rounded-md p-1 transition hover:bg-amber-50"
+                        aria-label={`Calificar ${value} estrellas`}
+                      >
+                        <Star
+                          className={`h-6 w-6 ${value <= myRating ? 'fill-amber-400 text-amber-400' : 'text-slate-300'}`}
+                        />
+                      </button>
+                    ))}
+                  </div>
+
+                  <Textarea
+                    value={myComment}
+                    onChange={(e) => setMyComment(e.target.value)}
+                    placeholder="Comparte un comentario (opcional)"
+                    className="mt-3 min-h-20 bg-white"
+                  />
+
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={handleSaveRating}
+                      disabled={savingRating || myRating < 1}
+                      className="rounded-full bg-slate-900 px-4 py-2 text-xs font-bold text-white disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      {savingRating ? 'Guardando...' : 'Guardar calificacion'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleDeleteRating}
+                      disabled={savingRating}
+                      className="rounded-full border border-slate-300 bg-white px-4 py-2 text-xs font-bold text-slate-700 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      Eliminar
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
 
             {/* Info pills grid */}
             <div className="mt-6 grid grid-cols-1 gap-3 sm:gap-4 sm:grid-cols-2">

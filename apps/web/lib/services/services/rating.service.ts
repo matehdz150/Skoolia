@@ -13,14 +13,7 @@ export interface SchoolRating {
   rating: number;
   comment?: string | null;
   createdAt: string;
-}
-
-export interface PaginatedRatings {
-  data: SchoolRating[];
-  page: number;
-  pageSize: number;
-  total: number;
-  totalPages: number;
+  updatedAt?: string;
 }
 
 /* ================================
@@ -64,7 +57,7 @@ export const schoolRatingsService = {
     schoolId: string;
     page?: number;
     pageSize?: number;
-  }): Promise<PaginatedRatings> {
+  }): Promise<SchoolRating[]> {
     const page = params.page ?? 1;
     const pageSize = params.pageSize ?? 10;
 
@@ -73,8 +66,15 @@ export const schoolRatingsService = {
       pageSize: String(pageSize),
     });
 
-    return api<PaginatedRatings>(
-      `/schools/${params.schoolId}/ratings?${query.toString()}`,
-    );
+    return api<SchoolRating[]>(`/schools/${params.schoolId}/ratings?${query.toString()}`);
   },
+
+  /**
+   * 🙋 Obtener mi rating para una escuela
+   * GET /schools/:schoolId/ratings/me
+   */
+  async getMine(schoolId: string): Promise<SchoolRating | null> {
+    return api<SchoolRating | null>(`/schools/${schoolId}/ratings/me`);
+  },
+
 };

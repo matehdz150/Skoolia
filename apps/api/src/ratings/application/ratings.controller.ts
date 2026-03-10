@@ -18,6 +18,7 @@ import { UpsertSchoolRatingDto } from './dto/upsert-school-rating.dto';
 import { UpsertSchoolRatingUseCase } from '../core/use-cases/upsert-school-rating.use-case';
 import { DeleteSchoolRatingUseCase } from '../core/use-cases/delete-rating.use-case';
 import { ListSchoolRatingsUseCase } from '../core/use-cases/list-school-ratings.use-case';
+import { GetMySchoolRatingUseCase } from '../core/use-cases/get-my-school-rating.use-case';
 
 @Controller('schools/:schoolId/ratings')
 export class SchoolRatingsController {
@@ -30,6 +31,9 @@ export class SchoolRatingsController {
 
     @Inject(ListSchoolRatingsUseCase)
     private readonly listRatings: ListSchoolRatingsUseCase,
+
+    @Inject(GetMySchoolRatingUseCase)
+    private readonly getMyRating: GetMySchoolRatingUseCase,
   ) {}
 
   /**
@@ -61,6 +65,19 @@ export class SchoolRatingsController {
     @CurrentUser() user: JwtPayload,
   ) {
     return this.deleteRating.execute(user, schoolId);
+  }
+
+  /**
+   * 🙋 Obtener MI rating para la escuela
+   * GET /schools/:schoolId/ratings/me
+   */
+  @Get('me')
+  @UseGuards(AuthGuard)
+  async mine(
+    @Param('schoolId') schoolId: string,
+    @CurrentUser() user: JwtPayload,
+  ) {
+    return this.getMyRating.execute(user, schoolId);
   }
 
   /**

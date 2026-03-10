@@ -1,11 +1,10 @@
 "use client";
 
 import React from "react";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { useOnboarding } from "@/contexts/OnBoardingContext";
 import EducationalLevelSelect from "./EducationalLevelSelect";
+import { cityOptions, institutionTypeOptions } from "./onboarding-options";
 
 export default function Step3() {
   const { state, setField } = useOnboarding();
@@ -47,12 +46,12 @@ export default function Step3() {
           <div className="space-y-3">
             <Label className="text-lg font-semibold">Tipo de institución</Label>
 
-            <Input
+            <select
               value={state.data.institutionType}
               onChange={(e) => setField("institutionType", e.target.value)}
-              placeholder="Ej. Privada, Pública..."
               className="
                 h-16
+                w-full
                 rounded-full
                 bg-[#f3f3f3]
                 border-0
@@ -62,7 +61,14 @@ export default function Step3() {
                 focus-visible:ring-black
                 focus-visible:ring-offset-0
               "
-            />
+            >
+              <option value="">Selecciona un tipo</option>
+              {institutionTypeOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
 
             {state.errors.institutionType && (
               <p className="text-sm text-red-500 px-2">
@@ -76,22 +82,29 @@ export default function Step3() {
         <div className="space-y-3">
           <Label className="text-lg font-semibold">Ciudad</Label>
 
-          <Input
+          <select
             value={state.data.city}
             onChange={(e) => setField("city", e.target.value)}
-            placeholder="Guadalajara, Puebla..."
             className="
-      h-16
-      rounded-full
-      bg-[#f3f3f3]
-      border-0
-      text-lg
-      px-8
-      focus-visible:ring-2
-      focus-visible:ring-black
-      focus-visible:ring-offset-0
-    "
-          />
+              h-16
+              w-full
+              rounded-full
+              bg-[#f3f3f3]
+              border-0
+              text-lg
+              px-8
+              focus-visible:ring-2
+              focus-visible:ring-black
+              focus-visible:ring-offset-0
+            "
+          >
+            <option value="">Selecciona una ciudad</option>
+            {cityOptions.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
 
           {state.errors.city && (
             <p className="text-sm text-red-500 px-2">{state.errors.city}</p>
