@@ -28,6 +28,28 @@ export default function FavoritesGrid() {
   const [selected, setSelected] = useState<FavoriteItem | undefined>();
   const [loading, setLoading] = useState(true);
 
+  const handleRatingUpdated = (schoolId: string, averageRating?: number) => {
+    setItems((prev) =>
+      prev.map((item) =>
+        item.id === schoolId
+          ? {
+              ...item,
+              rating: averageRating,
+            }
+          : item,
+      ),
+    );
+
+    setSelected((prev) =>
+      prev && prev.id === schoolId
+        ? {
+            ...prev,
+            rating: averageRating,
+          }
+        : prev,
+    );
+  };
+
   useEffect(() => {
     let mounted = true;
     (async () => {
@@ -121,6 +143,7 @@ export default function FavoritesGrid() {
       <FavoriteDetailModal
         open={open}
         onClose={() => setOpen(false)}
+        onRatingUpdated={handleRatingUpdated}
         item={
           selected && {
             id: selected.id,

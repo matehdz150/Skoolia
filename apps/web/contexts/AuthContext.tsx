@@ -82,6 +82,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   ========================= */
 
   async function logout() {
+    const currentRole = user?.role;
+
     try {
       await api("/auth/logout", {
         method: "POST",
@@ -90,9 +92,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // aunque falle, limpiamos estado
     } finally {
       setUser(null);
-      // Siempre regresamos al home al cerrar sesion.
+
       if (typeof window !== "undefined") {
-        window.location.replace("/?audience=parents");
+        const audience = currentRole === "private" ? "schools" : "parents";
+        window.location.replace(`/?audience=${audience}`);
       }
     }
   }

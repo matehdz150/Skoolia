@@ -16,6 +16,7 @@ import {
 import { JSX } from "react";
 import { messagesService, type SchoolThread } from "@/lib/services/services/messages.service";
 import { SCHOOL_THREADS_UPDATED_EVENT } from "@/lib/school-thread-events";
+import { useAuth } from "@/contexts/AuthContext";
 
 type ActiveSection =
 	| "summary"
@@ -30,6 +31,7 @@ type ActiveSection =
 type Props = { active?: ActiveSection };
 
 export default function SchoolsSidebar({ active = "summary" }: Props) {
+	const { logout } = useAuth();
 	const [threads, setThreads] = useState<SchoolThread[]>([]);
 
 	useEffect(() => {
@@ -157,7 +159,10 @@ export default function SchoolsSidebar({ active = "summary" }: Props) {
 					/>
 				</div>
 				<div className="mt-4 border-t border-slate-100 pt-3">
-					<button className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-rose-500 hover:text-rose-600">
+					<button
+						onClick={logout}
+						className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-rose-500 hover:text-rose-600"
+					>
 						<LogOut size={16} />
 						<span>Cerrar Sesión</span>
 					</button>
