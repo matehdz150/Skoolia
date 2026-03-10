@@ -1,8 +1,6 @@
 import SchoolsNavbar from "@/components/schools/SchoolsNavbar";
 import SchoolsSidebar from "@/components/schools/SchoolsSidebar";
-import SchoolSummaryHeader from "@/components/schools/SchoolSummaryHeader";
-import SchoolKpiCards from "@/components/schools/SchoolKpiCards";
-import SchoolRecentActivity from "@/components/schools/SchoolRecentActivity";
+import SchoolSummarySection from "@/components/schools/SchoolSummarySection";
 
 export default function SchoolsDashboardPage() {
 	return (
@@ -12,9 +10,7 @@ export default function SchoolsDashboardPage() {
 				<div className="grid grid-cols-1 gap-6 lg:grid-cols-[260px_1fr]">
 					<SchoolsSidebar active="summary" />
 					<div className="space-y-5 sm:space-y-6">
-						{/* {/* <SchoolSummaryHeader /> */}
-						<SchoolKpiCards />
-						<SchoolRecentActivity />
+						<SchoolSummarySection />
 					</div>
 				</div>
 			</main>

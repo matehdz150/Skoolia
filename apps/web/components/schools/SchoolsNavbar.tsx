@@ -1,14 +1,17 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { ChevronDown, LineChart, PlusCircle } from "lucide-react";
 import { schoolsService } from "@/lib/services/services/schools.service";
 import RegisterProjectModal from "./RegisterProjectModal";
 import SchoolRegistrationWizard from "./SchoolRegistrationWizard";
 
 export default function SchoolsNavbar() {
+	const router = useRouter();
 	const [registerOpen, setRegisterOpen] = useState(false);
 	const [wizardOpen, setWizardOpen] = useState(false);
 	const [schoolName, setSchoolName] = useState<string | null>(null);
+	const [hasSchool, setHasSchool] = useState(false);
 
 	useEffect(() => {
 		let active = true;
@@ -18,10 +21,14 @@ export default function SchoolsNavbar() {
 				const school = await schoolsService.getMySchool();
 				if (active) {
 					setSchoolName(school?.name ?? null);
+					setHasSchool(Boolean(school?.id));
 				}
 			} catch (err: unknown) {
 				// Si no hay escuela o no hay permisos, simplemente dejamos el nombre por defecto
 				console.error("No se pudo obtener la escuela actual", err);
+				if (active) {
+					setHasSchool(false);
+				}
 			}
 		})();
 
@@ -60,6 +67,16 @@ export default function SchoolsNavbar() {
 				onSelectType={(type) => {
 					if (type === "school") {
 						setWizardOpen(true);
+						return;
+					}
+
+					if (type === "course") {
+						if (!hasSchool) {
+							setWizardOpen(true);
+							return;
+						}
+
+						router.push("/schools/courses?create=1");
 					}
 				}}
 			/>

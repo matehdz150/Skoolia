@@ -1,10 +1,11 @@
 'use client';
 import Image from 'next/image';
 import { X, MapPin, Star, Clock, Users, Languages, ClipboardCheck, Heart } from 'lucide-react';
-import { JSX, useState } from 'react';
+import { JSX, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { messagesService } from '@/lib/services/services/messages.service';
+import { coursesService, type Course } from '@/lib/services/services/courses.service';
 
 type Item = {
   id?: string;
@@ -28,6 +29,35 @@ type Item = {
 export default function FavoriteDetailModal({ open, onClose, item }: { open: boolean; onClose: () => void; item?: Item }): JSX.Element | null {
   const router = useRouter();
   const [sending, setSending] = useState(false);
+  const [offers, setOffers] = useState<Course[]>([]);
+  const [loadingOffers, setLoadingOffers] = useState(false);
+
+  useEffect(() => {
+    let mounted = true;
+
+    if (!open || !item?.id) {
+      setOffers([]);
+      return;
+    }
+
+    (async () => {
+      try {
+        setLoadingOffers(true);
+        const data = await coursesService.listBySchoolId(item.id as string);
+        if (!mounted) return;
+        setOffers(data);
+      } catch {
+        if (!mounted) return;
+        setOffers([]);
+      } finally {
+        if (mounted) setLoadingOffers(false);
+      }
+    })();
+
+    return () => {
+      mounted = false;
+    };
+  }, [open, item?.id]);
 
   if (!open || !item) return null;
 
@@ -154,6 +184,30 @@ export default function FavoriteDetailModal({ open, onClose, item }: { open: boo
                     </p>
                   </div>
                 </div>
+              </div>
+            </div>
+
+            {/* Footer action */}
+            <div className="mt-7">
+              <p className="text-[10px] sm:text-[11px] font-extrabold tracking-widest text-slate-500">OFERTAS ACADÉMICAS</p>
+              <div className="mt-3 space-y-2">
+                {loadingOffers ? (
+                  <p className="text-xs text-slate-500">Cargando ofertas...</p>
+                ) : null}
+
+                {!loadingOffers && offers.map((offer) => (
+                  <div key={offer.id} className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
+                    <p className="text-sm font-bold text-slate-900">{offer.name}</p>
+                    <p className="mt-1 text-xs text-slate-600">
+                      {offer.modality || 'Modalidad por definir'} · ${offer.price.toLocaleString()} MXN
+                      {offer.capacity ? ` · ${offer.capacity} cupos` : ''}
+                    </p>
+                  </div>
+                ))}
+
+                {!loadingOffers && offers.length === 0 ? (
+                  <p className="text-xs text-slate-500">Esta escuela aún no tiene ofertas académicas publicadas.</p>
+                ) : null}
               </div>
             </div>
 

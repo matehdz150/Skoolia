@@ -79,6 +79,66 @@ export class DrizzleCourseRepository implements CourseRepository {
 
     return rows[0] ?? null;
   }
+
+  async findByOwner(ownerId: string): Promise<Course[]> {
+    const coverFile = alias(files, 'cover_file');
+
+    const rows = await this.db
+      .select({
+        id: courses.id,
+        schoolId: courses.schoolId,
+        name: courses.name,
+        description: courses.description,
+        coverImageUrl: coverFile.url,
+        price: courses.price,
+        capacity: courses.capacity,
+        startDate: courses.startDate,
+        endDate: courses.endDate,
+        modality: courses.modality,
+        averageRating: courses.averageRating,
+        enrollmentsCount: courses.enrollmentsCount,
+        status: courses.status,
+        isActive: courses.isActive,
+        createdAt: courses.createdAt,
+        updatedAt: courses.updatedAt,
+      })
+      .from(courses)
+      .innerJoin(schools, eq(schools.id, courses.schoolId))
+      .leftJoin(coverFile, eq(coverFile.id, courses.coverImageUrl))
+      .where(eq(schools.ownerId, ownerId));
+
+    return rows;
+  }
+
+  async findPublicBySchoolId(schoolId: string): Promise<Course[]> {
+    const coverFile = alias(files, 'cover_file');
+
+    const rows = await this.db
+      .select({
+        id: courses.id,
+        schoolId: courses.schoolId,
+        name: courses.name,
+        description: courses.description,
+        coverImageUrl: coverFile.url,
+        price: courses.price,
+        capacity: courses.capacity,
+        startDate: courses.startDate,
+        endDate: courses.endDate,
+        modality: courses.modality,
+        averageRating: courses.averageRating,
+        enrollmentsCount: courses.enrollmentsCount,
+        status: courses.status,
+        isActive: courses.isActive,
+        createdAt: courses.createdAt,
+        updatedAt: courses.updatedAt,
+      })
+      .from(courses)
+      .leftJoin(coverFile, eq(coverFile.id, courses.coverImageUrl))
+      .where(and(eq(courses.schoolId, schoolId), eq(courses.isActive, true)));
+
+    return rows;
+  }
+
   async update(params: { courseId: string; data: Partial<Course> }) {
     const [updated] = await this.db
       .update(courses)

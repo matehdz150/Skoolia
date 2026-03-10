@@ -13,6 +13,8 @@ import { UpdateCourseUseCase } from './core/use-cases/update-course.use-case';
 import { DeleteCourseUseCase } from './core/use-cases/delete-course.use-case';
 import { UpdateCourseImageUseCase } from './core/use-cases/update-image.use-case';
 import { FilesModule } from 'src/files/files.module';
+import { ListMyCoursesUseCase } from './core/use-cases/list-my-courses.use-case';
+import { ListPublicCoursesBySchoolUseCase } from './core/use-cases/list-public-courses-by-school.use-case';
 
 @Module({
   imports: [
@@ -28,6 +30,8 @@ import { FilesModule } from 'src/files/files.module';
     UpdateCourseUseCase,
     DeleteCourseUseCase,
     UpdateCourseImageUseCase,
+    ListMyCoursesUseCase,
+    ListPublicCoursesBySchoolUseCase,
     {
       provide: COURSE_REPOSITORY,
       useClass: DrizzleCourseRepository,

@@ -74,21 +74,13 @@ export default function SearchBar() {
 
                 <button
                   onClick={() => {
-                    const auth =
-                      typeof window !== "undefined"
-                        ? localStorage.getItem("skoolia:auth")
-                        : null;
+                    const params = new URLSearchParams();
 
-                    if (auth === "parents") {
-                      const params = new URLSearchParams({
-                        q: query,
-                        loc: city,
-                        tab: activeTab,
-                      });
-                      router.push(`/search?${params.toString()}`);
-                    } else {
-                      router.push("/?loginPrompt=1");
-                    }
+                    if (query.trim()) params.set("q", query.trim());
+                    if (city.trim()) params.set("loc", city.trim());
+                    params.set("tab", activeTab);
+
+                    router.push(`/search?${params.toString()}`);
                   }}
                   className="flex items-center justify-center bg-[#2d2c2b] hover:bg-[#1666e3] text-white font-bold px-8 py-3 rounded-full transition text-base md:ml-4 w-full md:w-auto"
                 >

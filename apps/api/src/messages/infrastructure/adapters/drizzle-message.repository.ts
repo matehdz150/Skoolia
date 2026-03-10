@@ -1,5 +1,5 @@
 import { Inject } from '@nestjs/common';
-import { and, asc, desc, eq } from 'drizzle-orm';
+import { and, asc, desc, eq, isNull } from 'drizzle-orm';
 
 import { schoolMessages, schools, publicUsers } from 'drizzle/schemas';
 import { DATABASE } from 'src/db/db.module';
@@ -66,6 +66,7 @@ export class DrizzleMessageRepository implements MessageRepository {
         schoolName: schools.name,
         content: schoolMessages.content,
         createdAt: schoolMessages.createdAt,
+        senderRole: schoolMessages.senderRole,
       })
       .from(schoolMessages)
       .innerJoin(schools, eq(schools.id, schoolMessages.schoolId))
@@ -84,6 +85,7 @@ export class DrizzleMessageRepository implements MessageRepository {
         schoolName: row.schoolName,
         lastMessage: row.content,
         lastMessageAt: row.createdAt,
+        lastSenderRole: row.senderRole,
       });
     }
 
@@ -99,6 +101,8 @@ export class DrizzleMessageRepository implements MessageRepository {
         publicUserName: publicUsers.name,
         content: schoolMessages.content,
         createdAt: schoolMessages.createdAt,
+        senderRole: schoolMessages.senderRole,
+        readAt: schoolMessages.readAt,
       })
       .from(schoolMessages)
       .innerJoin(schools, eq(schools.id, schoolMessages.schoolId))
@@ -107,17 +111,32 @@ export class DrizzleMessageRepository implements MessageRepository {
       .orderBy(desc(schoolMessages.createdAt));
 
     const seen = new Set<string>();
+    const unreadCountByThread = new Map<string, number>();
     const threads: SchoolThreadSummary[] = [];
+
+    for (const row of rows) {
+      if (row.senderRole !== 'public' || row.readAt) continue;
+
+      unreadCountByThread.set(
+        row.publicUserId,
+        (unreadCountByThread.get(row.publicUserId) ?? 0) + 1,
+      );
+    }
 
     for (const row of rows) {
       if (seen.has(row.publicUserId)) continue;
       seen.add(row.publicUserId);
+
+      const unreadCount = unreadCountByThread.get(row.publicUserId) ?? 0;
 
       threads.push({
         publicUserId: row.publicUserId,
         publicUserName: row.publicUserName ?? 'Padre de familia',
         lastMessage: row.content,
         lastMessageAt: row.createdAt,
+        lastSenderRole: row.senderRole,
+        unreadCount,
+        threadHasUnread: unreadCount > 0,
       });
     }
 
@@ -156,6 +175,18 @@ export class DrizzleMessageRepository implements MessageRepository {
   }): Promise<SchoolThreadMessage[]> {
     const schoolId = await this.findSchoolIdByOwner(params.ownerId);
     if (!schoolId) return [];
+
+    await this.db
+      .update(schoolMessages)
+      .set({ readAt: new Date() })
+      .where(
+        and(
+          eq(schoolMessages.schoolId, schoolId),
+          eq(schoolMessages.publicUserId, params.publicUserId),
+          eq(schoolMessages.senderRole, 'public'),
+          isNull(schoolMessages.readAt),
+        ),
+      );
 
     const rows = await this.db
       .select({

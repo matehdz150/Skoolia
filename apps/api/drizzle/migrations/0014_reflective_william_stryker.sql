@@ -1,0 +1,1 @@
+ALTER TABLE "school_messages" ADD COLUMN "read_at" timestamp;

@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/static-components */
 "use client";
 import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
 import {
 	Activity,
 	CreditCard,
@@ -13,6 +14,8 @@ import {
 	Users,
 } from "lucide-react";
 import { JSX } from "react";
+import { messagesService, type SchoolThread } from "@/lib/services/services/messages.service";
+import { SCHOOL_THREADS_UPDATED_EVENT } from "@/lib/school-thread-events";
 
 type ActiveSection =
 	| "summary"
@@ -27,6 +30,44 @@ type ActiveSection =
 type Props = { active?: ActiveSection };
 
 export default function SchoolsSidebar({ active = "summary" }: Props) {
+	const [threads, setThreads] = useState<SchoolThread[]>([]);
+
+	useEffect(() => {
+		let mounted = true;
+
+		const loadThreads = async () => {
+			try {
+				const data = await messagesService.listSchoolThreads();
+				if (mounted) setThreads(data);
+			} catch {
+				if (mounted) setThreads([]);
+			}
+		};
+
+		void loadThreads();
+
+		const interval = window.setInterval(() => {
+			void loadThreads();
+		}, 5000);
+
+		const handleRefresh = () => {
+			void loadThreads();
+		};
+
+		window.addEventListener(SCHOOL_THREADS_UPDATED_EVENT, handleRefresh);
+
+		return () => {
+			mounted = false;
+			window.clearInterval(interval);
+			window.removeEventListener(SCHOOL_THREADS_UPDATED_EVENT, handleRefresh);
+		};
+	}, []);
+
+	const pendingCount = useMemo(
+		() => threads.reduce((sum, thread) => sum + thread.unreadCount, 0),
+		[threads],
+	);
+
 	const Item = ({
 		icon,
 		label,
@@ -66,28 +107,29 @@ export default function SchoolsSidebar({ active = "summary" }: Props) {
 				<div className="flex flex-col gap-2">
 					<Item
 						icon={<Activity size={18} />}
-						label="Resumen"
+						label="Vista general"
 						href="/schools"
 						isActive={active === "summary"}
 					/>
 					<Item
 						icon={<Layers3 size={18} />}
-						label="Mis Cursos"
+						label="Oferta académica"
 						href="/schools/courses"
 						isActive={active === "courses"}
 					/>
 					<Item
 						icon={<Users size={18} />}
-						label="Leads & Interés"
+						label="Prospectos"
 						href="/schools/leads"
 						isActive={active === "leads"}
+						badge={pendingCount || undefined}
 					/>
 					<Item
 						icon={<MessageCircle size={18} />}
 						label="Mensajería"
 						href="/schools/messages"
 						isActive={active === "messages"}
-						badge={3}
+						badge={pendingCount || undefined}
 					/>
 					<Item
 						icon={<Inbox size={18} />}

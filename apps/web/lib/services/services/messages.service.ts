@@ -5,6 +5,7 @@ export interface ParentThread {
   schoolName: string;
   lastMessage: string;
   lastMessageAt: string;
+  lastSenderRole: 'public' | 'private';
 }
 
 export interface ParentMessage {
@@ -21,6 +22,9 @@ export interface SchoolThread {
   publicUserName: string;
   lastMessage: string;
   lastMessageAt: string;
+  lastSenderRole: 'public' | 'private';
+  unreadCount: number;
+  threadHasUnread: boolean;
 }
 
 export interface SchoolMessage {

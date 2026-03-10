@@ -33,7 +33,7 @@ export default function SchoolRecentActivity() {
 						Actividad Reciente
 					</h2>
 					<p className="mt-1 text-xs sm:text-sm text-slate-600">
-						Últimos interesados en tu institución.
+						Últimas familias y prospectos que interactuaron con tu institución.
 					</p>
 				</div>
 				<button className="text-xs sm:text-sm font-bold text-indigo-600 hover:text-indigo-700">
@@ -65,7 +65,7 @@ export default function SchoolRecentActivity() {
 						</div>
 						<span className="inline-flex items-center rounded-xl bg-emerald-50 px-3 py-1 text-[10px] font-bold text-emerald-700 sm:text-xs">
 							<span className="mr-1 inline-block h-1.5 w-1.5 rounded-full bg-emerald-500" />
-							Nuevo lead
+							Nuevo prospecto
 							<ChevronRight size={14} className="ml-1" />
 						</span>
 					</div>

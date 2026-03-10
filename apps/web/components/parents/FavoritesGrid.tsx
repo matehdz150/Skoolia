@@ -108,8 +108,7 @@ export default function FavoritesGrid() {
               await favoritesService.toggle(item.id);
               // optimistically remove from list
               setItems((prev) => prev.filter((x) => x.id !== item.id));
-            }}
-          />
+            } } priceFormatted={""}          />
         ))}
       </div>
     );
