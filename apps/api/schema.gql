@@ -37,8 +37,13 @@ type Query {
 }
 
 input SchoolsFeedInput {
+  educationalLevel: String
   city: String
   categoryId: String
+  schedule: String
+  languages: String
+  minPrice: Float
+  maxPrice: Float
   search: String
   sortBy: SchoolSortEnum
   onlyVerified: Boolean

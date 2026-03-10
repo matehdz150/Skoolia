@@ -32,6 +32,20 @@ export default function SearchPage() {
   const sp = useSearchParams();
   const q = sp.get("q") ?? "";
   const loc = sp.get("loc") ?? "";
+  const level = sp.get("level") ?? "";
+  const categoryId = sp.get("categoryId") ?? "";
+  const schedule = sp.get("schedule") ?? "";
+  const languages = sp.get("languages") ?? "";
+  const minPriceParam = sp.get("minPrice") ?? "";
+  const maxPriceParam = sp.get("maxPrice") ?? "";
+  const minPrice = minPriceParam ? Number(minPriceParam) : undefined;
+  const maxPrice = maxPriceParam ? Number(maxPriceParam) : undefined;
+  const sortByParam = sp.get("sortBy") ?? "recent";
+  const sortBy =
+    sortByParam === "favorites" || sortByParam === "rating"
+      ? sortByParam
+      : "recent";
+  const verifiedOnly = sp.get("verified") === "1";
   const tab = (sp.get("tab") ?? "escuelas").toUpperCase();
 
   const [items, setItems] = useState<CatalogItem[]>([]);
@@ -72,6 +86,14 @@ export default function SearchPage() {
           filters: {
             search: q || undefined,
             city: normalizedLoc,
+            educationalLevel: level || undefined,
+            categoryId: categoryId || undefined,
+            schedule: schedule || undefined,
+            languages: languages || undefined,
+            minPrice: Number.isFinite(minPrice) ? minPrice : undefined,
+            maxPrice: Number.isFinite(maxPrice) ? maxPrice : undefined,
+            sortBy,
+            onlyVerified: verifiedOnly,
           },
           pagination: { first: 24 },
         });
@@ -117,7 +139,7 @@ export default function SearchPage() {
     return () => {
       active = false;
     };
-  }, [q, loc]);
+  }, [q, loc, level, categoryId, schedule, languages, minPrice, maxPrice, sortBy, verifiedOnly]);
 
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<CatalogItem | undefined>();
@@ -190,7 +212,18 @@ export default function SearchPage() {
 
   return (
     <>
-      <SearchToolbar q={q} loc={loc || "México (Todas las zonas)"} />
+      <SearchToolbar
+        q={q}
+        loc={loc || "México (Todas las zonas)"}
+        level={level}
+        categoryId={categoryId}
+        schedule={schedule}
+        languages={languages}
+        minPrice={minPrice}
+        maxPrice={maxPrice}
+        sortBy={sortBy}
+        verified={verifiedOnly}
+      />
       <section className="mx-auto max-w-7xl px-6 py-10">
       {/* Header */}
       <div className="flex items-center justify-between">

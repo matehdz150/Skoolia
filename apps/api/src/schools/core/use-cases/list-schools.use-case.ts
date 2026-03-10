@@ -10,8 +10,13 @@ export class ListSchoolsFeedUseCase {
 
   async execute(params: {
     filters?: {
+      educationalLevel?: string;
       city?: string;
       categoryId?: string;
+      schedule?: string;
+      languages?: string;
+      minPrice?: number;
+      maxPrice?: number;
       search?: string;
       sortBy?: 'favorites' | 'rating' | 'recent';
       onlyVerified?: boolean;

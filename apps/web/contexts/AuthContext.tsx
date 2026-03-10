@@ -90,6 +90,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // aunque falle, limpiamos estado
     } finally {
       setUser(null);
+      // Siempre regresamos al home al cerrar sesion.
+      if (typeof window !== "undefined") {
+        window.location.replace("/?audience=parents");
+      }
     }
   }
 

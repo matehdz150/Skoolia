@@ -48,7 +48,7 @@ export default function HeroSection() {
         }}
         className="absolute right-0 top-3/16 w-155 md:w-125"
       />
-      <div className="w-full mt-10 md:mt-16 flex justify-center z-2">
+      <div id="search-bar" className="w-full mt-10 md:mt-16 flex justify-center z-2">
         <SearchBar />
       </div>
     </section>
