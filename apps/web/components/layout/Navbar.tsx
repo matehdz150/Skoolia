@@ -42,7 +42,6 @@ export default function Navbar(): JSX.Element {
   }, []);
 
   const displayName = user?.name ?? user?.email.split("@")[0] ?? "";
-  console.log(user, "navbar");
 
   return (
     <div className="sticky top-0 z-50 bg-transparent pt-5">
@@ -69,43 +68,81 @@ export default function Navbar(): JSX.Element {
 
           {/* LINKS */}
           <ul className="hidden md:flex gap-8 font-semibold text-base">
-            <li>
-              <Link
-                href="/?audience=parents"
-                className={`font-medium ${
-                  pathname === "/" && audience === "parents"
-                    ? "text-[#1973FC]"
-                    : "text-[#2d2c2b] hover:text-black"
-                }`}
-              >
-                Para padres
-              </Link>
-            </li>
+            {!user && (
+              <>
+                <li>
+                  <Link
+                    href="/?audience=parents"
+                    className={`font-medium ${
+                      pathname === "/" && audience === "parents"
+                        ? "text-[#1973FC]"
+                        : "text-[#2d2c2b] hover:text-black"
+                    }`}
+                  >
+                    Para padres
+                  </Link>
+                </li>
 
-            <li>
-              <Link
-                href="/?audience=schools"
-                className={`font-medium ${
-                  pathname === "/" && audience === "schools"
-                    ? "text-[#1973FC]"
-                    : "text-[#2d2c2b] hover:text-black"
-                }`}
-              >
-                Para escuelas
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/?audience=help"
-                className={`font-medium ${
-                  pathname === "/" && audience === "help"
-                    ? "text-[#1973FC]"
-                    : "text-[#2d2c2b] hover:text-black"
-                }`}
-              >
-                Ayuda
-              </Link>
-            </li>
+                <li>
+                  <Link
+                    href="/?audience=schools"
+                    className={`font-medium ${
+                      pathname === "/" && audience === "schools"
+                        ? "text-[#1973FC]"
+                        : "text-[#2d2c2b] hover:text-black"
+                    }`}
+                  >
+                    Para escuelas
+                  </Link>
+                </li>
+
+                <li>
+                  <Link
+                    href="/?audience=help"
+                    className={`font-medium ${
+                      pathname === "/" && audience === "help"
+                        ? "text-[#1973FC]"
+                        : "text-[#2d2c2b] hover:text-black"
+                    }`}
+                  >
+                    Ayuda
+                  </Link>
+                </li>
+              </>
+            )}
+
+            {user?.role === "public" && (
+              <>
+                <li>
+                  <Link
+                    href="/?audience=parents"
+                    className="font-medium text-[#2d2c2b] hover:text-black"
+                  >
+                    Buscar escuelas
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/?audience=help"
+                    className={`font-medium ${
+                      pathname === "/" && audience === "help"
+                        ? "text-[#1973FC]"
+                        : "text-[#2d2c2b] hover:text-black"
+                    }`}
+                  >
+                    Ayuda
+                  </Link>
+                </li>
+              </>
+            )}
+
+            {user?.role === "private" && (
+              <li>
+                <Link href="/schools" className="font-medium text-[#2d2c2b] hover:text-black">
+                  Panel escolar
+                </Link>
+              </li>
+            )}
           </ul>
         </div>
 
