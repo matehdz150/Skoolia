@@ -26,15 +26,15 @@ async function seed() {
   // ==============================
 
   const categoryList = [
-    { name: 'Deportes', slug: 'deportes' },
-    { name: 'Bilingue', slug: 'bilingue' },
-    { name: 'Arte', slug: 'arte' },
-    { name: 'Tecnología', slug: 'tecnologia' },
-    { name: 'Robótica', slug: 'robotica' },
-    { name: 'Teatro', slug: 'teatro' },
-    { name: 'Programación', slug: 'programacion' },
-    { name: 'Para niños', slug: 'para-ninos' },
-    { name: 'Para hombres', slug: 'para-hombres' },
+    { name: 'Deportes', slug: 'Trophy' },
+    { name: 'Bilingue', slug: 'Languages' },
+    { name: 'Arte', slug: 'Palette' },
+    { name: 'Tecnología', slug: 'Cpu' },
+    { name: 'Robótica', slug: 'Bot' },
+    { name: 'Teatro', slug: 'Drama' },
+    { name: 'Programación', slug: 'Code' },
+    { name: 'Para niños', slug: 'Baby' },
+    { name: 'Para hombres', slug: 'User' },
   ];
 
   const hashedPassword = await bcrypt.hash('123456', 10);
