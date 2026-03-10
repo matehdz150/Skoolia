@@ -20,6 +20,8 @@ export const schoolMessages = pgTable(
 
     content: text('content').notNull(),
 
+    readAt: timestamp('read_at'),
+
     createdAt: timestamp('created_at').defaultNow().notNull(),
   },
   (table) => ({

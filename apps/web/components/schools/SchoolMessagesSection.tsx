@@ -1,13 +1,19 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Send } from "lucide-react";
 
+import { useToast } from "@/components/ui/toast";
 import {
 	messagesService,
 	type SchoolMessage,
 	type SchoolThread,
 } from "@/lib/services/services/messages.service";
+import {
+	notifySchoolThreadsUpdated,
+	SCHOOL_THREADS_UPDATED_EVENT,
+} from "@/lib/school-thread-events";
 
 function formatDate(isoDate: string) {
 	const date = new Date(isoDate);
@@ -20,6 +26,9 @@ function formatDate(isoDate: string) {
 }
 
 export default function SchoolMessagesSection() {
+	const searchParams = useSearchParams();
+	const { showToast } = useToast();
+	const requestedThreadId = searchParams.get("thread");
 	const [threads, setThreads] = useState<SchoolThread[]>([]);
 	const [activeThreadId, setActiveThreadId] = useState<string | null>(null);
 	const [messages, setMessages] = useState<SchoolMessage[]>([]);
@@ -39,9 +48,15 @@ export default function SchoolMessagesSection() {
 		});
 	}, []);
 
-	const loadMessages = useCallback(async (threadId: string) => {
+	const loadMessages = useCallback(async (threadId: string, syncThreads = false) => {
 		const data = await messagesService.listSchoolThreadMessages(threadId);
 		setMessages(data);
+
+		if (syncThreads) {
+			const refreshedThreads = await messagesService.listSchoolThreads();
+			setThreads(refreshedThreads);
+			notifySchoolThreadsUpdated();
+		}
 	}, []);
 
 	useEffect(() => {
@@ -53,7 +68,11 @@ export default function SchoolMessagesSection() {
 				if (!mounted) return;
 
 				setThreads(data);
-				setActiveThreadId(data[0]?.publicUserId ?? null);
+				setActiveThreadId(
+					requestedThreadId && data.some((thread) => thread.publicUserId === requestedThreadId)
+						? requestedThreadId
+						: data[0]?.publicUserId ?? null,
+				);
 			} finally {
 				if (mounted) setLoadingThreads(false);
 			}
@@ -62,7 +81,7 @@ export default function SchoolMessagesSection() {
 		return () => {
 			mounted = false;
 		};
-	}, []);
+	}, [requestedThreadId]);
 
 	useEffect(() => {
 		if (loadingThreads) return;
@@ -77,6 +96,18 @@ export default function SchoolMessagesSection() {
 	}, [loadThreads, loadingThreads, sending]);
 
 	useEffect(() => {
+		const handleRefresh = () => {
+			void loadThreads();
+		};
+
+		window.addEventListener(SCHOOL_THREADS_UPDATED_EVENT, handleRefresh);
+
+		return () => {
+			window.removeEventListener(SCHOOL_THREADS_UPDATED_EVENT, handleRefresh);
+		};
+	}, [loadThreads]);
+
+	useEffect(() => {
 		if (!activeThreadId) {
 			setMessages([]);
 			return;
@@ -87,8 +118,7 @@ export default function SchoolMessagesSection() {
 		(async () => {
 			try {
 				setLoadingMessages(true);
-				const data = await messagesService.listSchoolThreadMessages(activeThreadId);
-				if (mounted) setMessages(data);
+				await loadMessages(activeThreadId, true);
 			} finally {
 				if (mounted) setLoadingMessages(false);
 			}
@@ -123,8 +153,20 @@ export default function SchoolMessagesSection() {
 			setSending(true);
 			await messagesService.sendSchoolMessage(activeThreadId, content);
 
-			await Promise.all([loadMessages(activeThreadId), loadThreads()]);
+			await loadMessages(activeThreadId, true);
 			setDraft("");
+			showToast({
+				title: "Mensaje enviado",
+				description: "La conversación se actualizó correctamente.",
+				variant: "success",
+			});
+		} catch (error) {
+			console.error("No se pudo enviar el mensaje", error);
+			showToast({
+				title: "No se pudo enviar el mensaje",
+				description: "Inténtalo otra vez en unos segundos.",
+				variant: "error",
+			});
 		} finally {
 			setSending(false);
 		}
@@ -170,9 +212,21 @@ export default function SchoolMessagesSection() {
 											<div>
 												<p className="text-sm font-extrabold text-slate-900">{thread.publicUserName}</p>
 												<p className="mt-0.5 line-clamp-1 text-xs text-slate-500">{thread.lastMessage}</p>
+												{thread.threadHasUnread ? (
+													<p className="mt-1 text-[11px] font-bold text-amber-600">
+														{thread.unreadCount} sin leer
+													</p>
+												) : null}
 											</div>
 										</div>
-										<div className="text-[11px] text-slate-400">{formatDate(thread.lastMessageAt)}</div>
+										<div className="flex items-center gap-2">
+											{thread.threadHasUnread ? (
+												<span className="inline-flex min-w-5 items-center justify-center rounded-full bg-amber-500 px-1.5 py-0.5 text-[10px] font-bold text-white">
+													{thread.unreadCount}
+												</span>
+											) : null}
+											<div className="text-[11px] text-slate-400">{formatDate(thread.lastMessageAt)}</div>
+										</div>
 									</button>
 								);
 							})}

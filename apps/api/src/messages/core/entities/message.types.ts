@@ -14,6 +14,7 @@ export interface ParentThreadSummary {
   schoolName: string;
   lastMessage: string;
   lastMessageAt: Date;
+  lastSenderRole: SenderRole;
 }
 
 export interface SchoolThreadSummary {
@@ -21,6 +22,9 @@ export interface SchoolThreadSummary {
   publicUserName: string;
   lastMessage: string;
   lastMessageAt: Date;
+  lastSenderRole: SenderRole;
+  unreadCount: number;
+  threadHasUnread: boolean;
 }
 
 export interface ParentThreadMessage {
