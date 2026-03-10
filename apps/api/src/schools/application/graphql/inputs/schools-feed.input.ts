@@ -13,12 +13,37 @@ export class SchoolsFeedInput {
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
+  educationalLevel?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
   city?: string;
 
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
   categoryId?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  schedule?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  languages?: string;
+
+  @Field(() => Float, { nullable: true })
+  @IsOptional()
+  @IsNumber()
+  minPrice?: number;
+
+  @Field(() => Float, { nullable: true })
+  @IsOptional()
+  @IsNumber()
+  maxPrice?: number;
 
   @Field({ nullable: true })
   @IsOptional()

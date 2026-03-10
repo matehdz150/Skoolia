@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { schoolCategories, schools } from 'drizzle/schemas';
-import { and, eq, ilike, desc, lt, SQL } from 'drizzle-orm';
+import { and, eq, ilike, desc, lt, SQL, or, gte, lte } from 'drizzle-orm';
 
 import { DATABASE } from 'src/db/db.module';
 import type { Database } from 'src/db/db.types';
@@ -178,8 +178,13 @@ export class DrizzleSchoolRepository implements SchoolRepository {
 
   async listForFeed(params: {
     filters?: {
+      educationalLevel?: string;
       city?: string;
       categoryId?: string;
+      schedule?: string;
+      languages?: string;
+      minPrice?: number;
+      maxPrice?: number;
       search?: string;
       sortBy?: 'favorites' | 'rating' | 'recent';
       onlyVerified?: boolean;
@@ -193,8 +198,34 @@ export class DrizzleSchoolRepository implements SchoolRepository {
 
     const whereConditions: SQL[] = [];
 
+    if (filters.educationalLevel) {
+      whereConditions.push(
+        ilike(schools.educationalLevel, `%${filters.educationalLevel}%`),
+      );
+    }
+
     if (filters.city) {
       whereConditions.push(eq(schools.city, filters.city));
+    }
+
+    if (filters.categoryId) {
+      whereConditions.push(eq(schoolCategories.categoryId, filters.categoryId));
+    }
+
+    if (filters.schedule) {
+      whereConditions.push(ilike(schools.schedule, `%${filters.schedule}%`));
+    }
+
+    if (filters.languages) {
+      whereConditions.push(ilike(schools.languages, `%${filters.languages}%`));
+    }
+
+    if (typeof filters.minPrice === 'number') {
+      whereConditions.push(gte(schools.monthlyPrice, filters.minPrice));
+    }
+
+    if (typeof filters.maxPrice === 'number') {
+      whereConditions.push(lte(schools.monthlyPrice, filters.maxPrice));
     }
 
     if (filters.onlyVerified) {
@@ -202,7 +233,12 @@ export class DrizzleSchoolRepository implements SchoolRepository {
     }
 
     if (filters.search) {
-      whereConditions.push(ilike(schools.name, `%${filters.search}%`));
+      whereConditions.push(
+        or(
+          ilike(schools.name, `%${filters.search}%`),
+          ilike(schools.educationalLevel, `%${filters.search}%`),
+        )!,
+      );
     }
 
     if (pagination?.after) {

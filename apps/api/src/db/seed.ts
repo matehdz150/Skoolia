@@ -1,8 +1,8 @@
 import 'dotenv/config';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
-import { randomUUID } from 'crypto';
 import bcrypt from 'bcrypt';
+import { inArray } from 'drizzle-orm';
 import { privateUsers } from '../../drizzle/schemas/users/private-users';
 import { publicUsers } from '../../drizzle/schemas/users/public-users';
 import { schools } from '../../drizzle/schemas/schools/school';
@@ -37,12 +37,16 @@ async function seed() {
     { name: 'Para hombres', slug: 'User' },
   ];
 
+  const categorySlugs = categoryList.map((c) => c.slug);
+
   const hashedPassword = await bcrypt.hash('123456', 10);
 
+  await db.insert(categories).values(categoryList).onConflictDoNothing();
+
   const insertedCategories = await db
-    .insert(categories)
-    .values(categoryList)
-    .returning();
+    .select()
+    .from(categories)
+    .where(inArray(categories.slug, categorySlugs));
 
   console.log('✅ Categories created');
 
@@ -50,28 +54,64 @@ async function seed() {
   // 2️⃣ PRIVATE USERS
   // ==============================
 
-  const owners = Array.from({ length: 15 }).map((_, i) => ({
-    id: randomUUID(),
-    email: `owner${i + 1}@test.com`,
+  const ownerEmails = Array.from({ length: 15 }).map(
+    (_, i) => `owner${i + 1}@test.com`,
+  );
+
+  const ownerSeedData = ownerEmails.map((email, i) => ({
+    email,
     passwordHash: hashedPassword,
-    role: 'private' as const,
+    name: `Owner ${i + 1}`,
   }));
 
-  await db.insert(privateUsers).values(owners);
+  await db.insert(privateUsers).values(ownerSeedData).onConflictDoNothing();
+
+  const ownerRows = await db
+    .select({ id: privateUsers.id, email: privateUsers.email })
+    .from(privateUsers)
+    .where(inArray(privateUsers.email, ownerEmails));
+
+  const ownerByEmail = new Map(ownerRows.map((o) => [o.email, o]));
+  const owners = ownerEmails
+    .map((email) => ownerByEmail.get(email))
+    .filter((o): o is { id: string; email: string } => Boolean(o));
+
+  if (owners.length !== ownerEmails.length) {
+    throw new Error('Failed to load all private test users for seed');
+  }
+
   console.log('✅ 15 private users created');
 
   // ==============================
   // 3️⃣ PUBLIC USERS
   // ==============================
 
-  const publics = Array.from({ length: 10 }).map((_, i) => ({
-    id: randomUUID(),
-    email: `public${i + 1}@test.com`,
+  const publicEmails = Array.from({ length: 10 }).map(
+    (_, i) => `public${i + 1}@test.com`,
+  );
+
+  const publicSeedData = publicEmails.map((email, i) => ({
+    email,
     passwordHash: hashedPassword,
-    role: 'public' as const,
+    name: `Public ${i + 1}`,
   }));
 
-  await db.insert(publicUsers).values(publics);
+  await db.insert(publicUsers).values(publicSeedData).onConflictDoNothing();
+
+  const publicRows = await db
+    .select({ id: publicUsers.id, email: publicUsers.email })
+    .from(publicUsers)
+    .where(inArray(publicUsers.email, publicEmails));
+
+  const publicByEmail = new Map(publicRows.map((u) => [u.email, u]));
+  const publics = publicEmails
+    .map((email) => publicByEmail.get(email))
+    .filter((u): u is { id: string; email: string } => Boolean(u));
+
+  if (publics.length !== publicEmails.length) {
+    throw new Error('Failed to load all public test users for seed');
+  }
+
   console.log('✅ 10 public users created');
 
   // ==============================
@@ -82,13 +122,51 @@ async function seed() {
     (_, i) => `Academia ${i + 1}`,
   );
 
+  const educationalLevels = [
+    'Maternal',
+    'Preescolar',
+    'Primaria',
+    'Secundaria',
+    'Preparatoria',
+    'Universidad',
+  ];
+
+  const cities = ['Guadalajara', 'CDMX', 'Zapopan', 'Monterrey', 'Puebla'];
+
+  const schedules = [
+    '7:30 AM - 2:30 PM',
+    '8:00 AM - 3:00 PM',
+    '8:30 AM - 3:30 PM',
+    '7:00 AM - 2:00 PM',
+    '9:00 AM - 4:00 PM',
+  ];
+
+  const languageOptions = [
+    'Español',
+    'Bilingüe (Español-Inglés)',
+    'Bilingüe (Español-Francés)',
+    'Trilingüe',
+    'Español',
+  ];
+
+  const prices = [5000, 7500, 10000, 12500, 15000, 18000, 20000];
+
+  const ownerIds = owners.map((o) => o.id);
+
+  await db.delete(schools).where(inArray(schools.ownerId, ownerIds));
+
   const insertedSchools = await db
     .insert(schools)
     .values(
       schoolNames.map((name, i) => ({
         name,
         description: `Descripcion profesional de ${name}`,
-        city: i % 2 === 0 ? 'Guadalajara' : 'CDMX',
+        city: cities[i % cities.length],
+        educationalLevel: educationalLevels[i % educationalLevels.length],
+        schedule: schedules[i % schedules.length],
+        languages: languageOptions[i % languageOptions.length],
+        monthlyPrice: prices[i % prices.length],
+        enrollmentOpen: i % 2 === 0,
         ownerId: owners[i].id,
         isVerified: i % 3 === 0,
       })),
@@ -101,11 +179,30 @@ async function seed() {
   // 5️⃣ SCHOOL CATEGORIES
   // ==============================
 
+  await db.delete(schoolCategories).where(
+    inArray(
+      schoolCategories.schoolId,
+      insertedSchools.map((s) => s.id),
+    ),
+  );
+
   await db.insert(schoolCategories).values(
-    insertedSchools.map((school, i) => ({
-      schoolId: school.id,
-      categoryId: insertedCategories[i % insertedCategories.length].id,
-    })),
+    insertedSchools.flatMap((school, i) => {
+      const firstCategory = insertedCategories[i % insertedCategories.length];
+      const secondCategory =
+        insertedCategories[(i + 3) % insertedCategories.length];
+
+      return [
+        {
+          schoolId: school.id,
+          categoryId: firstCategory.id,
+        },
+        {
+          schoolId: school.id,
+          categoryId: secondCategory.id,
+        },
+      ];
+    }),
   );
 
   console.log('✅ Categories assigned');
@@ -113,6 +210,13 @@ async function seed() {
   // ==============================
   // 6️⃣ COURSES (2 per school)
   // ==============================
+
+  await db.delete(courses).where(
+    inArray(
+      courses.schoolId,
+      insertedSchools.map((s) => s.id),
+    ),
+  );
 
   await db.insert(courses).values(
     insertedSchools.flatMap((school, i) => [
@@ -152,12 +256,26 @@ async function seed() {
     })),
   );
 
+  await db.delete(schoolRatings).where(
+    inArray(
+      schoolRatings.schoolId,
+      insertedSchools.map((s) => s.id),
+    ),
+  );
+
   await db.insert(schoolRatings).values(ratingsData);
   console.log('✅ Ratings created');
 
   // ==============================
   // 8️⃣ FAVORITES
   // ==============================
+
+  await db.delete(schoolFavorites).where(
+    inArray(
+      schoolFavorites.schoolId,
+      insertedSchools.map((s) => s.id),
+    ),
+  );
 
   await db.insert(schoolFavorites).values(
     insertedSchools.map((school) => ({
