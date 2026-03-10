@@ -10,6 +10,11 @@ export interface Student {
   name: string;
   age: number;
   monthlyBudget: number | null;
+  interests?: {
+    id: string;
+    name: string;
+    slug: string;
+  }[];
   createdAt: string;
   updatedAt: string;
 }

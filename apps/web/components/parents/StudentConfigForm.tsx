@@ -2,11 +2,12 @@
 import { Save, Wand2, Sparkles } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { studentService, Student } from '@/lib/services/services/student.service';
+import type { Category } from '@/lib/services/services/schools-categories.service';
 
 interface Props {
   mode: 'create' | 'edit';
   initial?: Student;
-  presetInterests?: string[];
+  presetInterests?: Category[];
   onSaved?: (student: Student) => void;
   onCancel?: () => void;
 }
@@ -15,7 +16,9 @@ export default function StudentConfigForm({ mode, initial, presetInterests = [],
   const [name, setName] = useState(initial?.name ?? 'Carlos');
   const [age, setAge] = useState(String(initial?.age ?? '12'));
   const [budget, setBudget] = useState(String(initial?.monthlyBudget ?? '12000'));
-  const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
+  const [selectedInterests, setSelectedInterests] = useState<string[]>(
+    initial?.interests?.map((interest) => interest.id) ?? [],
+  );
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -52,10 +55,15 @@ export default function StudentConfigForm({ mode, initial, presetInterests = [],
         name: name.trim(),
         age: parsedAge,
         monthlyBudget: parsedBudget,
-        // TODO: Map selectedInterests to real UUIDs when categories API is available
-        categoryIds: [],
+        categoryIds: selectedInterests,
       };
-      const saved = mode === 'edit' ? await studentService.update(payload) : await studentService.create(payload);
+      mode === 'edit'
+        ? await studentService.update(payload)
+        : await studentService.create(payload);
+      const saved = await studentService.getMyStudent();
+      if (!saved) {
+        throw new Error('No se pudo recuperar el alumno guardado.');
+      }
       setSuccess(mode === 'edit' ? 'Alumno actualizado correctamente.' : 'Alumno guardado correctamente.');
       onSaved?.(saved);
     } catch (err: unknown) {
@@ -117,14 +125,16 @@ export default function StudentConfigForm({ mode, initial, presetInterests = [],
           <label className="block text-sm font-semibold text-slate-700 mb-3">Intereses (opcional)</label>
           <div className="flex flex-wrap gap-2">
             {presetInterests.map((opt) => {
-              const selected = selectedInterests.includes(opt);
+              const selected = selectedInterests.includes(opt.id);
               return (
                 <button
                   type="button"
-                  key={opt}
+                  key={opt.id}
                   onClick={() => {
                     setSelectedInterests((prev) =>
-                      prev.includes(opt) ? prev.filter((i) => i !== opt) : [...prev, opt]
+                      prev.includes(opt.id)
+                        ? prev.filter((i) => i !== opt.id)
+                        : [...prev, opt.id]
                     );
                   }}
                   className={
@@ -135,7 +145,7 @@ export default function StudentConfigForm({ mode, initial, presetInterests = [],
                   }
                 >
                   {selected && <Sparkles size={14} className="text-indigo-600" />}
-                  {opt}
+                  {opt.name}
                 </button>
               );
             })}
