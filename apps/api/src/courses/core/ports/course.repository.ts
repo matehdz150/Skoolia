@@ -13,6 +13,10 @@ export interface CourseRepository {
     modality?: string;
   }): Promise<Course>;
 
+  findByOwner(ownerId: string): Promise<Course[]>;
+
+  findPublicBySchoolId(schoolId: string): Promise<Course[]>;
+
   update(params: {
     courseId: string;
     data: {

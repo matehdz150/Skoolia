@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Inject,
   Param,
   Patch,
@@ -23,6 +24,8 @@ import { UpdateCourseUseCase } from '../core/use-cases/update-course.use-case';
 import { DeleteCourseUseCase } from '../core/use-cases/delete-course.use-case';
 import { UpdateCourseImageDto } from './dto/update-image.dto';
 import { UpdateCourseImageUseCase } from '../core/use-cases/update-image.use-case';
+import { ListMyCoursesUseCase } from '../core/use-cases/list-my-courses.use-case';
+import { ListPublicCoursesBySchoolUseCase } from '../core/use-cases/list-public-courses-by-school.use-case';
 
 @Controller('courses')
 export class CoursesController {
@@ -38,6 +41,12 @@ export class CoursesController {
 
     @Inject(UpdateCourseImageUseCase)
     private readonly updateCourseImageUseCase: UpdateCourseImageUseCase,
+
+    @Inject(ListMyCoursesUseCase)
+    private readonly listMyCourses: ListMyCoursesUseCase,
+
+    @Inject(ListPublicCoursesBySchoolUseCase)
+    private readonly listPublicCoursesBySchool: ListPublicCoursesBySchoolUseCase,
   ) {}
 
   /**
@@ -60,6 +69,18 @@ export class CoursesController {
       endDate: dto.endDate,
       modality: dto.modality,
     });
+  }
+
+  @Get('me')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('private')
+  async listMine(@CurrentUser() user: JwtPayload) {
+    return this.listMyCourses.execute(user);
+  }
+
+  @Get('schools/:schoolId')
+  async listPublicBySchool(@Param('schoolId') schoolId: string) {
+    return this.listPublicCoursesBySchool.execute(schoolId);
   }
 
   @Patch(':id/image')
