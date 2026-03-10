@@ -4,40 +4,30 @@ import StudentConfigForm from './StudentConfigForm';
 import StudentCard from './StudentCard';
 import StudentEmptyState from './StudentEmptyState';
 import { studentService, Student } from '@/lib/services/services/student.service';
-
-const PRESET_INTERESTS = [
-  'Arte',
-  'Música',
-  'Danza',
-  'Teatro',
-  'Lectura',
-  'Escritura',
-  'Ajedrez',
-  'Ciencia',
-  'Tecnología',
-  'Robótica',
-  'Programación',
-  'Matemáticas',
-  'Idiomas',
-  'Fútbol',
-  'Baloncesto',
-  'Natación',
-  'Atletismo',
-];
+import {
+  schoolCategoriesService,
+  type Category,
+} from '@/lib/services/services/schools-categories.service';
 
 export default function StudentSection() {
   const [student, setStudent] = useState<Student | null>(null);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
 
   useEffect(() => {
     (async () => {
       try {
-        const me = await studentService.getMyStudent();
+        const [me, allCategories] = await Promise.all([
+          studentService.getMyStudent(),
+          schoolCategoriesService.getAllCategories(),
+        ]);
         setStudent(me);
+        setCategories(allCategories);
       } catch {
         // Si no está autenticado o hay error, mostramos el formulario de creación
         setStudent(null);
+        setCategories([]);
       } finally {
         setLoading(false);
       }
@@ -59,7 +49,7 @@ export default function StudentSection() {
       <StudentConfigForm
         mode={student ? 'edit' : 'create'}
         initial={student ?? undefined}
-        presetInterests={PRESET_INTERESTS}
+        presetInterests={categories}
         onSaved={(s) => {
           setStudent(s);
           setEditing(false);
@@ -76,7 +66,7 @@ export default function StudentSection() {
   return (
     <StudentCard
       student={student}
-      interests={[]}
+      interests={student.interests?.map((interest) => interest.name) ?? []}
       onEdit={() => setEditing(true)}
       onDelete={handleDelete}
     />
