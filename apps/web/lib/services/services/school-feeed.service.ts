@@ -29,8 +29,13 @@ export interface SchoolsConnection {
 }
 
 export interface SchoolsFeedFilters {
+  educationalLevel?: string;
   city?: string;
   categoryId?: string;
+  schedule?: string;
+  languages?: string;
+  minPrice?: number;
+  maxPrice?: number;
   search?: string;
   sortBy?: 'favorites' | 'rating' | 'recent';
   onlyVerified?: boolean;
@@ -75,10 +80,25 @@ export const schoolsFeedService = {
       }
     `;
 
+    const sortByMap: Record<NonNullable<SchoolsFeedFilters["sortBy"]>, string> = {
+      recent: "RECENT",
+      rating: "RATING",
+      favorites: "FAVORITES",
+    };
+
+    const normalizedFilters = params.filters
+      ? {
+          ...params.filters,
+          sortBy: params.filters.sortBy
+            ? sortByMap[params.filters.sortBy]
+            : undefined,
+        }
+      : undefined;
+
     const data = await graphql<{
       schoolsFeed: SchoolsConnection;
     }>(query, {
-      filters: params.filters,
+      filters: normalizedFilters,
       pagination: params.pagination,
     });
 
