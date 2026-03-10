@@ -8,6 +8,7 @@ import SearchToolbar from "@/components/search/SearchToolbar";
 import { schoolsFeedService } from "@/lib/services/services/school-feeed.service";
 import { schoolsService } from "@/lib/services/services/schools.service";
 import { favoritesService } from "@/lib/services/services/favorites.service";
+import { recordSchoolVisit } from "@/lib/history/school-history";
 
 type CatalogItem = {
   id: string;
@@ -123,7 +124,14 @@ export default function SearchPage() {
   const openModal = (item: CatalogItem) => {
     setSelected(item);
     setOpen(true);
-    // Enriquecer datos del modal con detalles completos
+
+    // Registrar visita en historial
+    recordSchoolVisit({
+      id: item.id,
+      name: item.title,
+      imageSrc: item.imageSrc,
+      location: item.location,
+    });
     // si el backend expone más campos vía REST
     (async () => {
       try {
