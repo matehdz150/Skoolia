@@ -12,6 +12,7 @@ import { DbModule } from './db/db.module';
 import { SchoolsModule } from './schools/schools.module';
 import { FavoritesModule } from './schools/favorites.module';
 import { CoursesModule } from './courses/courses.module';
+
 import { AppResolver } from './app.resolver';
 import { RatingsModule } from './ratings/ratings.module';
 import { StudentsModule } from './students/students.module';
@@ -20,6 +21,7 @@ import { UsersModule } from './users/users.module';
 import { CategoriesModule } from './categories/categories.module';
 import { MessagesModule } from './messages/messages.module';
 import { SubscriptionsModule } from './subscriptions/subscriptions.module';
+import { LeadsModule } from './leads/leads.module';
 
 @Module({
   imports: [
@@ -38,6 +40,7 @@ import { SubscriptionsModule } from './subscriptions/subscriptions.module';
     AuthModule,
     SchoolsModule,
     FavoritesModule,
+    LeadsModule,
     CoursesModule,
     RatingsModule,
     StudentsModule,
