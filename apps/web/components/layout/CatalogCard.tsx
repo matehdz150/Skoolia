@@ -1,12 +1,9 @@
 'use client';
 
 import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { Heart, ImageIcon, MapPin, ArrowRight, Users, Star, TrendingUp, Check } from "lucide-react";
+import { Heart, ImageIcon, MapPin, Star, TrendingUp, Check } from "lucide-react";
 import React from "react";
 import { sanitizeImageSrc } from "@/lib/utils";
-import { PlanBadge } from "./PlanBadge";
 
 type CatalogCardProps = {
   imageSrc?: string;
@@ -57,12 +54,7 @@ export default function CatalogCard({
   isComparing = false,
   onCompareToggle,
 }: CatalogCardProps) {
-  const router = useRouter();
   const safeImageSrc = sanitizeImageSrc(imageSrc);
-  // Log para depuración
-  console.log("CatalogCard props", { priceFormatted, title, name: title });
-
-  const isPremium = planName === "PREMIUM_SUBSCRIPTION";
 
   return (
     <article

@@ -1,13 +1,13 @@
 "use client";
 
-import { usePathname } from "next/navigation";
 import { useEffect, useState, useMemo } from "react";
 import { X, Image as ImageIcon, Upload, MapPin, Globe, Loader2, Tag, Check, Calendar, Users, DollarSign, Layers, Plus, Trash2, Images } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { COURSE_MODALITIES } from "@/lib/constants";
 import { MEXICO_STATES } from "@/lib/mexico-states";
 import { geocodingService } from "@/lib/services/geocoding.service";
 import { schoolCategoriesService, type Category } from "@/lib/services/services/schools-categories.service";
+import CustomSelect from "@/components/ui/custom-select";
 
 import type { Course } from "@/lib/services/services/courses.service";
 
@@ -45,6 +45,7 @@ type Props = {
 		isActive: boolean;
 		coverImage?: File | null;
 		galleryImages?: File[];
+		gallery?: string[];
 		address?: string;
 		city?: string;
 		state?: string;
@@ -92,13 +93,8 @@ export default function CourseEditorModal({
 	initialCourse,
 	submitting,
 }: Props) {
-	const pathname = usePathname();
-	const isCourseMode = pathname.startsWith("/courses");
-	
 	// Executive Colors
 	const accentBg = "bg-indigo-600";
-	const accentHoverBg = "hover:bg-indigo-700";
-	const accentRing = "ring-indigo-500/20";
 	const accentText = "text-indigo-600";
 
 	const [form, setForm] = useState<CourseFormValues>(() => buildInitialValues(initialCourse));
@@ -233,8 +229,8 @@ export default function CourseEditorModal({
 				<div className="flex-1 overflow-y-auto px-10 py-8 space-y-10 custom-scrollbar">
 					
 					{/* 🔹 BASIC INFO SECTION */}
-					<div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-						<div className="space-y-6 md:col-span-2">
+					<div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+						<div className="space-y-4 md:col-span-2">
 							<Label icon={<Tag size={14}/>}>Nombre del Programa</Label>
 							<input
 								value={form.name}
@@ -244,7 +240,7 @@ export default function CourseEditorModal({
 							/>
 						</div>
 
-						<div className="space-y-6">
+						<div className="space-y-4">
 							<Label icon={<ImageIcon size={14}/>}>Imagen de Portada</Label>
 							<div className="flex items-center gap-6 p-4 bg-slate-50 rounded-[2rem] border border-slate-100 ring-1 ring-white">
 								<div className="relative h-24 w-32 shrink-0 overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-100">
@@ -268,7 +264,7 @@ export default function CourseEditorModal({
 						</div>
 
 						{/* 🖼️ GALLERY SECTION */}
-						<div className="md:col-span-2 space-y-6">
+						<div className="space-y-4 md:col-span-2">
 							<Label icon={<Images size={14}/>}>Galería del Programa (Máx. 6)</Label>
 							<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 p-6 bg-slate-50 rounded-[2.5rem] border border-slate-100 ring-1 ring-white">
 								{existingGallery.map((url, i) => (
@@ -298,26 +294,32 @@ export default function CourseEditorModal({
 							</div>
 						</div>
 
-						<div className="space-y-6">
-							<Label icon={<Layers size={14}/>}>Categorías</Label>
-							<div className="p-4 bg-slate-50 rounded-[2rem] border border-slate-100 min-h-[110px]">
+						<div className="space-y-4">
+							<div className="space-y-2">
+								<Label icon={<Layers size={14}/>}>Categorías</Label>
+								<p className="pl-6 text-xs font-medium leading-6 text-slate-500">
+									Selecciona las etiquetas que mejor describen la oferta del programa para mejorar su descubrimiento.
+								</p>
+							</div>
+							<div className="min-h-[140px] rounded-[2rem] border border-slate-100 bg-slate-50 p-5">
 								{loadingCategories ? (
 									<div className="flex items-center justify-center h-full">
 										<Loader2 className="animate-spin text-slate-300" size={20} />
 									</div>
 								) : (
-									<div className="flex flex-wrap gap-2">
+									<div className="flex flex-wrap gap-3">
 										{allCategories.map(cat => (
 											<button
 												key={cat.id}
+												type="button"
 												onClick={() => toggleCategory(cat.id)}
-												className={`h-9 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border flex items-center gap-2 ${
+												className={`inline-flex min-h-11 items-center gap-2 rounded-full border px-4 py-2 text-[10px] font-black uppercase tracking-[0.18em] transition-all ${
 													form.categoryIds.includes(cat.id)
-														? 'bg-indigo-600 text-white border-indigo-600 shadow-lg shadow-indigo-100'
-														: 'bg-white text-slate-500 border-slate-100 hover:border-indigo-200 hover:text-indigo-600'
+														? 'border-indigo-200 bg-indigo-50 text-indigo-700 shadow-[0_10px_30px_-18px_rgba(25,115,252,0.9)]'
+														: 'border-slate-200 bg-white text-slate-500 hover:border-indigo-200 hover:text-indigo-600'
 												}`}
 											>
-												{form.categoryIds.includes(cat.id) && <Check size={12} />}
+												{form.categoryIds.includes(cat.id) && <Check size={12} className="text-indigo-600" />}
 												{cat.name}
 											</button>
 										))}
@@ -326,7 +328,7 @@ export default function CourseEditorModal({
 							</div>
 						</div>
 
-						<div className="md:col-span-2 space-y-6">
+						<div className="space-y-4 md:col-span-2">
 							<Label icon={<Layers size={14}/>}>Descripción del Programa</Label>
 							<textarea
 								value={form.description}
@@ -339,13 +341,18 @@ export default function CourseEditorModal({
 					</div>
 
 					{/* 🔹 LOGISTICS SECTION */}
-					<div className="space-y-8">
-						<div className="flex items-center gap-4">
-							<span className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.3em]">Logística y Costos</span>
-							<div className="h-px flex-1 bg-slate-50" />
+					<div className="space-y-6">
+						<div className="space-y-3">
+							<div className="flex items-center gap-4">
+								<span className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.3em]">Logística y Costos</span>
+								<div className="h-px flex-1 bg-slate-100" />
+							</div>
+							<p className="text-sm font-medium leading-6 text-slate-500">
+								Define el formato, la disponibilidad y el precio con el mismo lenguaje visual del resto del flujo.
+							</p>
 						</div>
 
-						<div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+						<div className="grid grid-cols-1 gap-6 rounded-[2rem] border border-slate-100 bg-slate-50/70 p-6 md:grid-cols-4">
 							<div className="space-y-4">
 								<Label icon={<DollarSign size={14}/>}>Precio (MXN)</Label>
 								<input
@@ -353,7 +360,7 @@ export default function CourseEditorModal({
 									value={form.price}
 									onChange={(e) => setForm(c => ({ ...c, price: e.target.value }))}
 									placeholder="0"
-									className="w-full h-14 px-6 rounded-2xl bg-slate-50 border-none ring-1 ring-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:bg-white transition-all text-sm font-black"
+									className="w-full h-14 rounded-2xl border-none bg-white px-6 text-sm font-black ring-1 ring-slate-100 transition-all focus:ring-2 focus:ring-indigo-500/20"
 								/>
 							</div>
 							<div className="space-y-4">
@@ -363,31 +370,38 @@ export default function CourseEditorModal({
 									value={form.capacity}
 									onChange={(e) => setForm(c => ({ ...c, capacity: e.target.value }))}
 									placeholder="30"
-									className="w-full h-14 px-6 rounded-2xl bg-slate-50 border-none ring-1 ring-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:bg-white transition-all text-sm font-black"
+									className="w-full h-14 rounded-2xl border-none bg-white px-6 text-sm font-black ring-1 ring-slate-100 transition-all focus:ring-2 focus:ring-indigo-500/20"
 								/>
 							</div>
 							<div className="space-y-4">
 								<Label icon={<Globe size={14}/>}>Modalidad</Label>
-								<select
+								<CustomSelect
 									value={form.modality}
-									onChange={(e) => setForm(c => ({ ...c, modality: e.target.value }))}
-									className="w-full h-14 px-6 rounded-2xl bg-slate-50 border-none ring-1 ring-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:bg-white transition-all text-sm font-black"
-								>
-									<option value="">Seleccionar</option>
-									{COURSE_MODALITIES.map(m => <option key={m} value={m}>{m}</option>)}
-								</select>
+									onChange={(selected) => setForm(c => ({ ...c, modality: selected }))}
+									options={COURSE_MODALITIES}
+									placeholder="Seleccionar"
+									icon={Globe}
+									triggerClassName="h-14 rounded-2xl bg-white px-5 text-sm font-semibold"
+									itemClassName="py-3 text-sm"
+									contentClassName="rounded-[1.5rem]"
+								/>
 							</div>
 							<div className="space-y-4">
 								<Label icon={<Check size={14}/>}>Estado</Label>
-								<select
+								<CustomSelect
 									value={form.status}
-									onChange={(e) => setForm(c => ({ ...c, status: e.target.value as any }))}
-									className="w-full h-14 px-6 rounded-2xl bg-slate-50 border-none ring-1 ring-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:bg-white transition-all text-sm font-black"
-								>
-									<option value="draft">Borrador</option>
-									<option value="published">Publicado</option>
-									<option value="archived">Archivado</option>
-								</select>
+									onChange={(selected) => setForm(c => ({ ...c, status: selected as Course["status"] }))}
+									options={[
+										{ value: "draft", label: "Borrador" },
+										{ value: "published", label: "Publicado" },
+										{ value: "archived", label: "Archivado" },
+									]}
+									placeholder="Seleccionar"
+									icon={Check}
+									triggerClassName="h-14 rounded-2xl bg-white px-5 text-sm font-semibold"
+									itemClassName="py-3 text-sm"
+									contentClassName="rounded-[1.5rem]"
+								/>
 							</div>
 						</div>
 					</div>
@@ -447,14 +461,17 @@ export default function CourseEditorModal({
 												Map
 											</button>
 										</div>
-										<select
+										<CustomSelect
 											value={form.city}
-											onChange={(e) => setForm(c => ({ ...c, city: e.target.value }))}
-											className="w-full h-11 bg-white rounded-xl px-4 text-xs font-bold border border-slate-100 focus:ring-2 focus:ring-indigo-500/20 outline-none"
-										>
-											<option value="">Seleccionar Estado</option>
-											{MEXICO_STATES.map(s => <option key={s} value={s}>{s}</option>)}
-										</select>
+											onChange={(selected) => setForm(c => ({ ...c, city: selected }))}
+											options={MEXICO_STATES}
+											placeholder="Seleccionar Estado"
+											icon={MapPin}
+											showSearch
+											triggerClassName="h-11 rounded-xl bg-white px-4 text-xs font-bold"
+											itemClassName="py-2.5 text-sm"
+											contentClassName="rounded-[1.25rem]"
+										/>
 									</>
 								) : (
 									<div className="space-y-2">

@@ -90,21 +90,23 @@ export default function FavoritesGrid() {
         const data = await favoritesService.listForMe();
         if (!mounted) return;
         const mapped: FavoriteItem[] = data.map((fav) => {
-          if (fav.type === "SCHOOL") {
+          const isSchool = fav.type ? fav.type === "SCHOOL" : fav.monthlyPrice != null;
+
+          if (isSchool) {
             return {
               id: fav.id,
               imageUrl: resolveSchoolCardImage(fav.id, fav.coverImageUrl),
               title: fav.name,
               location: fav.city ?? "",
               price: fav.monthlyPrice ?? "N/A",
-              description: fav.description,
-              rating: fav.averageRating,
-              schedule: fav.schedule,
-              languages: fav.languages,
-              studentsPerClass: fav.maxStudentsPerClass,
-              enrollmentOpen: fav.enrollmentOpen,
-              enrollmentYear: fav.enrollmentYear,
-              monthlyPrice: fav.monthlyPrice,
+              description: fav.description ?? undefined,
+              rating: fav.averageRating ?? undefined,
+              schedule: fav.schedule ?? undefined,
+              languages: fav.languages ?? undefined,
+              studentsPerClass: fav.maxStudentsPerClass ?? undefined,
+              enrollmentOpen: fav.enrollmentOpen ?? undefined,
+              enrollmentYear: fav.enrollmentYear ?? undefined,
+              monthlyPrice: fav.monthlyPrice ?? undefined,
             };
           } else {
             // COURSE
@@ -114,10 +116,10 @@ export default function FavoritesGrid() {
               title: fav.name,
               location: fav.city ?? "",
               price: fav.price ?? "N/A",
-              description: fav.description,
+              description: fav.description ?? undefined,
               schedule: fav.startDate ? `Inicio: ${fav.startDate}` : undefined,
-              languages: fav.languages,
-              studentsPerClass: fav.capacity,
+              languages: fav.languages ?? undefined,
+              studentsPerClass: fav.capacity ?? undefined,
               enrollmentOpen: undefined,
               enrollmentYear: undefined,
               monthlyPrice: undefined,
@@ -477,6 +479,8 @@ function CarouselSection({
 }) {
   if (items.length === 0) return null;
 
+  const visibleItems = items.slice(0, 6);
+
   return (
     <div className="space-y-6">
       <header className="flex items-center justify-between px-2">
@@ -493,30 +497,28 @@ function CarouselSection({
         </button>
       </header>
 
-      <div className="relative group">
-        <div className="flex gap-6 overflow-x-auto pb-8 scrollbar-hide snap-x px-2 -mx-2">
-          {items.map((item) => (
-            <div key={item.id} className="min-w-[320px] max-w-[320px] snap-start">
-              <CatalogCard
-                imageSrc={item.imageUrl ?? undefined}
-                imageAlt={item.title}
-                typeLabel={item.monthlyPrice ? "ESCUELA" : "CURSO"}
-                title={item.title}
-                location={item.location}
-                priceLabel={item.monthlyPrice ? "MENSUALIDAD" : "PRECIO"}
-                price={typeof item.price === 'number' ? item.price : 0}
-                priceFormatted={typeof item.price === 'number' ? `$${item.price.toLocaleString()}` : String(item.price)}
-                description={item.description}
-                languages={item.languages}
-                studentsPerClass={item.studentsPerClass}
-                onCardClick={() => onOpenModal(item)}
-                onAction={() => onOpenModal(item)}
-                isFavorite={true}
-                onFavoriteToggle={() => onFavoriteToggle(item.id)}
-              />
-            </div>
-          ))}
-        </div>
+      <div className="grid grid-cols-1 gap-6 px-2 sm:grid-cols-2 xl:grid-cols-3">
+        {visibleItems.map((item) => (
+          <CatalogCard
+            key={item.id}
+            imageSrc={item.imageUrl ?? undefined}
+            imageAlt={item.title}
+            typeLabel={item.monthlyPrice ? "ESCUELA" : "CURSO"}
+            title={item.title}
+            location={item.location}
+            priceLabel={item.monthlyPrice ? "MENSUALIDAD" : "PRECIO"}
+            price={typeof item.price === 'number' ? item.price : 0}
+            priceFormatted={typeof item.price === 'number' ? `$${item.price.toLocaleString()}` : String(item.price)}
+            description={item.description}
+            languages={item.languages}
+            studentsPerClass={item.studentsPerClass}
+            onCardClick={() => onOpenModal(item)}
+            onAction={() => onOpenModal(item)}
+            isFavorite={true}
+            onFavoriteToggle={() => onFavoriteToggle(item.id)}
+            className="h-full"
+          />
+        ))}
       </div>
     </div>
   );
@@ -662,7 +664,7 @@ function SchoolCompareModal({
                                 {[...Array(5)].map((_, i) => (
                                   <Star 
                                     key={i} 
-                                    className={`h-3 w-3 ${i < Math.round(item.rating) ? "fill-amber-400 text-amber-400" : "text-slate-200"}`} 
+                                    className={`h-3 w-3 ${i < Math.round(item.rating ?? 0) ? "fill-amber-400 text-amber-400" : "text-slate-200"}`} 
                                   />
                                 ))}
                               </div>

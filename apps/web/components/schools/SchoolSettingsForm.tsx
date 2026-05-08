@@ -6,6 +6,7 @@ import { schoolsService, type School } from "../../lib/services/services/schools
 import { MEXICO_STATES, resolveMexicanState } from "@/lib/mexico-states";
 import { filesService } from "@/lib/services/services/files.service";
 import { schoolCategoriesService, type Category } from "@/lib/services/services/schools-categories.service";
+import CustomSelect from "@/components/ui/custom-select";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   ArrowUpRight, 
@@ -49,6 +50,8 @@ const SCHEDULE_OPTIONS = [
   "09:00 - 16:00",
 ] as const;
 
+type SettingsTab = "general" | "multimedia" | "ubicacion" | "academico" | "categorias";
+
 type FormState = {
   name: string;
   description: string;
@@ -73,10 +76,8 @@ export default function SchoolSettingsForm() {
   const accentColor = isCourseMode ? "violet" : "indigo";
   const accentBgClass = isCourseMode ? "bg-violet-600" : "bg-indigo-600";
   const accentTextClass = isCourseMode ? "text-violet-600" : "text-indigo-600";
-  const accentHoverBgClass = isCourseMode ? "hover:bg-violet-700" : "hover:bg-indigo-700";
-  const accentRingClass = isCourseMode ? "focus:ring-violet-500" : "focus:ring-indigo-500";
 
-  const [activeTab, setActiveTab] = useState<"general" | "multimedia" | "ubicacion" | "academico">("general");
+  const [activeTab, setActiveTab] = useState<SettingsTab>("general");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -491,10 +492,16 @@ export default function SchoolSettingsForm() {
                         <input className={`h-14 w-full rounded-2xl bg-slate-50 px-6 text-sm text-slate-900 ring-1 ring-slate-200 focus:bg-white focus:ring-4 focus:ring-${accentColor}-500/10 focus:border-${accentColor}-300 transition-all font-medium outline-none`} value={form.address} onChange={(e) => set("address", e.target.value)} />
                       </FormGroup>
                       <FormGroup label="Estado / Ciudad">
-                        <select className={`h-14 w-full rounded-2xl bg-slate-50 px-6 text-sm text-slate-900 ring-1 ring-slate-200 focus:bg-white focus:ring-4 focus:ring-${accentColor}-500/10 focus:border-${accentColor}-300 transition-all font-medium outline-none appearance-none`} value={form.city} onChange={(e) => set("city", e.target.value)}>
-                          <option value="">Selecciona...</option>
-                          {MEXICO_STATES.map((state) => <option key={state} value={state}>{state}</option>)}
-                        </select>
+                        <CustomSelect
+                          value={form.city}
+                          onChange={(selected) => set("city", selected)}
+                          options={MEXICO_STATES}
+                          placeholder="Selecciona..."
+                          showSearch
+                          triggerClassName="h-14 rounded-2xl px-6 text-sm font-medium"
+                          itemClassName="py-3 text-sm"
+                          contentClassName="rounded-[1.5rem]"
+                        />
                       </FormGroup>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -514,30 +521,50 @@ export default function SchoolSettingsForm() {
                       {!isCourseMode && (
                         <>
                           <FormGroup label="Nivel Educativo">
-                            <select className="h-14 w-full rounded-2xl bg-slate-50 px-6 text-sm outline-none ring-1 ring-slate-200 focus:bg-white transition-all appearance-none" value={form.educationalLevel} onChange={e => set("educationalLevel", e.target.value)}>
-                              <option value="">Selecciona...</option>
-                              {EDUCATIONAL_LEVEL_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}
-                            </select>
+                            <CustomSelect
+                              value={form.educationalLevel}
+                              onChange={(selected) => set("educationalLevel", selected)}
+                              options={EDUCATIONAL_LEVEL_OPTIONS}
+                              placeholder="Selecciona..."
+                              triggerClassName="h-14 rounded-2xl px-6 text-sm font-medium"
+                              itemClassName="py-3 text-sm"
+                              contentClassName="rounded-[1.5rem]"
+                            />
                           </FormGroup>
                           <FormGroup label="Tipo de Institución">
-                            <select className="h-14 w-full rounded-2xl bg-slate-50 px-6 text-sm outline-none ring-1 ring-slate-200 focus:bg-white transition-all appearance-none" value={form.institutionType} onChange={e => set("institutionType", e.target.value)}>
-                              <option value="">Selecciona...</option>
-                              {INSTITUTION_TYPE_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}
-                            </select>
+                            <CustomSelect
+                              value={form.institutionType}
+                              onChange={(selected) => set("institutionType", selected)}
+                              options={INSTITUTION_TYPE_OPTIONS}
+                              placeholder="Selecciona..."
+                              triggerClassName="h-14 rounded-2xl px-6 text-sm font-medium"
+                              itemClassName="py-3 text-sm"
+                              contentClassName="rounded-[1.5rem]"
+                            />
                           </FormGroup>
                         </>
                       )}
                       <FormGroup label="Horario">
-                        <select className="h-14 w-full rounded-2xl bg-slate-50 px-6 text-sm outline-none ring-1 ring-slate-200 focus:bg-white transition-all appearance-none" value={form.schedule} onChange={e => set("schedule", e.target.value)}>
-                          <option value="">Selecciona...</option>
-                          {SCHEDULE_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}
-                        </select>
+                        <CustomSelect
+                          value={form.schedule}
+                          onChange={(selected) => set("schedule", selected)}
+                          options={SCHEDULE_OPTIONS}
+                          placeholder="Selecciona..."
+                          triggerClassName="h-14 rounded-2xl px-6 text-sm font-medium"
+                          itemClassName="py-3 text-sm"
+                          contentClassName="rounded-[1.5rem]"
+                        />
                       </FormGroup>
                       <FormGroup label="Idiomas">
-                        <select className="h-14 w-full rounded-2xl bg-slate-50 px-6 text-sm outline-none ring-1 ring-slate-200 focus:bg-white transition-all appearance-none" value={form.languages} onChange={e => set("languages", e.target.value)}>
-                          <option value="">Selecciona...</option>
-                          {LANGUAGE_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}
-                        </select>
+                        <CustomSelect
+                          value={form.languages}
+                          onChange={(selected) => set("languages", selected)}
+                          options={LANGUAGE_OPTIONS}
+                          placeholder="Selecciona..."
+                          triggerClassName="h-14 rounded-2xl px-6 text-sm font-medium"
+                          itemClassName="py-3 text-sm"
+                          contentClassName="rounded-[1.5rem]"
+                        />
                       </FormGroup>
                       {!isCourseMode && (
                         <>
@@ -582,12 +609,13 @@ export default function SchoolSettingsForm() {
                                   setSelectedCategoryIds(prev => [...prev, cat.id]);
                                 }
                               }}
-                              className={`px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                              className={`inline-flex min-h-12 items-center rounded-full border px-5 py-3 text-[10px] font-black uppercase tracking-[0.2em] transition-all ${
                                 isSelected
-                                  ? `${accentBgClass} text-white shadow-lg shadow-${accentColor}-500/20`
-                                  : "bg-white border border-slate-200 text-slate-400 hover:text-slate-900 hover:border-slate-300"
+                                  ? "border-indigo-200 bg-indigo-50 text-indigo-700 shadow-[0_12px_32px_-20px_rgba(25,115,252,0.9)]"
+                                  : "bg-white border-slate-200 text-slate-500 hover:border-indigo-200 hover:text-indigo-700"
                               }`}
                             >
+                              {isSelected ? <span className="mr-2 h-2 w-2 rounded-full bg-indigo-600" /> : null}
                               {cat.name}
                             </button>
                           );

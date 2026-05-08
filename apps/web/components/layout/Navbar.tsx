@@ -54,6 +54,11 @@ function NavbarContent(): JSX.Element {
   const loginHref = audience === "schools" ? "/auth/login/schools" : "/auth/login";
   const registerHref = audience === "schools" ? "/auth/register?role=private" : "/auth/register";
   const privateDashboardHref = user?.hasSchool === true ? "/schools" : "/courses";
+  const dashboardHref = user
+    ? user.role === "private"
+      ? privateDashboardHref
+      : "/parents"
+    : "/";
 
   const displayName = user?.name ?? user?.email.split("@")[0] ?? "";
 
@@ -71,7 +76,7 @@ function NavbarContent(): JSX.Element {
         {/* ===== LEFT SIDE (LOGO + LINKS) ===== */}
         <div className="flex items-center gap-10">
           {/* LOGO */}
-          <Link href="/" className="flex items-center gap-2">
+          <Link href={dashboardHref} className="flex items-center gap-2">
             <div className="flex items-center justify-center w-12 h-12 bg-[#1973FC] rounded-xl">
               <GraduationCap size={28} className="text-white" />
             </div>
@@ -129,7 +134,7 @@ function NavbarContent(): JSX.Element {
               <>
                 <li>
                   <Link
-                    href="/search?tab=escuelas"
+                    href="/search"
                     className="font-medium text-[#2d2c2b] hover:text-black"
                   >
                     Buscar escuelas
